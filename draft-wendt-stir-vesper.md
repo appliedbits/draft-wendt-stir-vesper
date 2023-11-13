@@ -1,6 +1,6 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "VESPER - VErifiable Sti Personas"
+abbrev: "vesper"
 category: info
 
 docname: draft-wendt-stir-vesper-latest
@@ -12,9 +12,8 @@ v: 3
 area: "Applications and Real-Time"
 workgroup: "Secure Telephone Identity Revisited"
 keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
+ - telephone number
+ - vetting
 venue:
   group: "Secure Telephone Identity Revisited"
   type: "Working Group"
@@ -26,8 +25,8 @@ venue:
 author:
  -
     fullname: "Chris Wendt"
-    organization: Your Organization Here
-    email: "chris@chriswendt.net"
+    organization: Somos, Inc.
+    email: "chris@appliedbits.com"
 
 normative:
 
