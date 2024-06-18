@@ -37,8 +37,8 @@ author:
 
 normative:
   RFC7800:
-  RFC8824:
-  RFC8825:
+  RFC8224:
+  RFC8225:
   RFC8226:
   I-D.ietf-oauth-selective-disclosure-jwt:
 
