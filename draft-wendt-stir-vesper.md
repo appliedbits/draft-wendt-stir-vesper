@@ -36,6 +36,7 @@ author:
     country: US
 
 normative:
+  RFC7800:
   RFC8824:
   RFC8825:
   RFC8226:
@@ -74,32 +75,40 @@ The vetting process is much about registration and authentication of a Vetting E
 
 The vetting process generally involves the following steps:
 
-1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA.
-2. The entity generates a public/private key pair or the VA does it on the entries behalf.
-3. The public key is registered with the VA.
-4. The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process. 
-5. The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions is believed to be something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.
+Setup and registration of VE with VA
+1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA and a unique entity_id is created.
+2. The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
+3. The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions are something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.
+
+RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
+4. The entity generates a public/private key pair or the VA does it on the entries behalf.
+5. The public key is registered with the VA.
+
+VA publishes vetted information digest to transparency service
 6. The VA creates hash of their vetting data and/or results. What exactly is included in generation of the hash is up to VA and influenced by the process used.
 7. The VA logs the hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
 8. The VA provides the API service or the Vetted Entity (VE) hosts their own according the API definition in this document.
-9. The VA or VE issues an SD-JWT containing the KYC/KYB information, the public key, and the transparency receipt.
-10. Verifying party ensures that token signature is correct.
-11. Verifier can verify the Transparency log signature to further trust the token.
-12. Verifier can call proof of possession API and issue the challenge to ensure that the entity presenting the token is the legitimate holder of it.  (? this is to validate that the holder is indeed the holder based on issuer)
+
+VE initiates communications requiring a valid and fresh token with required disclosures
+9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.
+
+VV Verification procedures
+10. VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.
+11. VV can verify the Transparency log signature to further trust the token.
 
 # Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
-This document defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document. 
+This document defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.
 
 In order to represent the vetted claim information about a VE. The SD-JWT MUST include the following claims:
 
-iss: Issuer, the Vetting Authority (VA), a URI uniquely representing the issuer/VA
-sub: Subject, the Vetting Entity (VE), a URI uniquely representing the subject/VE
+iss: Issuer, the Vetting Authority.
+sub: Subject, the vetted entity represented by a unique entity_id
 iat: Issuance timestamp.
 exp: Expiry timestamp.
-vetting_claims_hash: Hash of the fully disclosed vetting claims.
+kyc_data_hash: Hash of the KYC/KYB data.
 transparency_receipt: Transparency receipt issued by the transparency service.
-public_key: Public key of the vetted entity.  CW: should this be the cnf??
+cnf: Public key of the vetted entity, only if key binding is required, defined in {{RFC7800}}
 vetting_process: Details of the vetting process, including the date and methodology.
 vetting_outcome: Result of the vetting process.
 
@@ -107,47 +116,33 @@ vetting_outcome: Result of the vetting process.
 
 The vetting service provides the following APIs:
 
-## Register Public Key API
+## Request Vetting Token API
 
-Endpoint: /api/register-public-key
+Endpoint: /api/request-vetting-token
 Method: POST
-Description: Registers the public key of the vetted entity.
+Description: Requests a vetting token (SD-JWT) from the Vetting Authority (VA).
+Headers:
+
+* Authorization: Bearer {VA's m2m bearer token}
+
 Request Body:
 
 ~~~~~~~~~~~~
 {
   "entity_id": "unique-entity-id",
-  "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."
-}
-~~~~~~~~~~~~
-
-Response:
-
-~~~~~~~~~~~~
-{
-  "status": "success",
-  "message": "Public key registered successfully."
-}
-~~~~~~~~~~~~
-
-## Issue Vetting Token API
-
-Endpoint: /api/issue-vetting-token
-Method: POST
-Description: Issues a vetting token (SD-JWT) containing KYC/KYB information and a transparency receipt.
-Request Body:
-
-{
-  "entity_id": "unique-entity-id",
-  "kyc_data": {
-    "name": "Example VoIP Entity",
-    "registration_number": "123456789",
-    "address": "1234 Example St, Example City, EX 12345"
+  "key_binding": true,
+  "public_key_jwk": {
+    "kty": "RSA",
+    "e": "AQAB",
+    "n": "lsO0Qe0Qu7FwZQ22T5vlqXN...",
+    "alg": "RS256"
   }
 }
+~~~~~~~~~~~~
 
 Response:
 
+~~~~~~~~~~~~
 {
   "status": "success",
   "vetting_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -160,16 +155,19 @@ Response:
     }
   }
 }
+~~~~~~~~~~~~
 
-## Verify Vetting Token API
+Note: entity_id is generated by VA. The mechanism how persona is vetted is not subject of this document. This API can only be called after the vetting was complete and entity_id was issued.
 
-Endpoint: /api/verify-vetting-token
+## Public API for Verifiers
+
+Endpoint: /api/verify-vetted-info
 Method: POST
-Description: Verifies the validity of a vetting token (SD-JWT) and its associated transparency receipt.
+Description: Verifies the validity of transparency receipt.
 Request Body:
 
+~~~~~~~~~~~~
 {
-  "vetting_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "transparency_receipt": {
     "log_entry_id": "transparency-log-001",
     "receipt": {
@@ -179,23 +177,16 @@ Request Body:
     }
   }
 }
+~~~~~~~~~~~~
 
 Response:
 
+~~~~~~~~~~~~
 {
   "status": "success",
-  "message": "Vetting token and transparency receipt verified successfully."
+  "message": "Vetted information verified successfully."
 }
-
-# Proof of Possession Mechanism
-
-The proof of possession mechanism ensures that the entity presenting the token is the legitimate holder of it. This involves:
-
-The verifier issuing a unique challenge to the entity.
-The entity signing the challenge with its private key.
-The verifier verifying the signed challenge using the public key included in the vetting token.
-
-
+~~~~~~~~~~~~
 
 # Security Considerations
 
