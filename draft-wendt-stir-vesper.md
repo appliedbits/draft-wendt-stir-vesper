@@ -128,7 +128,7 @@ VA publishes vetted information digest to transparency service
 
 VE initiates communications requiring a valid and fresh token with required disclosures
 
-1. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.
+9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.
 
 VV Verification procedures
 
