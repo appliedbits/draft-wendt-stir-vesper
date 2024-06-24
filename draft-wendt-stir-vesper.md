@@ -131,11 +131,15 @@ An SD-JWT+KB is composed of
 
 The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde ('~') character as follows:
 
+~~~~~~~~~~~
 <Issuer-signed JWT>~<Disclosure 1>~<Disclosure 2>~...~<Disclosure N>~
+~~~~~~~~~~~
 
 The serialized format for an SD-JWT+KB extends the SD-JWT format by concatenating a Key Binding JWT.
 
+~~~~~~~~~~~
 <Issuer-signed JWT>~<Disclosure 1>~<Disclosure 2>~...~<Disclosure N>~<KB>
+~~~~~~~~~~~
 
 The payload of a vesper token as an SD-JWT is a JSON object according to the following rules:
 
@@ -161,6 +165,7 @@ transparency_receipt: Transparency receipt issued by the transparency service.
 
 The Issuer is using the following input claim set:
 
+~~~~~~~~~~~~~
 {
   "sub": "Business_42",
   "telephone_number_rtu": [
@@ -184,6 +189,7 @@ The Issuer is using the following input claim set:
   "contact_email": "johndoe@example.com",
   "contact_phone_number": "+12025550101"
 }
+~~~~~~~~~~~~~
 
 The Issuer in this case made the following decisions:
 
@@ -195,6 +201,7 @@ The Issuer in this case made the following decisions:
 
 The following payload is used for the SD-JWT:
 
+~~~~~~~~~~~~
 {
   "_sd": [
     "CrQe7S5kqBAHt-nMYXgc6bdt2SH5aTY1sU_M-PgkjPI",
@@ -236,46 +243,64 @@ The following payload is used for the SD-JWT:
     }
   }
 }
+~~~~~~~~~~~~~
 
 The following Disclosures are created by the Issuer:
 
 Claim contact_given_name:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4
 Disclosure:
 WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9o
 biJd
 Contents: ["2GLC42sKQveCfGfryNRN9w", "contact_given_name", "John"]
+~~~~~~~~~~~~~
 
 Claim contact_family_name:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: TGf4oLbgwd5JQaHyKVQZU9UdGE0w5rtDsrZzfUaomLo
 Disclosure:
 WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwgImZhbWlseV9uYW1lIiwgIkRv
 ZSJd
 Contents: ["eluV5Og3gSNII8EYnsxA_A", "contact_family_name", "Doe"]
+~~~~~~~~~~~~~
 
 Claim contact_email:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: JzYjH4svliH0R3PyEMfeZu6Jt69u5qehZo7F7EPYlSE
 Disclosure:
 WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWlsIiwgImpvaG5kb2VA
 ZXhhbXBsZS5jb20iXQ
 Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "contact_email", "johndoe@example.com"]
+~~~~~~~~~~~~~
 
 Claim phone_number:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: PorFbpKuVu6xymJagvkFsFXAbRoc2JGlAUA2BA4o7cI
 Disclosure:
 WyJlSThaV205UW5LUHBOUGVOZW5IZGhRIiwgInBob25lX251bWJlciIsICIr
 MS0yMDItNTU1LTAxMDEiXQ
 Contents: ["eI8ZWm9QnKPpNPeNenHdhQ", "contact_phone_number",
 "+1-202-555-0101"]
+~~~~~~~~~~~~~
 
 Claim business_ids:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: XQ_3kPKt1XyX7KANkqVR6yZ2Va5NrPIvPYbyMvRKBMM
 Disclosure:
 WyJRZ19PNjR6cUF4ZTQxMmExMDhpcm9BIiwgInBob25lX251bWJlcl92ZXJp
 ZmllZCIsIHRydWVd
 Contents: ["Qg_O64zqAxe412a108iroA", "business_ids", true]
+~~~~~~~~~~~~~
 
 Claim address:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: XzFrzwscM6Gn6CJDc6vVK8BkMnfG8vOSKfpPIZdAfdE
 Disclosure:
 WyJBSngtMDk1VlBycFR0TjRRTU9xUk9BIiwgImFkZHJlc3MiLCB7InN0cmVl
@@ -284,21 +309,27 @@ d24iLCAicmVnaW9uIjogIkFueXN0YXRlIiwgImNvdW50cnkiOiAiVVMifV0
 Contents: ["AJx-095VPrpTtN4QMOqROA", "address", {"street_address":
 "123 Main St", "locality": "Anytown", "region": "Anystate",
 "country": "US"}]
+~~~~~~~~~~~~~
 
 Array Entry:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: pFndjkZ_VCzmyTa6UjlZo3dh-ko8aIKQc9DlGzhaVYo
-Disclosure:
-WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIlVTIl0
+Disclosure: WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIlVTIl0
 Contents: ["lklxF5jMYlGTPUovMNIvCA", "{"nam":"Business_42","icn":"https://example.com/logo.png"}"]
+~~~~~~~~~~~~~
 
 Array Entry:
+
+~~~~~~~~~~~~~
 SHA-256 Hash: 7Cf6JkPudry3lcbwHgeZ8khAv1U1OSlerP0VkBJrWZ0
-Disclosure:
-WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0
+Disclosure: WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0
 Contents: ["nPuoQnkRFq3BIeAm7AnXFA", "123456789"]
+~~~~~~~~~~~~~
 
 The payload is then signed by the Issuer to create a JWT like the following:
 
+~~~~~~~~~~~~~
 eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImV4YW1wbGUrc2Qtand0In0.eyJfc2QiOiBb
 IkNyUWU3UzVrcUJBSHQtbk1ZWGdjNmJkdDJTSDVhVFkxc1VfTS1QZ2tqUEkiLCAiSnpZ
 akg0c3ZsaUgwUjNQeUVNZmVadTZKdDY5dTVxZWhabzdGN0VQWWxTRSIsICJQb3JGYnBL
@@ -349,11 +380,13 @@ eXN0YXRlIiwgImNvdW50cnkiOiAiVVMifV0~WyJQYzMzSk0yTGNoY1VfbEhnZ3ZfdWZR
 IiwgImJpcnRoZGF0ZSIsICIxOTQwLTAxLTAxIl0~WyJHMDJOU3JRZmpGWFE3SW8wOXN5
 YWpBIiwgInVwZGF0ZWRfYXQiLCAxNTcwMDAwMDAwXQ~WyJsa2x4RjVqTVlsR1RQVW92T
 U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
+~~~~~~~~~~~~~
 
 Presentation
 
 The following non-normative example shows an SD-JWT+KB as it would be sent from the Holder to the Verifier. Note that it consists of six tilde-separated parts, with the Issuer-signed JWT as shown above in the beginning, four Disclosures (for the claims given_name, family_name, address, and nationalities) in the middle, and the Key Binding JWT as the last element.
 
+~~~~~~~~~~~~~
 eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImV4YW1wbGUrc2Qtand0In0.eyJfc2QiOiBb
 IkNyUWU3UzVrcUJBSHQtbk1ZWGdjNmJkdDJTSDVhVFkxc1VfTS1QZ2tqUEkiLCAiSnpZ
 akg0c3ZsaUgwUjNQeUVNZmVadTZKdDY5dTVxZWhabzdGN0VQWWxTRSIsICJQb3JGYnBL
@@ -382,15 +415,18 @@ RwczovL3ZlcmlmaWVyLmV4YW1wbGUub3JnIiwgImlhdCI6IDE3MTgyOTg3NjYsICJzZF
 9oYXNoIjogImEyWTh0bUhrUm9MQXFrWTlKMjR0aXhucWJNLVVxcFg2MUpJRm5BVDIxX2
 sifQ.sqzbrv_SfCuI7yk3w7Hot82zFZiaWB-EH2GqsSi2-ZukcgP7z8DQGhPkSV97-WZ
 r5hGm-nR0MmSDTXgmoFeViQ
+~~~~~~~~~~~~~
 
 The following Key Binding JWT payload was created and signed for this presentation by the Holder:
 
+~~~~~~~~~~~~~
 {
   "nonce": "1234567890",
   "aud": "https://verifier.example.org",
   "iat": 1718298766,
   "sd_hash": "a2Y8tmHkRoLAqkY9J24tixnqbM-UqpX61JIFnAT21_k"
 }
+~~~~~~~~~~~~~
 
 If the Verifier did not require Key Binding, then the Holder could have presented the SD-JWT with selected Disclosures directly, instead of encapsulating it in an SD-JWT+KB.
 
@@ -402,12 +438,13 @@ The vetting service provides the following APIs:
 
 ## Request Vetting Token API
 
+~~~~~~~~~~~~~
 Endpoint: /api/request-vetting-token
 Method: POST
 Description: Requests a vetting token (SD-JWT) from the Vetting Authority (VA).
 Headers:
-
-* Authorization: Bearer (VE's m2m bearer token)
+  Authorization: Bearer (VE's m2m bearer token)
+~~~~~~~~~~~~~
 
 Request Body:
 
@@ -445,10 +482,12 @@ Note: entity_id is generated by VA. The mechanism how persona is vetted is not s
 
 ## Public API for Verifiers
 
+~~~~~~~~~~~~~
 Endpoint: /api/verify-vetted-info
 Method: POST
 Description: Verifies the validity of transparency receipt.
 Request Body:
+~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~
 {
