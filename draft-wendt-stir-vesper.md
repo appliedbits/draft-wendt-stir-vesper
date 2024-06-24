@@ -181,7 +181,7 @@ The payload MAY contain further claims such as iss, iat, etc. as defined or requ
 
 In order to represent the vetted claim information about a VE. The SD-JWT MUST include the following claims:
 
-iss: Issuer, the Vetting Authority.
+iss: Issuer, the Vetting Agent.
 sub: Subject, the vetted entity represented by a unique entity_id
 iat: Issuance timestamp.
 exp: Expiry timestamp.
