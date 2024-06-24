@@ -75,24 +75,63 @@ The vetting process is much about registration and authentication of a Vetting E
 
 The vetting process generally involves the following steps:
 
+```mermaid
+sequenceDiagram
+    participant VE as Vetting Entity (VE)
+    participant VA as Vetting Authority (VA)
+    participant TS as Transparency Service (TS)
+    participant VV as Verification Validator (VV)
+
+    VE->>VA: 1. Register with VA and create entity_id
+    VE->>VA: 2. Submit information claims for vetting
+    VA->>VA: 3. Perform KYC/KYB checks
+
+    alt Optional Key Binding (KB)
+        VE->>VA: 4. Generate and register public key (or VA does it)
+        VA->>VA: 5. Register public key
+    end
+
+    VA->>VA: 6. Create hash of vetting data/results
+    VA->>TS: 7. Log hash and get transparency receipt
+    TS-->>VA: 7. Transparency receipt
+
+    alt API service
+        VA->>VE: 8. Provide API service
+        VE->>VE: 8. Host own API service
+    end
+
+    VE->>VA: 9. Request SD-JWT
+    VA-->>VE: 9. Issue SD-JWT with KYC/KYB info, public key, transparency receipt
+
+    VE->>VV: 10. Submit token for verification
+    VV->>VV: 10. Verify token signature and optionally KB-JWT
+    VV->>TS: 11. Verify transparency log signature
+    TS-->>VV: 11. Transparency log signature validation
+```
+
 Setup and registration of VE with VA
+
 1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA and a unique entity_id is created.
 2. The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
 3. The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions are something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.
 
 RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
+
 4. The entity generates a public/private key pair or the VA does it on the entries behalf.
 5. The public key is registered with the VA.
 
 VA publishes vetted information digest to transparency service
+
 6. The VA creates hash of their vetting data and/or results. What exactly is included in generation of the hash is up to VA and influenced by the process used.
 7. The VA logs the hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
-8. The VA provides the API service or the Vetted Entity (VE) hosts their own according the API definition in this document.
+8. VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.  Optionally, the VE can use VAs hosted wallet service APIs if available.
 
 VE initiates communications requiring a valid and fresh token with required disclosures
+
 9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.
 
 VV Verification procedures
+
 10. VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.
 11. VV can verify the Transparency log signature to further trust the token.
 
@@ -157,7 +196,7 @@ The Issuer is using the following input claim set:
 {
   "sub": "Business_42",
   "telephone_number_rtu": [
-    +18001231234, 
+    +18001231234,
     +18881231234
   ],
   "rcd": [
@@ -184,7 +223,7 @@ The Issuer in this case made the following decisions:
 * The "rcd" array is always visible, but its contents are selectively disclosable.
 * The sub element and essential verification data (iss, iat, cnf, etc.) are always visible.
 * All other claims are selectively disclosable.
-* For address, all of the claims can only be selectively disclosed in full. 
+* For address, all of the claims can only be selectively disclosed in full.
 
 The following payload is used for the SD-JWT:
 
@@ -204,7 +243,7 @@ The following payload is used for the SD-JWT:
   "exp": 1883000000,
   "sub": "Business_42",
   "telephone_number_rtu": [
-    +18001231234, 
+    +18001231234,
     +18881231234
   ],
   "rcd": [
