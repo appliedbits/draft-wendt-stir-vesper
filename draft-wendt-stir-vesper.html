@@ -1032,7 +1032,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Wendt &amp; Sliwa</td>
-<td class="center">Expires 20 December 2024</td>
+<td class="center">Expires 26 December 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1045,12 +1045,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wendt-stir-vesper-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-06-18" class="published">18 June 2024</time>
+<time datetime="2024-06-24" class="published">24 June 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-12-20">20 December 2024</time></dd>
+<dd class="expires"><time datetime="2024-12-26">26 December 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1104,7 +1104,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 December 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 December 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1150,6 +1150,20 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-selective-disclosure-json-w" class="internal xref">Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-sd-jwt-and-disclosures" class="internal xref">SD-JWT and Disclosures</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-sd-jwt-verification" class="internal xref">SD-JWT Verification</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-vesper-token-sd-jwt-and-sd-" class="internal xref">Vesper token SD-JWT and SD-JWT+KB Data Formats</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-example-issuance" class="internal xref">Example Issuance</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-api-endpoints" class="internal xref">API Endpoints</a></p>
@@ -1224,22 +1238,55 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-vetting-process-procedures" class="section-name selfRef">Vetting Process Procedures</a>
       </h2>
 <p id="section-5-1">The vetting process generally involves the following steps:<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">Setup and registration of VE with VA
-1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA and a unique entity_id is created.
-2. The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that <span class="bcp14">SHOULD</span> be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is <span class="bcp14">RECOMMENDED</span> to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
-3. The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions are something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3"><span class="bcp14">RECOMMENDED</span> but optional use of Key Binding (KB) as defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>:
-4. The entity generates a public/private key pair or the VA does it on the entries behalf.
-5. The public key is registered with the VA.<a href="#section-5-3" class="pilcrow">¶</a></p>
-<p id="section-5-4">VA publishes vetted information digest to transparency service
-6. The VA creates hash of their vetting data and/or results. What exactly is included in generation of the hash is up to VA and influenced by the process used.
-7. The VA logs the hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
-8. The VA provides the API service or the Vetted Entity (VE) hosts their own according the API definition in this document.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">VE initiates communications requiring a valid and fresh token with required disclosures
-9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.<a href="#section-5-5" class="pilcrow">¶</a></p>
-<p id="section-5-6">VV Verification procedures
-10. VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.
-11. VV can verify the Transparency log signature to further trust the token.<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-2">Placeholder for diagram<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">Setup and registration of VE with VA<a href="#section-5-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-4">
+<li id="section-5-4.1">
+          <p id="section-5-4.1.1">Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA and a unique entity_id is created.<a href="#section-5-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-4.2">
+          <p id="section-5-4.2.1">The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that <span class="bcp14">SHOULD</span> be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is <span class="bcp14">RECOMMENDED</span> to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.<a href="#section-5-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-4.3">
+          <p id="section-5-4.3.1">The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions are something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.<a href="#section-5-4.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-5-5"><span class="bcp14">RECOMMENDED</span> but optional use of Key Binding (KB) as defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>:<a href="#section-5-5" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-6">
+<li id="section-5-6.1">
+          <p id="section-5-6.1.1">The entity generates a public/private key pair or the VA does it on the entries behalf.<a href="#section-5-6.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-6.2">
+          <p id="section-5-6.2.1">The public key is registered with the VA.<a href="#section-5-6.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-5-7">VA publishes vetted information digest to transparency service<a href="#section-5-7" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-8">
+<li id="section-5-8.1">
+          <p id="section-5-8.1.1">The VA creates hash of their vetting data and/or results. What exactly is included in generation of the hash is up to VA and influenced by the process used.<a href="#section-5-8.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-8.2">
+          <p id="section-5-8.2.1">The VA logs the hash of the KYC/KYB data with a transparency service and issues a transparency receipt.<a href="#section-5-8.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-8.3">
+          <p id="section-5-8.3.1">VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.  Optionally, the VE can use VAs hosted wallet service APIs if available.<a href="#section-5-8.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-5-9">VE initiates communications requiring a valid and fresh token with required disclosures<a href="#section-5-9" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-10">
+<li id="section-5-10.1">
+          <p id="section-5-10.1.1">The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.<a href="#section-5-10.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-5-11">VV Verification procedures<a href="#section-5-11" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-12">
+<li id="section-5-12.1">
+          <p id="section-5-12.1.1">VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.<a href="#section-5-12.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-12.2">
+          <p id="section-5-12.2.1">VV can verify the Transparency log signature to further trust the token.<a href="#section-5-12.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
 </section>
 </div>
 <div id="selective-disclosure-json-web-tokens-sd-jwt-for-vetted-information">
@@ -1247,17 +1294,357 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-selective-disclosure-json-w">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-selective-disclosure-json-w" class="section-name selfRef">Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information</a>
       </h2>
-<p id="section-6-1">This document defines the vesper token using the SD-JWT, defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<p id="section-6-2">In order to represent the vetted claim information about a VE. The SD-JWT <span class="bcp14">MUST</span> include the following claims:<a href="#section-6-2" class="pilcrow">¶</a></p>
-<p id="section-6-3">iss: Issuer, the Vetting Authority.
+<p id="section-6-1">This document defines the vesper token using the SD-JWT, defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.  The Issuer in the context of the vesper token is the VA, the Holder corresponds to the VE, and the Verifier is the VV.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="sd-jwt-and-disclosures">
+<section id="section-6.1">
+        <h3 id="name-sd-jwt-and-disclosures">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-sd-jwt-and-disclosures" class="section-name selfRef">SD-JWT and Disclosures</a>
+        </h3>
+<p id="section-6.1-1">SD-JWT is a digitally signed JSON document containing digests over the selectively disclosable claims with the Disclosures outside the document. Disclosures can be omitted without breaking the signature, and modifying them can be detected. Selectively disclosable claims can be individual object properties (name-value pairs) or array elements. When presenting an SD-JWT to a Verifier, the Holder only includes the Disclosures for the claims that it wants to reveal to that Verifier. An SD-JWT can also contain clear-text claims that are always disclosed to the Verifier.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">To disclose to a Verifier a subset of the SD-JWT claim values, a Holder sends only the Disclosures of those selectively released claims to the Verifier as part of the SD-JWT. The use of Key Binding is an optional feature.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sd-jwt-verification">
+<section id="section-6.2">
+        <h3 id="name-sd-jwt-verification">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-sd-jwt-verification" class="section-name selfRef">SD-JWT Verification</a>
+        </h3>
+<p id="section-6.2-1">The Verifier receives either an SD-JWT or an SD-JWT+KB from the Holder, verifies the signature on the SD-JWT (or the the SD-JWT inside the SD-JWT+KB) using the Issuer's public key, verifies the signature on the KB-JWT using the public key included (or referenced) in the SD-JWT, and calculates the digests over the Holder-Selected Disclosures and verifies that each digest is contained in the SD-JWT.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="vesper-token-sd-jwt-and-sd-jwtkb-data-formats">
+<section id="section-6.3">
+        <h3 id="name-vesper-token-sd-jwt-and-sd-">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-vesper-token-sd-jwt-and-sd-" class="section-name selfRef">Vesper token SD-JWT and SD-JWT+KB Data Formats</a>
+        </h3>
+<p id="section-6.3-1">An SD-JWT is composed of<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.3-2.1">
+            <p id="section-6.3-2.1.1">an Issuer-signed JWT, and<a href="#section-6.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-2.2">
+            <p id="section-6.3-2.2.1">zero or more Disclosures.<a href="#section-6.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.3-3">An SD-JWT+KB is composed of<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.3-4.1">
+            <p id="section-6.3-4.1.1">an SD-JWT, and<a href="#section-6.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-4.2">
+            <p id="section-6.3-4.2.1">a Key Binding JWT.<a href="#section-6.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.3-5">The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde ('~') character as follows:<a href="#section-6.3-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.3-6">
+<pre>
+&lt;Issuer-signed JWT&gt;~&lt;Disclosure 1&gt;~&lt;Disclosure 2&gt;~...~&lt;Disclosure N&gt;~
+</pre><a href="#section-6.3-6" class="pilcrow">¶</a>
+</div>
+<p id="section-6.3-7">The serialized format for an SD-JWT+KB extends the SD-JWT format by concatenating a Key Binding JWT.<a href="#section-6.3-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.3-8">
+<pre>
+&lt;Issuer-signed JWT&gt;~&lt;Disclosure 1&gt;~&lt;Disclosure 2&gt;~...~&lt;Disclosure N&gt;~&lt;KB&gt;
+</pre><a href="#section-6.3-8" class="pilcrow">¶</a>
+</div>
+<p id="section-6.3-9">The payload of a vesper token as an SD-JWT is a JSON object according to the following rules:<a href="#section-6.3-9" class="pilcrow">¶</a></p>
+<p id="section-6.3-10">The payload <span class="bcp14">MAY</span> contain the _sd_alg key described in Section 5.1.1 of <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>.
+The payload <span class="bcp14">MAY</span> contain one or more digests of Disclosures to enable selective disclosure of the respective claims, created and formatted as described in Section 5.2.
+The payload <span class="bcp14">MAY</span> contain one or more decoy digests to obscure the actual number of claims in the SD-JWT, created and formatted as described in Section 5.2.5.
+The payload <span class="bcp14">MAY</span> contain one or more non-selectively disclosable claims.
+The payload <span class="bcp14">MAY</span> contain the Holder's public key(s) or reference(s) thereto, as explained in Section 5.1.2.
+The payload <span class="bcp14">MAY</span> contain further claims such as iss, iat, etc. as defined or required by the application using SD-JWTs.<a href="#section-6.3-10" class="pilcrow">¶</a></p>
+<p id="section-6.3-11">In order to represent the vetted claim information about a VE. The SD-JWT <span class="bcp14">MUST</span> include the following claims:<a href="#section-6.3-11" class="pilcrow">¶</a></p>
+<p id="section-6.3-12">iss: Issuer, the Vetting Agent.
 sub: Subject, the vetted entity represented by a unique entity_id
 iat: Issuance timestamp.
 exp: Expiry timestamp.
 kyc_data_hash: Hash of the KYC/KYB data.
 transparency_receipt: Transparency receipt issued by the transparency service.
-cnf: Public key of the vetted entity, only if key binding is required, defined in <span>[<a href="#RFC7800" class="cite xref">RFC7800</a>]</span>
-vetting_process: Details of the vetting process, including the date and methodology.
-vetting_outcome: Result of the vetting process.<a href="#section-6-3" class="pilcrow">¶</a></p>
+(optional) cnf: Public key of the vetted entity, only if key binding is required, defined in <span>[<a href="#RFC7800" class="cite xref">RFC7800</a>]</span><a href="#section-6.3-12" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-issuance">
+<section id="section-6.4">
+        <h3 id="name-example-issuance">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-example-issuance" class="section-name selfRef">Example Issuance</a>
+        </h3>
+<p id="section-6.4-1">The Issuer is using the following input claim set:<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-2">
+<pre>
+{
+  "sub": "Business_42",
+  "telephone_number_rtu": [
+    +18001231234,
+    +18881231234
+  ],
+  "rcd": [
+    {"nam":"Business_42","icn":"https://example.com/logo.png"}
+  ]
+  "business_ids": [
+    {"EIN":"123456789"}
+  ]
+  "address": {
+    "street_address": "123 Main St",
+    "locality": "Anytown",
+    "region": "Anystate",
+    "country": "US"
+  },
+  "contact_given_name": "John",
+  "contact_family_name": "Doe",
+  "contact_email": "johndoe@example.com",
+  "contact_phone_number": "+12025550101"
+}
+</pre><a href="#section-6.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-3">The Issuer in this case made the following decisions:<a href="#section-6.4-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.4-4.1">
+            <p id="section-6.4-4.1.1">The "telephone_number_rtu" array and contents is always visible.<a href="#section-6.4-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-4.2">
+            <p id="section-6.4-4.2.1">The "rcd" array is always visible, but its contents are selectively disclosable.<a href="#section-6.4-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-4.3">
+            <p id="section-6.4-4.3.1">The sub element and essential verification data (iss, iat, cnf, etc.) are always visible.<a href="#section-6.4-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-4.4">
+            <p id="section-6.4-4.4.1">All other claims are selectively disclosable.<a href="#section-6.4-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.4-4.5">
+            <p id="section-6.4-4.5.1">For address, all of the claims can only be selectively disclosed in full.<a href="#section-6.4-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.4-5">The following payload is used for the SD-JWT:<a href="#section-6.4-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-6">
+<pre>
+{
+  "_sd": [
+    "CrQe7S5kqBAHt-nMYXgc6bdt2SH5aTY1sU_M-PgkjPI",
+    "JzYjH4svliH0R3PyEMfeZu6Jt69u5qehZo7F7EPYlSE",
+    "PorFbpKuVu6xymJagvkFsFXAbRoc2JGlAUA2BA4o7cI",
+    "TGf4oLbgwd5JQaHyKVQZU9UdGE0w5rtDsrZzfUaomLo",
+    "XQ_3kPKt1XyX7KANkqVR6yZ2Va5NrPIvPYbyMvRKBMM",
+    "XzFrzwscM6Gn6CJDc6vVK8BkMnfG8vOSKfpPIZdAfdE",
+    "gbOsI4Edq2x2Kw-w5wPEzakob9hV1cRD0ATN3oQL9JM",
+    "jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4"
+  ],
+  "iss": "https://vetting-agent.example.com",
+  "iat": 1683000000,
+  "exp": 1883000000,
+  "sub": "Business_42",
+  "telephone_number_rtu": [
+    +18001231234,
+    +18881231234
+  ],
+  "rcd": [
+    {
+      "...": "pFndjkZ_VCzmyTa6UjlZo3dh-ko8aIKQc9DlGzhaVYo"
+    }
+  ],
+  "business_ids": [
+    {
+      "...": "7Cf6JkPudry3lcbwHgeZ8khAv1U1OSlerP0VkBJrWZ0"
+    }
+  ],
+  "kyc_data_hash": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
+  "transparency_receipt": "dh-ko8aIKQc9DlGzhaVYopFndjkZ_VCzmyTa6UjlZo3",
+  "_sd_alg": "sha-256",
+  "cnf": {
+    "jwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+    }
+  }
+}
+</pre><a href="#section-6.4-6" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-7">The following Disclosures are created by the Issuer:<a href="#section-6.4-7" class="pilcrow">¶</a></p>
+<p id="section-6.4-8">Claim contact_given_name:<a href="#section-6.4-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-9">
+<pre>
+SHA-256 Hash: jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4
+Disclosure:
+WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9o
+biJd
+Contents: ["2GLC42sKQveCfGfryNRN9w", "contact_given_name", "John"]
+</pre><a href="#section-6.4-9" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-10">Claim contact_family_name:<a href="#section-6.4-10" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-11">
+<pre>
+SHA-256 Hash: TGf4oLbgwd5JQaHyKVQZU9UdGE0w5rtDsrZzfUaomLo
+Disclosure:
+WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwgImZhbWlseV9uYW1lIiwgIkRv
+ZSJd
+Contents: ["eluV5Og3gSNII8EYnsxA_A", "contact_family_name", "Doe"]
+</pre><a href="#section-6.4-11" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-12">Claim contact_email:<a href="#section-6.4-12" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-13">
+<pre>
+SHA-256 Hash: JzYjH4svliH0R3PyEMfeZu6Jt69u5qehZo7F7EPYlSE
+Disclosure:
+WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWlsIiwgImpvaG5kb2VA
+ZXhhbXBsZS5jb20iXQ
+Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "contact_email", "johndoe@example.com"]
+</pre><a href="#section-6.4-13" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-14">Claim phone_number:<a href="#section-6.4-14" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-15">
+<pre>
+SHA-256 Hash: PorFbpKuVu6xymJagvkFsFXAbRoc2JGlAUA2BA4o7cI
+Disclosure:
+WyJlSThaV205UW5LUHBOUGVOZW5IZGhRIiwgInBob25lX251bWJlciIsICIr
+MS0yMDItNTU1LTAxMDEiXQ
+Contents: ["eI8ZWm9QnKPpNPeNenHdhQ", "contact_phone_number",
+"+1-202-555-0101"]
+</pre><a href="#section-6.4-15" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-16">Claim business_ids:<a href="#section-6.4-16" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-17">
+<pre>
+SHA-256 Hash: XQ_3kPKt1XyX7KANkqVR6yZ2Va5NrPIvPYbyMvRKBMM
+Disclosure:
+WyJRZ19PNjR6cUF4ZTQxMmExMDhpcm9BIiwgInBob25lX251bWJlcl92ZXJp
+ZmllZCIsIHRydWVd
+Contents: ["Qg_O64zqAxe412a108iroA", "business_ids", true]
+</pre><a href="#section-6.4-17" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-18">Claim address:<a href="#section-6.4-18" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-19">
+<pre>
+SHA-256 Hash: XzFrzwscM6Gn6CJDc6vVK8BkMnfG8vOSKfpPIZdAfdE
+Disclosure:
+WyJBSngtMDk1VlBycFR0TjRRTU9xUk9BIiwgImFkZHJlc3MiLCB7InN0cmVl
+dF9hZGRyZXNzIjogIjEyMyBNYWluIFN0IiwgImxvY2FsaXR5IjogIkFueXRv
+d24iLCAicmVnaW9uIjogIkFueXN0YXRlIiwgImNvdW50cnkiOiAiVVMifV0
+Contents: ["AJx-095VPrpTtN4QMOqROA", "address", {"street_address":
+"123 Main St", "locality": "Anytown", "region": "Anystate",
+"country": "US"}]
+</pre><a href="#section-6.4-19" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-20">Array Entry:<a href="#section-6.4-20" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-21">
+<pre>
+SHA-256 Hash: pFndjkZ_VCzmyTa6UjlZo3dh-ko8aIKQc9DlGzhaVYo
+Disclosure: WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIlVTIl0
+Contents: ["lklxF5jMYlGTPUovMNIvCA", "{"nam":"Business_42","icn":"https://example.com/logo.png"}"]
+</pre><a href="#section-6.4-21" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-22">Array Entry:<a href="#section-6.4-22" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-23">
+<pre>
+SHA-256 Hash: 7Cf6JkPudry3lcbwHgeZ8khAv1U1OSlerP0VkBJrWZ0
+Disclosure: WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0
+Contents: ["nPuoQnkRFq3BIeAm7AnXFA", "123456789"]
+</pre><a href="#section-6.4-23" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-24">The payload is then signed by the Issuer to create a JWT like the following:<a href="#section-6.4-24" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-25">
+<pre>
+eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImV4YW1wbGUrc2Qtand0In0.eyJfc2QiOiBb
+IkNyUWU3UzVrcUJBSHQtbk1ZWGdjNmJkdDJTSDVhVFkxc1VfTS1QZ2tqUEkiLCAiSnpZ
+akg0c3ZsaUgwUjNQeUVNZmVadTZKdDY5dTVxZWhabzdGN0VQWWxTRSIsICJQb3JGYnBL
+dVZ1Nnh5bUphZ3ZrRnNGWEFiUm9jMkpHbEFVQTJCQTRvN2NJIiwgIlRHZjRvTGJnd2Q1
+SlFhSHlLVlFaVTlVZEdFMHc1cnREc3JaemZVYW9tTG8iLCAiWFFfM2tQS3QxWHlYN0tB
+TmtxVlI2eVoyVmE1TnJQSXZQWWJ5TXZSS0JNTSIsICJYekZyendzY002R242Q0pEYzZ2
+Vks4QmtNbmZHOHZPU0tmcFBJWmRBZmRFIiwgImdiT3NJNEVkcTJ4Mkt3LXc1d1BFemFr
+b2I5aFYxY1JEMEFUTjNvUUw5Sk0iLCAianN1OXlWdWx3UVFsaEZsTV8zSmx6TWFTRnpn
+bGhRRzBEcGZheVF3TFVLNCJdLCAiaXNzIjogImh0dHBzOi8vaXNzdWVyLmV4YW1wbGUu
+Y29tIiwgImlhdCI6IDE2ODMwMDAwMDAsICJleHAiOiAxODgzMDAwMDAwLCAic3ViIjog
+InVzZXJfNDIiLCAibmF0aW9uYWxpdGllcyI6IFt7Ii4uLiI6ICJwRm5kamtaX1ZDem15
+VGE2VWpsWm8zZGgta284YUlLUWM5RGxHemhhVllvIn0sIHsiLi4uIjogIjdDZjZKa1B1
+ZHJ5M2xjYndIZ2VaOGtoQXYxVTFPU2xlclAwVmtCSnJXWjAifV0sICJfc2RfYWxnIjog
+InNoYS0yNTYiLCAiY25mIjogeyJqd2siOiB7Imt0eSI6ICJFQyIsICJjcnYiOiAiUC0y
+NTYiLCAieCI6ICJUQ0FFUjE5WnZ1M09IRjRqNFc0dmZTVm9ISVAxSUxpbERsczd2Q2VH
+ZW1jIiwgInkiOiAiWnhqaVdXYlpNUUdIVldLVlE0aGJTSWlyc1ZmdWVjQ0U2dDRqVDlG
+MkhaUSJ9fX0.XaB1KmNGBE-uKjT8M3VSu65QVWdNMjuhJI1sIEM4TIEs6Ae2f0DfWP80
+TAg79QIhbz04IIrrXyrEbzkeZLoVHQ
+
+The issued SD-JWT might look as follows:
+
+eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImV4YW1wbGUrc2Qtand0In0.eyJfc2QiOiBb
+IkNyUWU3UzVrcUJBSHQtbk1ZWGdjNmJkdDJTSDVhVFkxc1VfTS1QZ2tqUEkiLCAiSnpZ
+akg0c3ZsaUgwUjNQeUVNZmVadTZKdDY5dTVxZWhabzdGN0VQWWxTRSIsICJQb3JGYnBL
+dVZ1Nnh5bUphZ3ZrRnNGWEFiUm9jMkpHbEFVQTJCQTRvN2NJIiwgIlRHZjRvTGJnd2Q1
+SlFhSHlLVlFaVTlVZEdFMHc1cnREc3JaemZVYW9tTG8iLCAiWFFfM2tQS3QxWHlYN0tB
+TmtxVlI2eVoyVmE1TnJQSXZQWWJ5TXZSS0JNTSIsICJYekZyendzY002R242Q0pEYzZ2
+Vks4QmtNbmZHOHZPU0tmcFBJWmRBZmRFIiwgImdiT3NJNEVkcTJ4Mkt3LXc1d1BFemFr
+b2I5aFYxY1JEMEFUTjNvUUw5Sk0iLCAianN1OXlWdWx3UVFsaEZsTV8zSmx6TWFTRnpn
+bGhRRzBEcGZheVF3TFVLNCJdLCAiaXNzIjogImh0dHBzOi8vaXNzdWVyLmV4YW1wbGUu
+Y29tIiwgImlhdCI6IDE2ODMwMDAwMDAsICJleHAiOiAxODgzMDAwMDAwLCAic3ViIjog
+InVzZXJfNDIiLCAibmF0aW9uYWxpdGllcyI6IFt7Ii4uLiI6ICJwRm5kamtaX1ZDem15
+VGE2VWpsWm8zZGgta284YUlLUWM5RGxHemhhVllvIn0sIHsiLi4uIjogIjdDZjZKa1B1
+ZHJ5M2xjYndIZ2VaOGtoQXYxVTFPU2xlclAwVmtCSnJXWjAifV0sICJfc2RfYWxnIjog
+InNoYS0yNTYiLCAiY25mIjogeyJqd2siOiB7Imt0eSI6ICJFQyIsICJjcnYiOiAiUC0y
+NTYiLCAieCI6ICJUQ0FFUjE5WnZ1M09IRjRqNFc0dmZTVm9ISVAxSUxpbERsczd2Q2VH
+ZW1jIiwgInkiOiAiWnhqaVdXYlpNUUdIVldLVlE0aGJTSWlyc1ZmdWVjQ0U2dDRqVDlG
+MkhaUSJ9fX0.XaB1KmNGBE-uKjT8M3VSu65QVWdNMjuhJI1sIEM4TIEs6Ae2f0DfWP80
+TAg79QIhbz04IIrrXyrEbzkeZLoVHQ~WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgI
+mdpdmVuX25hbWUiLCAiSm9obiJd~WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwgImZh
+bWlseV9uYW1lIiwgIkRvZSJd~WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWl
+sIiwgImpvaG5kb2VAZXhhbXBsZS5jb20iXQ~WyJlSThaV205UW5LUHBOUGVOZW5IZGhR
+IiwgInBob25lX251bWJlciIsICIrMS0yMDItNTU1LTAxMDEiXQ~WyJRZ19PNjR6cUF4Z
+TQxMmExMDhpcm9BIiwgInBob25lX251bWJlcl92ZXJpZmllZCIsIHRydWVd~WyJBSngt
+MDk1VlBycFR0TjRRTU9xUk9BIiwgImFkZHJlc3MiLCB7InN0cmVldF9hZGRyZXNzIjog
+IjEyMyBNYWluIFN0IiwgImxvY2FsaXR5IjogIkFueXRvd24iLCAicmVnaW9uIjogIkFu
+eXN0YXRlIiwgImNvdW50cnkiOiAiVVMifV0~WyJQYzMzSk0yTGNoY1VfbEhnZ3ZfdWZR
+IiwgImJpcnRoZGF0ZSIsICIxOTQwLTAxLTAxIl0~WyJHMDJOU3JRZmpGWFE3SW8wOXN5
+YWpBIiwgInVwZGF0ZWRfYXQiLCAxNTcwMDAwMDAwXQ~WyJsa2x4RjVqTVlsR1RQVW92T
+U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
+</pre><a href="#section-6.4-25" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-26">Presentation<a href="#section-6.4-26" class="pilcrow">¶</a></p>
+<p id="section-6.4-27">The following non-normative example shows an SD-JWT+KB as it would be sent from the Holder to the Verifier. Note that it consists of six tilde-separated parts, with the Issuer-signed JWT as shown above in the beginning, four Disclosures (for the claims given_name, family_name, address, and nationalities) in the middle, and the Key Binding JWT as the last element.<a href="#section-6.4-27" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-28">
+<pre>
+eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImV4YW1wbGUrc2Qtand0In0.eyJfc2QiOiBb
+IkNyUWU3UzVrcUJBSHQtbk1ZWGdjNmJkdDJTSDVhVFkxc1VfTS1QZ2tqUEkiLCAiSnpZ
+akg0c3ZsaUgwUjNQeUVNZmVadTZKdDY5dTVxZWhabzdGN0VQWWxTRSIsICJQb3JGYnBL
+dVZ1Nnh5bUphZ3ZrRnNGWEFiUm9jMkpHbEFVQTJCQTRvN2NJIiwgIlRHZjRvTGJnd2Q1
+SlFhSHlLVlFaVTlVZEdFMHc1cnREc3JaemZVYW9tTG8iLCAiWFFfM2tQS3QxWHlYN0tB
+TmtxVlI2eVoyVmE1TnJQSXZQWWJ5TXZSS0JNTSIsICJYekZyendzY002R242Q0pEYzZ2
+Vks4QmtNbmZHOHZPU0tmcFBJWmRBZmRFIiwgImdiT3NJNEVkcTJ4Mkt3LXc1d1BFemFr
+b2I5aFYxY1JEMEFUTjNvUUw5Sk0iLCAianN1OXlWdWx3UVFsaEZsTV8zSmx6TWFTRnpn
+bGhRRzBEcGZheVF3TFVLNCJdLCAiaXNzIjogImh0dHBzOi8vaXNzdWVyLmV4YW1wbGUu
+Y29tIiwgImlhdCI6IDE2ODMwMDAwMDAsICJleHAiOiAxODgzMDAwMDAwLCAic3ViIjog
+InVzZXJfNDIiLCAibmF0aW9uYWxpdGllcyI6IFt7Ii4uLiI6ICJwRm5kamtaX1ZDem15
+VGE2VWpsWm8zZGgta284YUlLUWM5RGxHemhhVllvIn0sIHsiLi4uIjogIjdDZjZKa1B1
+ZHJ5M2xjYndIZ2VaOGtoQXYxVTFPU2xlclAwVmtCSnJXWjAifV0sICJfc2RfYWxnIjog
+InNoYS0yNTYiLCAiY25mIjogeyJqd2siOiB7Imt0eSI6ICJFQyIsICJjcnYiOiAiUC0y
+NTYiLCAieCI6ICJUQ0FFUjE5WnZ1M09IRjRqNFc0dmZTVm9ISVAxSUxpbERsczd2Q2VH
+ZW1jIiwgInkiOiAiWnhqaVdXYlpNUUdIVldLVlE0aGJTSWlyc1ZmdWVjQ0U2dDRqVDlG
+MkhaUSJ9fX0.XaB1KmNGBE-uKjT8M3VSu65QVWdNMjuhJI1sIEM4TIEs6Ae2f0DfWP80
+TAg79QIhbz04IIrrXyrEbzkeZLoVHQ~WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwgI
+mZhbWlseV9uYW1lIiwgIkRvZSJd~WyJBSngtMDk1VlBycFR0TjRRTU9xUk9BIiwgImFk
+ZHJlc3MiLCB7InN0cmVldF9hZGRyZXNzIjogIjEyMyBNYWluIFN0IiwgImxvY2FsaXR5
+IjogIkFueXRvd24iLCAicmVnaW9uIjogIkFueXN0YXRlIiwgImNvdW50cnkiOiAiVVMi
+fV0~WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9obiJd
+~WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIlVTIl0~eyJhbGciOiAiRVMyNTYiLCA
+idHlwIjogImtiK2p3dCJ9.eyJub25jZSI6ICIxMjM0NTY3ODkwIiwgImF1ZCI6ICJodH
+RwczovL3ZlcmlmaWVyLmV4YW1wbGUub3JnIiwgImlhdCI6IDE3MTgyOTg3NjYsICJzZF
+9oYXNoIjogImEyWTh0bUhrUm9MQXFrWTlKMjR0aXhucWJNLVVxcFg2MUpJRm5BVDIxX2
+sifQ.sqzbrv_SfCuI7yk3w7Hot82zFZiaWB-EH2GqsSi2-ZukcgP7z8DQGhPkSV97-WZ
+r5hGm-nR0MmSDTXgmoFeViQ
+</pre><a href="#section-6.4-28" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-29">The following Key Binding JWT payload was created and signed for this presentation by the Holder:<a href="#section-6.4-29" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-30">
+<pre>
+{
+  "nonce": "1234567890",
+  "aud": "https://verifier.example.org",
+  "iat": 1718298766,
+  "sd_hash": "a2Y8tmHkRoLAqkY9J24tixnqbM-UqpX61JIFnAT21_k"
+}
+</pre><a href="#section-6.4-30" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-31">If the Verifier did not require Key Binding, then the Holder could have presented the SD-JWT with selected Disclosures directly, instead of encapsulating it in an SD-JWT+KB.<a href="#section-6.4-31" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="api-endpoints">
@@ -1271,17 +1658,17 @@ vetting_outcome: Result of the vetting process.<a href="#section-6-3" class="pil
         <h3 id="name-request-vetting-token-api">
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-request-vetting-token-api" class="section-name selfRef">Request Vetting Token API</a>
         </h3>
-<p id="section-7.1-1">Endpoint: /api/request-vetting-token
+<div class="alignLeft art-text artwork" id="section-7.1-1">
+<pre>
+Endpoint: /api/request-vetting-token
 Method: POST
 Description: Requests a vetting token (SD-JWT) from the Vetting Authority (VA).
-Headers:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.1">
-            <p id="section-7.1-2.1.1">Authorization: Bearer {VA's m2m bearer token}<a href="#section-7.1-2.1.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-7.1-3">Request Body:<a href="#section-7.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.1-4">
+Headers:
+  Authorization: Bearer (VE's m2m bearer token)
+</pre><a href="#section-7.1-1" class="pilcrow">¶</a>
+</div>
+<p id="section-7.1-2">Request Body:<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.1-3">
 <pre>
 {
   "entity_id": "unique-entity-id",
@@ -1293,10 +1680,10 @@ Headers:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
     "alg": "RS256"
   }
 }
-</pre><a href="#section-7.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-7.1-3" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1-5">Response:<a href="#section-7.1-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.1-6">
+<p id="section-7.1-4">Response:<a href="#section-7.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.1-5">
 <pre>
 {
   "status": "success",
@@ -1310,9 +1697,9 @@ Headers:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
     }
   }
 }
-</pre><a href="#section-7.1-6" class="pilcrow">¶</a>
+</pre><a href="#section-7.1-5" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1-7">Note: entity_id is generated by VA. The mechanism how persona is vetted is not subject of this document. This API can only be called after the vetting was complete and entity_id was issued.<a href="#section-7.1-7" class="pilcrow">¶</a></p>
+<p id="section-7.1-6">Note: entity_id is generated by VA. The mechanism how persona is vetted is not subject of this document. This API can only be called after the vetting was complete and entity_id was issued.<a href="#section-7.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="public-api-for-verifiers">
@@ -1320,10 +1707,14 @@ Headers:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
         <h3 id="name-public-api-for-verifiers">
 <a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-public-api-for-verifiers" class="section-name selfRef">Public API for Verifiers</a>
         </h3>
-<p id="section-7.2-1">Endpoint: /api/verify-vetted-info
+<div class="alignLeft art-text artwork" id="section-7.2-1">
+<pre>
+Endpoint: /api/verify-vetted-info
 Method: POST
 Description: Verifies the validity of transparency receipt.
-Request Body:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+Request Body:
+</pre><a href="#section-7.2-1" class="pilcrow">¶</a>
+</div>
 <div class="alignLeft art-text artwork" id="section-7.2-2">
 <pre>
 {
