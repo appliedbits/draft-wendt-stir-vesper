@@ -1,6 +1,6 @@
-# TODO - Your title
+# Vesper
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the individual Internet-Draft, "draft-wendt-stir-vesper".
 
 * [Editor's Copy](https://appliedbits.github.io/draft-wendt-stir-vesper/#go.draft-wendt-stir-vesper.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-wendt-stir-vesper)
