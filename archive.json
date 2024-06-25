@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-23T01:23:00.182246+00:00",
+  "timestamp": "2024-06-25T01:18:39.760033+00:00",
   "repo": "appliedbits/draft-wendt-stir-vesper",
   "labels": [
     {
@@ -56,26 +56,68 @@
       "id": "PR_kwDOKswe3s5zNREI",
       "title": "Minor updates to styling and diagram of the Vesper token issuance.",
       "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/1",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "robjsliwa",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-06-21T17:21:16Z",
-      "updatedAt": "2024-06-21T17:25:00Z",
+      "updatedAt": "2024-06-24T07:17:53Z",
       "baseRepository": "appliedbits/draft-wendt-stir-vesper",
       "baseRefName": "main",
       "baseRefOid": "e5402cf0dd5a9e3424999d75e64d4f4ca7097a31",
       "headRepository": "appliedbits/draft-wendt-stir-vesper",
       "headRefName": "draft-updates",
       "headRefOid": "f0822fbd023a26a6d714ad2a69bbffc2277219cf",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-06-24T07:17:53Z",
+      "mergedAt": "2024-06-24T07:17:53Z",
+      "mergedBy": "chriswendt",
+      "mergeCommit": {
+        "oid": "990b66a433e6d8e2892e7b110429ff1fba68291f"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOKswe3s5_P5nm",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:16:22Z",
+          "updatedAt": "2024-06-24T07:16:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s5_P5s4",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:16:34Z",
+          "updatedAt": "2024-06-24T07:16:34Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s5_P57D",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:17:06Z",
+          "updatedAt": "2024-06-24T07:17:06Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
