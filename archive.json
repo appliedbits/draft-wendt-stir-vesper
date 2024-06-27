@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-25T01:18:39.760033+00:00",
+  "timestamp": "2024-06-27T01:18:56.186737+00:00",
   "repo": "appliedbits/draft-wendt-stir-vesper",
   "labels": [
     {
@@ -84,7 +84,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "NONE",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:16:22Z",
@@ -97,7 +97,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "NONE",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:16:34Z",
@@ -110,7 +110,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "NONE",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:17:06Z",
