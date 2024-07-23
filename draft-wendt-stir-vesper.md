@@ -90,18 +90,133 @@ RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-
 
 VA publishes vetted information digest to transparency service
 
-6. The VA creates hash of their vetting data and/or results. What exactly is included in generation of the hash is up to VA and influenced by the process used.
-7. The VA logs the hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
-8. VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.  Optionally, the VE can use VAs hosted wallet service APIs if available.
+1. The VA encapsulates the results of their vetting data in Vetting Credential Manifest (VCM) see [Vetting Credential Manifest]. What exactly is included in VCM is up to VA and influenced by the process used.
+2. The VA generates a hash of the VCM data.
+3. The VA logs the VCM hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
+4. VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.  Optionally, the VE can use VAs hosted wallet service APIs if available.
 
 VE initiates communications requiring a valid and fresh token with required disclosures
 
-9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt.
+9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the VCM data.
 
 VV Verification procedures
 
 10. VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.
 11. VV can verify the Transparency log signature to further trust the token.
+
+# Vetting Credential Manifest
+
+The Vetting Credential Manifest (VCM) is used as an envelope for identifying the results of the vetting process. This draft does not define or recommend any specific vetting process. Instead, the VCM provides a common envelope for the vetting results, which can be used to cryptographically ensure that the included data references have not been tampered with.
+
+The data used within the VCM is determined by the Vetting Agent (VA), and the documents list can be empty or as simple as a reference to the identifier that represents the Vetted Entity (VE).
+
+## VCM Structure
+
+The VCM consists of the following key elements:
+
+- **Vetting Agent Information**
+  - `agent_name`: Name of the vetting agent.
+  - `agent_contact`: Contact information for the vetting agent, including email and phone number.
+- **Vetted Entity Information**
+  - `entity_id`: Unique identifier for the vetted entity (unique within the Vetting Agent's scope).
+  - `entity_name`: Name of the vetted entity.
+  - `entity_contact`: Contact information for the vetted entity, including email and phone number.
+- **Documents**
+  - `documents`: List of document objects, each containing:
+    - `document_id`: Unique identifier for the document.
+    - `document_name`: Name of the document.
+    - `document_description`: Description of the document.
+    - `hasFiles`: Boolean indicating if the document has associated files.
+    - `document_hash`: Hash of the document (for documents without files).
+    - `files`: List of file objects (for documents with files), each containing:
+      - `file_name`: Name of the file.
+      - `file_hash`: Hash of the file.
+    - `external_references`: List of external references related to the document, each containing:
+      - `reference_id`: Unique identifier for the external reference.
+      - `reference_type`: Type of the external reference.
+      - `reference_locator`: Locator (URL or other identifier) for the external reference.
+
+## JSON Representation of VCM
+
+Here is an example of how the VCM can be structured in JSON:
+
+```json
+{
+  "VCM": {
+    "vetting_agent": {
+      "agent_name": "Vetting Authority Inc.",
+      "agent_contact": {
+        "email": "contact@va.example.com",
+        "phone": "+1234567890"
+      }
+    },
+    "vetted_entity": {
+      "entity_id": "VE654321",
+      "entity_name": "Business_42",
+      "entity_contact": {
+        "email": "info@business42.example.com",
+        "phone": "+0987654321"
+      }
+    },
+    "documents": [
+      {
+        "document_id": "DOC001",
+        "document_name": "Certificate of Incorporation",
+        "document_description": "Official document proving the incorporation of Business_42.",
+        "hasFiles": true,
+        "files": [
+          {
+            "file_name": "certificate.pdf",
+            "file_hash": "abc123def456..."
+          }
+        ],
+        "external_references": [
+          {
+            "reference_id": "REF001",
+            "reference_type": "URL",
+            "reference_locator": "https://example.com/incorporation-certificate"
+          }
+        ]
+      },
+      {
+        "document_id": "DOC002",
+        "document_name": "Proof of Address",
+        "document_description": "Document providing proof of Business_42's address.",
+        "hasFiles": true,
+        "files": [
+          {
+            "file_name": "address_proof.pdf",
+            "file_hash": "ghi789jkl012..."
+          }
+        ],
+        "external_references": [
+          {
+            "reference_id": "REF002",
+            "reference_type": "URL",
+            "reference_locator": "https://example.com/proof-of-address"
+          }
+        ]
+      },
+      {
+        "document_id": "DOC003",
+        "document_name": "Business Overview",
+        "document_description": "Detailed overview of Business_42 operations.",
+        "hasFiles": false,
+        "document_hash": "mno345pqr678...",
+        "external_references": []
+      }
+    ]
+  }
+}
+```
+
+## Using VCM in the Vetting Process
+
+1. **Define the VCM Structure**: Use the Vetting Credential Manifest (VCM) to define the structure of the vetting data, including hashes for documents and files.
+2. **Generate Hash**: Create a hash of the entire VCM data using a standard algorithm (e.g., SHA-256).
+3. **Log Hash**: Log the hash with a transparency service.
+4. **Include Hash in Token**: Embed the hash in the SD-JWT or other relevant token formats to ensure the integrity of the vetting data.
+
 
 # Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
