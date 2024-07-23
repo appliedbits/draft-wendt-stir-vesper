@@ -1,0 +1,123 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-07-23T01:21:34.605952+00:00",
+  "repo": "appliedbits/draft-wendt-stir-vesper",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOKswe3s5zNREI",
+      "title": "Minor updates to styling and diagram of the Vesper token issuance.",
+      "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/1",
+      "state": "MERGED",
+      "author": "robjsliwa",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-06-21T17:21:16Z",
+      "updatedAt": "2024-06-24T07:17:53Z",
+      "baseRepository": "appliedbits/draft-wendt-stir-vesper",
+      "baseRefName": "main",
+      "baseRefOid": "e5402cf0dd5a9e3424999d75e64d4f4ca7097a31",
+      "headRepository": "appliedbits/draft-wendt-stir-vesper",
+      "headRefName": "draft-updates",
+      "headRefOid": "f0822fbd023a26a6d714ad2a69bbffc2277219cf",
+      "closedAt": "2024-06-24T07:17:53Z",
+      "mergedAt": "2024-06-24T07:17:53Z",
+      "mergedBy": "chriswendt",
+      "mergeCommit": {
+        "oid": "990b66a433e6d8e2892e7b110429ff1fba68291f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOKswe3s5_P5nm",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:16:22Z",
+          "updatedAt": "2024-06-24T07:16:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s5_P5s4",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:16:34Z",
+          "updatedAt": "2024-06-24T07:16:34Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s5_P57D",
+          "commit": {
+            "abbreviatedOid": "f0822fb"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-24T07:17:06Z",
+          "updatedAt": "2024-06-24T07:17:06Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
+}
