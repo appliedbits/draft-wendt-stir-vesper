@@ -67,42 +67,111 @@ The use of vesper tokens in communications will allow for a trust model enabled 
 
 The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using JSON Web Tokens (JWT) and Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
 
+# Terminology
+
+Vetting Agent: An entity that performs the vetting of persona-related information and issues verifiable tokens containing the vetted information. A Vetting Agent can be a trusted third party or a service provider that performs the vetting of persona-related information. The vetting process can be performed by the Vetting Agent or a third party that specializes in vetting. It is the responsibility of the Vetting Agent to ensure that the vetting process is performed according to the agreed-upon policies and best practices.
+
+Vetting Entity: An entity that is vetted by a Vetting Agent and holds the verifiable token containing the vetted information. The Vetting Entity can be a person or a business entity.
+
+Vetting Verifier: An entity that verifies the verifiable token issued by a Vetting Agent to a Vetting Entity. The Vetting Verifier can be a service provider or a third party that verifies the verifiable token.
+
+Vesper Token: A verifiable token issued by a Vetting Agent to a Vetting Entity containing the disclosable claims. The Vesper Token is represented as a Selective Disclosure JWT (SD-JWT).
+
+Vetting Confirmation Manifest: An envelope that encapsulates the results of the vetting process. The Vetting Confirmation Manifest is used to log the fact that the Vetting Agent vetted and accepted the Vetting Entity with a transparency service.
+
 # Vetting Process Overview
 
-The vetting process is much about registration and authentication of a Vetting Entity (VE) with a Vetting Authority (VA). The VE makes claims about themselves to prove whom they are and associated claims that should be vetted by the VA and will be used to make trusted disclosures to at Vetting Verifier (VV). The vesper token is issued with that set of selectively disclosable claims to formalize that the information has been vetted and represents the VE accurately.
+The vetting process involves verifying the identity and legitimacy of a Vetting Entity (VE) through KYC and KYB vetting procedures. The vetting procedures are not the subject of this document, but the successful results of the vetting procedures are captured in a Vetting Confirmation Manifest (VCM), which serves as an indication that the vetting process was completed successfully.
+
+After the Vetting Agent (VA) completes the vetting process, it can issue a verifiable token containing zero or more disclosable claims about the VE. The Vetting Entity (VE) holds the verifiable token and can present it to Vetting Verifiers (VV) to prove their identity and legitimacy. The VV verifies the verifiable token to ensure that the VE is who they claim to be.
 
 # Vetting Process Procedures
 
 The vetting process generally involves the following steps:
 
-Placeholder for diagram
+                    ┌───────────────────┐                                                 ┌──────────────────┐                               ┌─────────────────────┐                ┌─────────────────────────┐
+                    │Vetting Entity (VE)│                                                 │Vetting Agent (VA)│                               │Vetting Verifier (VV)│                │Transparency Service (TS)│
+                    └─────────┬─────────┘                                                 └─────────┬────────┘                               └──────────┬──────────┘                └────────────┬────────────┘
+                              │                  Register and submit information                    │                                                   │                                        │
+                              │────────────────────────────────────────────────────────────────────>│                                                   │                                        │
+                              │                                                                     │                                                   │                                        │
+                              │             Create authenticated account and entity_id              │                                                   │                                        │
+                              │<────────────────────────────────────────────────────────────────────│                                                   │                                        │
+                              │                                                                     │                                                   │                                        │
+                   ╔══════════╧═════════════════════════════════════════════════════════════════════╧══════════╗                                        │                                        │
+                   ║VE submits uniquely identifiable information                                              ░║                                        │                                        │
+                   ╚══════════╤═════════════════════════════════════════════════════════════════════╤══════════╝                                        │                                        │
+                              │                                                                     │────┐                                              │                                        │
+                              │                                                                     │    │ Perform vetting functions and KYC/KYB checks │                                        │
+                              │                                                                     │<───┘                                              │                                        │
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                                                   │                                        │
+          ╔══════╤════════════╪═════════════════════════════════════════════════════════════════════╪═══════════════════╗                               │                                        │
+          ║ ALT  │  Key Binding (KB) Setup                                                          │                   ║                               │                                        │
+          ╟──────┘            │                                                                     │                   ║                               │                                        │
+          ║                   │                  Generate public/private key pair                   │                   ║                               │                                        │
+          ║                   │────────────────────────────────────────────────────────────────────>│                   ║                               │                                        │
+          ║                   │                                                                     │                   ║                               │                                        │
+          ║                   │                       Public key registered                         │                   ║                               │                                        │
+          ║                   │<────────────────────────────────────────────────────────────────────│                   ║                               │                                        │
+          ╚═══════════════════╪═════════════════════════════════════════════════════════════════════╪═══════════════════╝                               │                                        │
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                              Encapsulate vetting data in VCM                               │
+                              │                                                                     │───────────────────────────────────────────────────────────────────────────────────────────>│
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                               Append-only log and issue SVT                                │
+                              │                                                                     │<───────────────────────────────────────────────────────────────────────────────────────────│
+                              │                                                                     │                                                   │                                        │
+                              │                        Request Vesper Token                         │                                                   │                                        │
+                              │────────────────────────────────────────────────────────────────────>│                                                   │                                        │
+                              │                                                                     │                                                   │                                        │
+                              │Issue SD-JWT with KYC/KYB info, public key, and transparency receipt │                                                   │                                        │
+                              │<────────────────────────────────────────────────────────────────────│                                                   │                                        │
+                              │                                                                     │                                                   │                                        │
+                              │                                                Present verifiable token                                                 │                                        │
+                              │────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────>│                                        │
+                              │                                                                     │                                                   │                                        │
+                              │                                 Verify token signature and optionally validate KB-JWT                                   │                                        │
+                              │<────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│                                        │
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                                                   │         Verify SVT signature           │
+                              │                                                                     │                                                   │───────────────────────────────────────>│
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                                                   │Verify entity_name in SVT matches token │
+                              │                                                                     │                                                   │<───────────────────────────────────────│
+                              │                                                                     │                                                   │                                        │
+                              │                                                                     │                                   ╔═══════════════╧═══════════════╗                        │
+                              │                                                                     │                                   ║Vetting Verification Complete ░║                        │
+                    ┌─────────┴─────────┐                                                 ┌─────────┴────────┐                          ╚═══════════════════════════════╝           ┌────────────┴────────────┐
+                    │Vetting Entity (VE)│                                                 │Vetting Agent (VA)│                               │Vetting Verifier (VV)│                │Transparency Service (TS)│
+                    └───────────────────┘                                                 └──────────────────┘                               └─────────────────────┘                └─────────────────────────┘
 
-Setup and registration of VE with VA
+## Setup and Registration of VE with VA
 
-1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA).  The VE creates an authenticated account relationship with the VA and a unique entity_id is created.
-2. The VE submits a set of information to describe itself with uniquely identifiable entity specific information.  This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information including the syntax and definitions. The submittal of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
-3. The VA performs the vetting functions and KYC/KYB checks according to their procedures.  The vetting functions are something that can be performed in many ways in different countries and legal jurisdictions and therefore this document does not specify any specifics to how the VA performs these vetting functions and is out of scope of this document.
+1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA). The VE creates an authenticated account relationship with the VA, and a unique entity_id is created.
+2. The VE submits a set of information to describe itself with uniquely identifiable entity-specific information. This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information, including the syntax and definitions. The submission of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
+3. The VA performs the vetting functions and KYC/KYB checks according to their procedures. The vetting functions can be performed in many ways in different countries and legal jurisdictions, and therefore, this document does not specify any specifics on how the VA performs these vetting functions and is out of scope for this document.
 
 RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
 
-4. The entity generates a public/private key pair or the VA does it on the entries behalf.
+4. The entity generates a public/private key pair, or the VA does it on the entity's behalf.
 5. The public key is registered with the VA.
 
-VA publishes vetted information digest to transparency service
+## VA Publishes Vetted Information Digest to Transparency Service
 
-1. The VA encapsulates the results of their vetting data in Vetting Credential Manifest (VCM) see [Vetting Credential Manifest]. What exactly is included in VCM is up to VA and influenced by the process used.
-2. The VA generates a hash of the VCM data.
-3. The VA logs the VCM hash of the KYC/KYB data with a transparency service and issues a transparency receipt.
-4. VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.  Optionally, the VE can use VAs hosted wallet service APIs if available.
+6. The VA encapsulates the results of their vetting data in a Vetting Credential Manifest (VCM) (see [Vetting Credential Manifest](#vetting-credential-manifest)). What exactly is included in the VCM is up to the VA and influenced by the process used, but there is a minimum set of information that is required to be included in the VCM.
+7. The VA registers the VCM with an append-only log.
+8. The append-only log, upon verification of the VCM and queuing it into the log, issues a Signed Vetting Timestamp (SVT).
 
-VE initiates communications requiring a valid and fresh token with required disclosures
+## VE Requests a Vesper Token from VA
 
-9. The VA issues an SD-JWT containing the KYC/KYB information, the public key in CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the VCM data.
+9. The VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information. Optionally, the VE can use the VA's hosted wallet service APIs if available.
+10. The VA issues an SD-JWT containing the KYC/KYB information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the VCM data.
 
-VV Verification procedures
+## VV Verification Procedures
 
-10. VV ensures that token signature is correct. Optionally, if Key Binding is used, VV validates KB-JWT.
-11. VV can verify the Transparency log signature to further trust the token.
+11. The VV ensures that the token signature is correct. Optionally, if Key Binding is used, the VV validates the KB-JWT.
+12. The VV verifies the SVT signature and checks that the entity_name in the SVT matches the entity_name in the token.
 
 # Vetting Credential Manifest
 
@@ -114,27 +183,14 @@ The data used within the VCM is determined by the Vetting Agent (VA), and the do
 
 The VCM consists of the following key elements:
 
-- **Vetting Agent Information**
-  - `agent_name`: Name of the vetting agent.
-  - `agent_contact`: Contact information for the vetting agent, including email and phone number.
-- **Vetted Entity Information**
-  - `entity_id`: Unique identifier for the vetted entity (unique within the Vetting Agent's scope).
-  - `entity_name`: Name of the vetted entity.
-  - `entity_contact`: Contact information for the vetted entity, including email and phone number.
-- **Documents**
-  - `documents`: List of document objects, each containing:
-    - `document_id`: Unique identifier for the document.
-    - `document_name`: Name of the document.
-    - `document_description`: Description of the document.
-    - `hasFiles`: Boolean indicating if the document has associated files.
-    - `document_hash`: Hash of the document (for documents without files).
-    - `files`: List of file objects (for documents with files), each containing:
-      - `file_name`: Name of the file.
-      - `file_hash`: Hash of the file.
-    - `external_references`: List of external references related to the document, each containing:
-      - `reference_id`: Unique identifier for the external reference.
-      - `reference_type`: Type of the external reference.
-      - `reference_locator`: Locator (URL or other identifier) for the external reference.
+- VCM Version: Version of the VCM format.
+- Vetting Agent Information
+  - agent_name: Name of the vetting agent.
+  - agent_metadata: Additional metadata about the vetting agent (optional).
+- Vetted Entity Information
+  - entity_id: Unique identifier for the vetted entity (unique within the Vetting Agent's scope).
+  - entity_name: Name of the vetted entity.
+- vetting_metadata: Additional metadata about the vetting process (optional).
 
 ## JSON Representation of VCM
 
@@ -142,81 +198,18 @@ Here is an example of how the VCM can be structured in JSON:
 
 ```json
 {
-  "VCM": {
-    "vetting_agent": {
-      "agent_name": "Vetting Authority Inc.",
-      "agent_contact": {
-        "email": "contact@va.example.com",
-        "phone": "+1234567890"
-      }
-    },
-    "vetted_entity": {
-      "entity_id": "VE654321",
-      "entity_name": "Business_42",
-      "entity_contact": {
-        "email": "info@business42.example.com",
-        "phone": "+0987654321"
-      }
-    },
-    "documents": [
-      {
-        "document_id": "DOC001",
-        "document_name": "Certificate of Incorporation",
-        "document_description": "Official document proving the incorporation of Business_42.",
-        "hasFiles": true,
-        "files": [
-          {
-            "file_name": "certificate.pdf",
-            "file_hash": "abc123def456..."
-          }
-        ],
-        "external_references": [
-          {
-            "reference_id": "REF001",
-            "reference_type": "URL",
-            "reference_locator": "https://example.com/incorporation-certificate"
-          }
-        ]
-      },
-      {
-        "document_id": "DOC002",
-        "document_name": "Proof of Address",
-        "document_description": "Document providing proof of Business_42's address.",
-        "hasFiles": true,
-        "files": [
-          {
-            "file_name": "address_proof.pdf",
-            "file_hash": "ghi789jkl012..."
-          }
-        ],
-        "external_references": [
-          {
-            "reference_id": "REF002",
-            "reference_type": "URL",
-            "reference_locator": "https://example.com/proof-of-address"
-          }
-        ]
-      },
-      {
-        "document_id": "DOC003",
-        "document_name": "Business Overview",
-        "document_description": "Detailed overview of Business_42 operations.",
-        "hasFiles": false,
-        "document_hash": "mno345pqr678...",
-        "external_references": []
-      }
-    ]
-  }
+  "vcm_version": 1,
+  "vetting_agent": {
+    "agent_name": "Vetting Authority Inc.",
+    "agent_metadata": {}
+  },
+  "vetted_entity": {
+    "entity_id": "VE654321",
+    "entity_name": "Business_42"
+  },
+  "vetting_metadata": []
 }
 ```
-
-## Using VCM in the Vetting Process
-
-1. **Define the VCM Structure**: Use the Vetting Credential Manifest (VCM) to define the structure of the vetting data, including hashes for documents and files.
-2. **Generate Hash**: Create a hash of the entire VCM data using a standard algorithm (e.g., SHA-256).
-3. **Log Hash**: Log the hash with a transparency service.
-4. **Include Hash in Token**: Embed the hash in the SD-JWT or other relevant token formats to ensure the integrity of the vetting data.
-
 
 # Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
@@ -346,8 +339,7 @@ The following payload is used for the SD-JWT:
       "...": "7Cf6JkPudry3lcbwHgeZ8khAv1U1OSlerP0VkBJrWZ0"
     }
   ],
-  "kyc_data_hash": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
-  "transparency_receipt": "dh-ko8aIKQc9DlGzhaVYopFndjkZ_VCzmyTa6UjlZo3",
+  "svt": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
   "_sd_alg": "sha-256",
   "cnf": {
     "jwk": {
@@ -625,6 +617,17 @@ Response:
   "message": "Vetted information verified successfully."
 }
 ~~~~~~~~~~~~
+
+# Requirement for SHA-256 in Append-only Logs
+
+To ensure compatibility and prevent inconsistencies across different implementations of Transparency Services, all Append-only Logs used in the VESPER architecture MUST employ SHA-256 as the cryptographic hash function. Specifically:
+
+- Each entry in the Append-only Log MUST be hashed using the SHA-256 algorithm.
+- The log structure, whether implemented as a Merkle Tree or any other verifiable data structure, MUST utilize SHA-256 for all cryptographic operations.
+- This uniformity in the choice of the hash function guarantees that all participants and auditors can independently verify the integrity and consistency of the logs without compatibility issues.
+- Transparency Services MUST provide cryptographic proofs (inclusion proofs and consistency proofs) based on SHA-256, as detailed in [I-D.draft-ietf-cose-merkle-tree-proofs].
+
+By mandating the use of SHA-256 for all logs, VESPER ensures a standardized and secure approach to maintaining and verifying the integrity of supply chain data.
 
 # Security Considerations
 
