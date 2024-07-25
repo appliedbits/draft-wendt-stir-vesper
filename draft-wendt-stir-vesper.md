@@ -211,6 +211,22 @@ Here is an example of how the VCM can be structured in JSON:
 }
 ```
 
+# Signed Vesper Timestamp
+
+Signed Vesper Timestamp (SVT) is a signed timestamp that is issued by a Transparency Service to confirm that the VCM has been successfully registered and appended to the log. The SVT is used to verify the integrity of the VCM and ensure that it has not been tampered with.
+
+## JSON Reprsentation of SVT
+
+Here is JSON representation of SVT:
+
+```json
+{
+	"LogID": "0x1234567890abcdef",
+	"Timestamp": 1683000000,
+	"Signature": ...
+}
+```
+
 # Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
 This document defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.  The Issuer in the context of the vesper token is the VA, the Holder corresponds to the VE, and the Verifier is the VV.
@@ -629,6 +645,34 @@ Response:
   "message": "Vetted information verified successfully."
 }
 ~~~~~~~~~~~~
+
+# Vesper Transparency Log Usage
+
+1.	VCM Submission:
+- When a VA issues a proof of vetting for VE, it submits the Vetting Confirmation Manifest (VCM) to a Vesper Certificate Transparency (VESPER CT) log server.
+- The log server records the VCM in its append-only log.
+2.	Generating the SVT:
+- The log server generates a Signed Vetting Timestamp (SVT) for the submitted VCM.
+- The SVT includes the following fields:
+- Version: Indicates the version of the SVT.
+- Log ID: A unique identifier for the VESPER CT log server, typically the hash of the log server’s public key.
+- Timestamp: The time at which the certificate was submitted to the log, measured in milliseconds since the Unix epoch.
+- Signature: A digital signature created by the log server using its private key. This signature covers the log ID, timestamp, and VCM data.
+3.	SVT Delivery:
+- The VA receives the SVT from the log server and delivers it as part of the Vesper token.
+4.	VV Verification:
+•	When VV receives a Vesper token and embedded SVT, it performs the following steps to verify the SVT:
+•	Extract the Log ID: The VV extracts the log ID from the SVT.
+•	Retrieve the Public Key: Using the log ID, the VV retrieves the corresponding public key from its list of trusted Vesper logs.
+•	Verify the Signature: The VV verifies the SVT’s signature using the log server’s public key. This ensures that the SVT was indeed issued by the log server and has not been tampered with.
+5.	Merkle Tree Inclusion Proof (Optional but recommended):
+•	To further ensure that the VCM is in the log, the VV can request a Merkle Tree inclusion proof from the log server. This proof demonstrates that the VCM is part of the log’s Merkle Tree without revealing the entire log.
+•	The proof consists of:
+•	Leaf Node: The hash of the VCM.
+•	Path: A sequence of hashes that demonstrate the VCM's inclusion in the Merkle Tree.
+6.	Validation:
+•	The VV validates the Merkle Tree proof by reconstructing the Merkle Tree hash from the leaf node and the path provided by the log server.
+•	By comparing the reconstructed hash to the known root hash of the log’s Merkle Tree (obtained from periodic signed tree heads), the VV can confirm the VCM's inclusion.
 
 # Vesper Transparency Service API
 
