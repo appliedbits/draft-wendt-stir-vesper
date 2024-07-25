@@ -1508,7 +1508,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-6.4-1.1.1">The VV ensures that the token signature is correct. Optionally, if Key Binding is used, the VV validates the KB-JWT.<a href="#section-6.4-1.1.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-6.4-1.2">
-            <p id="section-6.4-1.2.1">The VV verifies the SVT signature and checks that the entity_name in the SVT matches the entity_name in the token.<a href="#section-6.4-1.2.1" class="pilcrow">¶</a></p>
+            <p id="section-6.4-1.2.1">The VV verifies the SVT signature.  Optionally, VV can request Merkle Tree inclusion proof from the append-only log.<a href="#section-6.4-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 </section>
@@ -1743,6 +1743,18 @@ transparency_receipt: Transparency receipt issued by the transparency service.
     }
   ],
   "svt": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
+  "vcm": {
+      "vcm_version": 1,
+      "vetting_agent": {
+          "agent_name": "Vetting Authority Inc.",
+          "agent_metadata": {}
+      },
+      "vetted_entity": {
+          "entity_id": "VE654321",
+          "entity_name": "Business_42"
+      },
+      "vetting_metadata": []
+  },
   "_sd_alg": "sha-256",
   "cnf": {
     "jwk": {
