@@ -1031,7 +1031,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Wendt &amp; Sliwa</td>
-<td class="center">Expires 25 January 2025</td>
+<td class="center">Expires 26 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1044,12 +1044,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wendt-stir-vesper-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-07-24" class="published">24 July 2024</time>
+<time datetime="2024-07-25" class="published">25 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-01-25">25 January 2025</time></dd>
+<dd class="expires"><time datetime="2025-01-26">26 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1103,7 +1103,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 25 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1204,22 +1204,119 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-requirement-for-sha-256-in-" class="internal xref">Requirement for SHA-256 in Append-only Logs</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-vesper-transparency-service" class="internal xref">Vesper Transparency Service API</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-add-vcm-to-log" class="internal xref">Add VCM to Log</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1.2.1">
+                    <p id="section-toc.1-1.10.2.1.2.1.1"><a href="#section-10.1.1" class="auto internal xref">10.1.1</a>.  <a href="#name-endpoint-vesper-v1-add-vcm" class="internal xref">Endpoint: /vesper/v1/add-vcm</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1.2.2">
+                    <p id="section-toc.1-1.10.2.1.2.2.1"><a href="#section-10.1.2" class="auto internal xref">10.1.2</a>.  <a href="#name-example-request" class="internal xref">Example Request</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1.2.3">
+                    <p id="section-toc.1-1.10.2.1.2.3.1"><a href="#section-10.1.3" class="auto internal xref">10.1.3</a>.  <a href="#name-example-response" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-retrieve-latest-signed-tree" class="internal xref">Retrieve Latest Signed Tree Head</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2.2.1">
+                    <p id="section-toc.1-1.10.2.2.2.1.1"><a href="#section-10.2.1" class="auto internal xref">10.2.1</a>.  <a href="#name-endpoint-vesper-v1-get-sth" class="internal xref">Endpoint: /vesper/v1/get-sth</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2.2.2">
+                    <p id="section-toc.1-1.10.2.2.2.2.1"><a href="#section-10.2.2" class="auto internal xref">10.2.2</a>.  <a href="#name-example-response-2" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-retrieve-merkle-consistency" class="internal xref">Retrieve Merkle Consistency Proof between Two Signed Tree Heads</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.1">
+                    <p id="section-toc.1-1.10.2.3.2.1.1"><a href="#section-10.3.1" class="auto internal xref">10.3.1</a>.  <a href="#name-endpoint-vesper-v1-get-sth-" class="internal xref">Endpoint: /vesper/v1/get-sth-consistency</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.2">
+                    <p id="section-toc.1-1.10.2.3.2.2.1"><a href="#section-10.3.2" class="auto internal xref">10.3.2</a>.  <a href="#name-example-request-2" class="internal xref">Example Request</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.3">
+                    <p id="section-toc.1-1.10.2.3.2.3.1"><a href="#section-10.3.3" class="auto internal xref">10.3.3</a>.  <a href="#name-example-response-3" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
+                <p id="section-toc.1-1.10.2.4.1"><a href="#section-10.4" class="auto internal xref">10.4</a>.  <a href="#name-retrieve-merkle-audit-proof" class="internal xref">Retrieve Merkle Audit Proof from Log by Leaf Hash</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4.2.1">
+                    <p id="section-toc.1-1.10.2.4.2.1.1"><a href="#section-10.4.1" class="auto internal xref">10.4.1</a>.  <a href="#name-endpoint-vesper-v1-get-proo" class="internal xref">Endpoint: /vesper/v1/get-proof-by-hash</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4.2.2">
+                    <p id="section-toc.1-1.10.2.4.2.2.1"><a href="#section-10.4.2" class="auto internal xref">10.4.2</a>.  <a href="#name-example-request-3" class="internal xref">Example Request</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4.2.3">
+                    <p id="section-toc.1-1.10.2.4.2.3.1"><a href="#section-10.4.3" class="auto internal xref">10.4.3</a>.  <a href="#name-example-response-4" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5">
+                <p id="section-toc.1-1.10.2.5.1"><a href="#section-10.5" class="auto internal xref">10.5</a>.  <a href="#name-retrieve-entries-from-log" class="internal xref">Retrieve Entries from Log</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5.2.1">
+                    <p id="section-toc.1-1.10.2.5.2.1.1"><a href="#section-10.5.1" class="auto internal xref">10.5.1</a>.  <a href="#name-endpoint-vesper-v1-get-entr" class="internal xref">Endpoint: /vesper/v1/get-entries</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5.2.2">
+                    <p id="section-toc.1-1.10.2.5.2.2.1"><a href="#section-10.5.2" class="auto internal xref">10.5.2</a>.  <a href="#name-example-request-4" class="internal xref">Example Request</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5.2.3">
+                    <p id="section-toc.1-1.10.2.5.2.3.1"><a href="#section-10.5.3" class="auto internal xref">10.5.3</a>.  <a href="#name-example-response-5" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6">
+                <p id="section-toc.1-1.10.2.6.1"><a href="#section-10.6" class="auto internal xref">10.6</a>.  <a href="#name-retrieve-accepted-root-cert" class="internal xref">Retrieve Accepted Root Certificates</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6.2.1">
+                    <p id="section-toc.1-1.10.2.6.2.1.1"><a href="#section-10.6.1" class="auto internal xref">10.6.1</a>.  <a href="#name-endpoint-vesper-v1-get-root" class="internal xref">Endpoint: /vesper/v1/get-roots</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6.2.2">
+                    <p id="section-toc.1-1.10.2.6.2.2.1"><a href="#section-10.6.2" class="auto internal xref">10.6.2</a>.  <a href="#name-example-response-6" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7">
+                <p id="section-toc.1-1.10.2.7.1"><a href="#section-10.7" class="auto internal xref">10.7</a>.  <a href="#name-retrieve-entry-merkle-audit" class="internal xref">Retrieve Entry + Merkle Audit Proof from Log</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7.2.1">
+                    <p id="section-toc.1-1.10.2.7.2.1.1"><a href="#section-10.7.1" class="auto internal xref">10.7.1</a>.  <a href="#name-endpoint-vesper-v1-get-entry" class="internal xref">Endpoint: /vesper/v1/get-entry-and-proof</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7.2.2">
+                    <p id="section-toc.1-1.10.2.7.2.2.1"><a href="#section-10.7.2" class="auto internal xref">10.7.2</a>.  <a href="#name-example-request-5" class="internal xref">Example Request</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7.2.3">
+                    <p id="section-toc.1-1.10.2.7.2.3.1"><a href="#section-10.7.3" class="auto internal xref">10.7.3</a>.  <a href="#name-example-response-7" class="internal xref">Example Response</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-requirement-for-sha-256-in-" class="internal xref">Requirement for SHA-256 in Append-only Logs</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
-            <p id="section-toc.1-1.15.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.15.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1939,49 +2036,529 @@ Request Body:
 </div>
 </section>
 </div>
-<div id="requirement-for-sha-256-in-append-only-logs">
+<div id="vesper-transparency-service-api">
 <section id="section-10">
-      <h2 id="name-requirement-for-sha-256-in-">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-requirement-for-sha-256-in-" class="section-name selfRef">Requirement for SHA-256 in Append-only Logs</a>
+      <h2 id="name-vesper-transparency-service">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-vesper-transparency-service" class="section-name selfRef">Vesper Transparency Service API</a>
       </h2>
-<p id="section-10-1">To ensure compatibility and prevent inconsistencies across different implementations of Transparency Services, all Append-only Logs used in the VESPER architecture <span class="bcp14">MUST</span> employ SHA-256 as the cryptographic hash function. Specifically:<a href="#section-10-1" class="pilcrow">¶</a></p>
+<div id="add-vcm-to-log">
+<section id="section-10.1">
+        <h3 id="name-add-vcm-to-log">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-add-vcm-to-log" class="section-name selfRef">Add VCM to Log</a>
+        </h3>
+<div id="endpoint-vesperv1add-vcm">
+<section id="section-10.1.1">
+          <h4 id="name-endpoint-vesper-v1-add-vcm">
+<a href="#section-10.1.1" class="section-number selfRef">10.1.1. </a><a href="#name-endpoint-vesper-v1-add-vcm" class="section-name selfRef">Endpoint: /vesper/v1/add-vcm</a>
+          </h4>
 <ul class="normal">
-<li class="normal" id="section-10-2.1">
-          <p id="section-10-2.1.1">Each entry in the Append-only Log <span class="bcp14">MUST</span> be hashed using the SHA-256 algorithm.<a href="#section-10-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-10.1.1-1.1">
+              <p id="section-10.1.1-1.1.1">Method: POST<a href="#section-10.1.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.2">
-          <p id="section-10-2.2.1">The log structure, whether implemented as a Merkle Tree or any other verifiable data structure, <span class="bcp14">MUST</span> utilize SHA-256 for all cryptographic operations.<a href="#section-10-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-10.1.1-1.2">
+              <p id="section-10.1.1-1.2.1">Description: Adds a VCM (Vetting Credential Manifest) to the log.<a href="#section-10.1.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.3">
-          <p id="section-10-2.3.1">This uniformity in the choice of the hash function guarantees that all participants and auditors can independently verify the integrity and consistency of the logs without compatibility issues.<a href="#section-10-2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-10.1.1-1.3">
+              <p id="section-10.1.1-1.3.1">Inputs:<a href="#section-10.1.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.1.1-1.3.2.1">
+                  <p id="section-10.1.1-1.3.2.1.1">vcm: A base64-encoded Vetting Credential Manifest.<a href="#section-10.1.1-1.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.4">
-          <p id="section-10-2.4.1">Transparency Services <span class="bcp14">MUST</span> provide cryptographic proofs (inclusion proofs and consistency proofs) based on SHA-256, as detailed in [I-D.draft-ietf-cose-merkle-tree-proofs].<a href="#section-10-2.4.1" class="pilcrow">¶</a></p>
+              </ul>
+</li>
+            <li class="normal" id="section-10.1.1-1.4">
+              <p id="section-10.1.1-1.4.1">Outputs:<a href="#section-10.1.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.1.1-1.4.2.1">
+                  <p id="section-10.1.1-1.4.2.1.1">svt_version: The version of the Signed Vetting Timestamp structure, in decimal.<a href="#section-10.1.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.1.1-1.4.2.2">
+                  <p id="section-10.1.1-1.4.2.2.1">id: The log ID, base64 encoded.<a href="#section-10.1.1-1.4.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.1.1-1.4.2.3">
+                  <p id="section-10.1.1-1.4.2.3.1">timestamp: The SVT timestamp, in decimal.<a href="#section-10.1.1-1.4.2.3.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.1.1-1.4.2.4">
+                  <p id="section-10.1.1-1.4.2.4.1">extensions: An opaque type for future expansion. Logs should set this to the empty string. Clients should decode the base64-encoded data and include it in the SVT.<a href="#section-10.1.1-1.4.2.4.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.1.1-1.4.2.5">
+                  <p id="section-10.1.1-1.4.2.5.1">signature: The SVT signature, base64 encoded.<a href="#section-10.1.1-1.4.2.5.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-request">
+<section id="section-10.1.2">
+          <h4 id="name-example-request">
+<a href="#section-10.1.2" class="section-number selfRef">10.1.2. </a><a href="#name-example-request" class="section-name selfRef">Example Request</a>
+          </h4>
+<p id="section-10.1.2-1"><code>json
+{
+  "vcm": "base64-encoded-vcm"
+}
+</code><a href="#section-10.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-response">
+<section id="section-10.1.3">
+          <h4 id="name-example-response">
+<a href="#section-10.1.3" class="section-number selfRef">10.1.3. </a><a href="#name-example-response" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.1.3-1"><code>json
+{
+  "svt_version": 1,
+  "id": "base64-encoded-log-id",
+  "timestamp": 1683000000,
+  "extensions": "",
+  "signature": "base64-encoded-signature"
+}
+</code><a href="#section-10.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-latest-signed-tree-head">
+<section id="section-10.2">
+        <h3 id="name-retrieve-latest-signed-tree">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-retrieve-latest-signed-tree" class="section-name selfRef">Retrieve Latest Signed Tree Head</a>
+        </h3>
+<div id="endpoint-vesperv1get-sth">
+<section id="section-10.2.1">
+          <h4 id="name-endpoint-vesper-v1-get-sth">
+<a href="#section-10.2.1" class="section-number selfRef">10.2.1. </a><a href="#name-endpoint-vesper-v1-get-sth" class="section-name selfRef">Endpoint: /vesper/v1/get-sth</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.2.1-1.1">
+              <p id="section-10.2.1-1.1.1">Method: GET<a href="#section-10.2.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.2.1-1.2">
+              <p id="section-10.2.1-1.2.1">Description: Retrieves the latest signed tree head.<a href="#section-10.2.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.2.1-1.3">
+              <p id="section-10.2.1-1.3.1">Inputs: None<a href="#section-10.2.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.2.1-1.4">
+              <p id="section-10.2.1-1.4.1">Outputs:<a href="#section-10.2.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.2.1-1.4.2.1">
+                  <p id="section-10.2.1-1.4.2.1.1">tree_size: The size of the tree, in entries, in decimal.<a href="#section-10.2.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.2.1-1.4.2.2">
+                  <p id="section-10.2.1-1.4.2.2.1">timestamp: The timestamp, in decimal.<a href="#section-10.2.1-1.4.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.2.1-1.4.2.3">
+                  <p id="section-10.2.1-1.4.2.3.1">sha256_root_hash: The Merkle Tree Hash of the tree, in base64.<a href="#section-10.2.1-1.4.2.3.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.2.1-1.4.2.4">
+                  <p id="section-10.2.1-1.4.2.4.1">tree_head_signature: A TreeHeadSignature for the above data.<a href="#section-10.2.1-1.4.2.4.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-response-1">
+<section id="section-10.2.2">
+          <h4 id="name-example-response-2">
+<a href="#section-10.2.2" class="section-number selfRef">10.2.2. </a><a href="#name-example-response-2" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.2.2-1"><code>json
+{
+  "tree_size": 100,
+  "timestamp": 1683000000,
+  "sha256_root_hash": "base64-encoded-root-hash",
+  "tree_head_signature": "base64-encoded-signature"
+}
+</code><a href="#section-10.2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-merkle-consistency-proof-between-two-signed-tree-heads">
+<section id="section-10.3">
+        <h3 id="name-retrieve-merkle-consistency">
+<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-retrieve-merkle-consistency" class="section-name selfRef">Retrieve Merkle Consistency Proof between Two Signed Tree Heads</a>
+        </h3>
+<div id="endpoint-vesperv1get-sth-consistency">
+<section id="section-10.3.1">
+          <h4 id="name-endpoint-vesper-v1-get-sth-">
+<a href="#section-10.3.1" class="section-number selfRef">10.3.1. </a><a href="#name-endpoint-vesper-v1-get-sth-" class="section-name selfRef">Endpoint: /vesper/v1/get-sth-consistency</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.3.1-1.1">
+              <p id="section-10.3.1-1.1.1">Method: GET<a href="#section-10.3.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.3.1-1.2">
+              <p id="section-10.3.1-1.2.1">Description: Retrieves a Merkle consistency proof between two signed tree heads.<a href="#section-10.3.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.3.1-1.3">
+              <p id="section-10.3.1-1.3.1">Inputs:<a href="#section-10.3.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.3.1-1.3.2.1">
+                  <p id="section-10.3.1-1.3.2.1.1">first: The tree_size of the first tree, in decimal.<a href="#section-10.3.1-1.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.3.1-1.3.2.2">
+                  <p id="section-10.3.1-1.3.2.2.1">second: The tree_size of the second tree, in decimal.<a href="#section-10.3.1-1.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-10.3.1-1.4">
+              <p id="section-10.3.1-1.4.1">Outputs:<a href="#section-10.3.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.3.1-1.4.2.1">
+                  <p id="section-10.3.1-1.4.2.1.1">consistency: An array of Merkle Tree nodes, base64 encoded.<a href="#section-10.3.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-request-1">
+<section id="section-10.3.2">
+          <h4 id="name-example-request-2">
+<a href="#section-10.3.2" class="section-number selfRef">10.3.2. </a><a href="#name-example-request-2" class="section-name selfRef">Example Request</a>
+          </h4>
+<p id="section-10.3.2-1"><code>
+/vesper/v1/get-sth-consistency?first=50&amp;second=100
+</code><a href="#section-10.3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-response-2">
+<section id="section-10.3.3">
+          <h4 id="name-example-response-3">
+<a href="#section-10.3.3" class="section-number selfRef">10.3.3. </a><a href="#name-example-response-3" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.3.3-1"><code>json
+{
+  "consistency": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+</code><a href="#section-10.3.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-merkle-audit-proof-from-log-by-leaf-hash">
+<section id="section-10.4">
+        <h3 id="name-retrieve-merkle-audit-proof">
+<a href="#section-10.4" class="section-number selfRef">10.4. </a><a href="#name-retrieve-merkle-audit-proof" class="section-name selfRef">Retrieve Merkle Audit Proof from Log by Leaf Hash</a>
+        </h3>
+<div id="endpoint-vesperv1get-proof-by-hash">
+<section id="section-10.4.1">
+          <h4 id="name-endpoint-vesper-v1-get-proo">
+<a href="#section-10.4.1" class="section-number selfRef">10.4.1. </a><a href="#name-endpoint-vesper-v1-get-proo" class="section-name selfRef">Endpoint: /vesper/v1/get-proof-by-hash</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.4.1-1.1">
+              <p id="section-10.4.1-1.1.1">Method: GET<a href="#section-10.4.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.4.1-1.2">
+              <p id="section-10.4.1-1.2.1">Description: Retrieves a Merkle audit proof from the log by leaf hash.<a href="#section-10.4.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.4.1-1.3">
+              <p id="section-10.4.1-1.3.1">Inputs:<a href="#section-10.4.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.4.1-1.3.2.1">
+                  <p id="section-10.4.1-1.3.2.1.1">hash: A base64-encoded leaf hash.<a href="#section-10.4.1-1.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.4.1-1.3.2.2">
+                  <p id="section-10.4.1-1.3.2.2.1">tree_size: The tree_size of the tree on which to base the proof, in decimal.<a href="#section-10.4.1-1.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-10.4.1-1.4">
+              <p id="section-10.4.1-1.4.1">Outputs:<a href="#section-10.4.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.4.1-1.4.2.1">
+                  <p id="section-10.4.1-1.4.2.1.1">leaf_index: The 0-based index of the end entity corresponding to the <code>hash</code> parameter.<a href="#section-10.4.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.4.1-1.4.2.2">
+                  <p id="section-10.4.1-1.4.2.2.1">audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.<a href="#section-10.4.1-1.4.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-request-2">
+<section id="section-10.4.2">
+          <h4 id="name-example-request-3">
+<a href="#section-10.4.2" class="section-number selfRef">10.4.2. </a><a href="#name-example-request-3" class="section-name selfRef">Example Request</a>
+          </h4>
+<p id="section-10.4.2-1"><code>
+/vesper/v1/get-proof-by-hash?hash=base64-encoded-hash&amp;tree_size=100
+</code><a href="#section-10.4.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-response-3">
+<section id="section-10.4.3">
+          <h4 id="name-example-response-4">
+<a href="#section-10.4.3" class="section-number selfRef">10.4.3. </a><a href="#name-example-response-4" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.4.3-1"><code>json
+{
+  "leaf_index": 10,
+  "audit_path": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+</code><a href="#section-10.4.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-entries-from-log">
+<section id="section-10.5">
+        <h3 id="name-retrieve-entries-from-log">
+<a href="#section-10.5" class="section-number selfRef">10.5. </a><a href="#name-retrieve-entries-from-log" class="section-name selfRef">Retrieve Entries from Log</a>
+        </h3>
+<div id="endpoint-vesperv1get-entries">
+<section id="section-10.5.1">
+          <h4 id="name-endpoint-vesper-v1-get-entr">
+<a href="#section-10.5.1" class="section-number selfRef">10.5.1. </a><a href="#name-endpoint-vesper-v1-get-entr" class="section-name selfRef">Endpoint: /vesper/v1/get-entries</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.5.1-1.1">
+              <p id="section-10.5.1-1.1.1">Method: GET<a href="#section-10.5.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.5.1-1.2">
+              <p id="section-10.5.1-1.2.1">Description: Retrieves entries from the log.<a href="#section-10.5.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.5.1-1.3">
+              <p id="section-10.5.1-1.3.1">Inputs:<a href="#section-10.5.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.5.1-1.3.2.1">
+                  <p id="section-10.5.1-1.3.2.1.1">start: 0-based index of first entry to retrieve, in decimal.<a href="#section-10.5.1-1.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.5.1-1.3.2.2">
+                  <p id="section-10.5.1-1.3.2.2.1">end: 0-based index of last entry to retrieve, in decimal.<a href="#section-10.5.1-1.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-10.5.1-1.4">
+              <p id="section-10.5.1-1.4.1">Outputs:<a href="#section-10.5.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.5.1-1.4.2.1">
+                  <p id="section-10.5.1-1.4.2.1.1">entries: An array of objects, each consisting of:<a href="#section-10.5.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.5.1-1.4.2.1.2.1">
+                      <p id="section-10.5.1-1.4.2.1.2.1.1">leaf_input: The base64-encoded MerkleTreeLeaf structure.<a href="#section-10.5.1-1.4.2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                    <li class="normal" id="section-10.5.1-1.4.2.1.2.2">
+                      <p id="section-10.5.1-1.4.2.1.2.2.1">extra_data: The base64-encoded unsigned data pertaining to the log entry.<a href="#section-10.5.1-1.4.2.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-request-3">
+<section id="section-10.5.2">
+          <h4 id="name-example-request-4">
+<a href="#section-10.5.2" class="section-number selfRef">10.5.2. </a><a href="#name-example-request-4" class="section-name selfRef">Example Request</a>
+          </h4>
+<p id="section-10.5.2-1"><code>
+/vesper/v1/get-entries?start=0&amp;end=10
+</code><a href="#section-10.5.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-response-4">
+<section id="section-10.5.3">
+          <h4 id="name-example-response-5">
+<a href="#section-10.5.3" class="section-number selfRef">10.5.3. </a><a href="#name-example-response-5" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.5.3-1"><code>json
+{
+  "entries": [
+    {
+      "leaf_input": "base64-encoded-leaf1",
+      "extra_data": "base64-encoded-extra-data1"
+    },
+    {
+      "leaf_input": "base64-encoded-leaf2",
+      "extra_data": "base64-encoded-extra-data2"
+    }
+  ]
+}
+</code><a href="#section-10.5.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-accepted-root-certificates">
+<section id="section-10.6">
+        <h3 id="name-retrieve-accepted-root-cert">
+<a href="#section-10.6" class="section-number selfRef">10.6. </a><a href="#name-retrieve-accepted-root-cert" class="section-name selfRef">Retrieve Accepted Root Certificates</a>
+        </h3>
+<div id="endpoint-vesperv1get-roots">
+<section id="section-10.6.1">
+          <h4 id="name-endpoint-vesper-v1-get-root">
+<a href="#section-10.6.1" class="section-number selfRef">10.6.1. </a><a href="#name-endpoint-vesper-v1-get-root" class="section-name selfRef">Endpoint: /vesper/v1/get-roots</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.6.1-1.1">
+              <p id="section-10.6.1-1.1.1">Method: GET<a href="#section-10.6.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.6.1-1.2">
+              <p id="section-10.6.1-1.2.1">Description: Retrieves the list of accepted root certificates.<a href="#section-10.6.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.6.1-1.3">
+              <p id="section-10.6.1-1.3.1">Inputs: None<a href="#section-10.6.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.6.1-1.4">
+              <p id="section-10.6.1-1.4.1">Outputs:<a href="#section-10.6.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.6.1-1.4.2.1">
+                  <p id="section-10.6.1-1.4.2.1.1">certificates: An array of base64-encoded root certificates that are acceptable to the log.<a href="#section-10.6.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-response-5">
+<section id="section-10.6.2">
+          <h4 id="name-example-response-6">
+<a href="#section-10.6.2" class="section-number selfRef">10.6.2. </a><a href="#name-example-response-6" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.6.2-1"><code>json
+{
+  "certificates": [
+    "base64-encoded-root-cert1",
+    "base64-encoded-root-cert2"
+  ]
+}
+</code><a href="#section-10.6.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="retrieve-entry-merkle-audit-proof-from-log">
+<section id="section-10.7">
+        <h3 id="name-retrieve-entry-merkle-audit">
+<a href="#section-10.7" class="section-number selfRef">10.7. </a><a href="#name-retrieve-entry-merkle-audit" class="section-name selfRef">Retrieve Entry + Merkle Audit Proof from Log</a>
+        </h3>
+<div id="endpoint-vesperv1get-entry-and-proof">
+<section id="section-10.7.1">
+          <h4 id="name-endpoint-vesper-v1-get-entry">
+<a href="#section-10.7.1" class="section-number selfRef">10.7.1. </a><a href="#name-endpoint-vesper-v1-get-entry" class="section-name selfRef">Endpoint: /vesper/v1/get-entry-and-proof</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-10.7.1-1.1">
+              <p id="section-10.7.1-1.1.1">Method: GET<a href="#section-10.7.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.7.1-1.2">
+              <p id="section-10.7.1-1.2.1">Description: Retrieves an entry and its Merkle audit proof from the log.<a href="#section-10.7.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.7.1-1.3">
+              <p id="section-10.7.1-1.3.1">Inputs:<a href="#section-10.7.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.7.1-1.3.2.1">
+                  <p id="section-10.7.1-1.3.2.1.1">leaf_index: The index of the desired entry.<a href="#section-10.7.1-1.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.7.1-1.3.2.2">
+                  <p id="section-10.7.1-1.3.2.2.1">tree_size: The tree_size of the tree for which the proof is desired.<a href="#section-10.7.1-1.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-10.7.1-1.4">
+              <p id="section-10.7.1-1.4.1">Outputs:<a href="#section-10.7.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.7.1-1.4.2.1">
+                  <p id="section-10.7.1-1.4.2.1.1">leaf_input: The base64-encoded MerkleTreeLeaf structure.<a href="#section-10.7.1-1.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.7.1-1.4.2.2">
+                  <p id="section-10.7.1-1.4.2.2.1">extra_data: The base64-encoded unsigned data.<a href="#section-10.7.1-1.4.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-10.7.1-1.4.2.3">
+                  <p id="section-10.7.1-1.4.2.3.1">audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.<a href="#section-10.7.1-1.4.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="example-request-4">
+<section id="section-10.7.2">
+          <h4 id="name-example-request-5">
+<a href="#section-10.7.2" class="section-number selfRef">10.7.2. </a><a href="#name-example-request-5" class="section-name selfRef">Example Request</a>
+          </h4>
+<p id="section-10.7.2-1"><code>
+/vesper/v1/get-entry-and-proof?leaf_index=10&amp;tree_size=100
+</code><a href="#section-10.7.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-response-6">
+<section id="section-10.7.3">
+          <h4 id="name-example-response-7">
+<a href="#section-10.7.3" class="section-number selfRef">10.7.3. </a><a href="#name-example-response-7" class="section-name selfRef">Example Response</a>
+          </h4>
+<p id="section-10.7.3-1"><code>json
+{
+  "leaf_input": "base64-encoded-leaf",
+  "extra_data": "base64-encoded-extra-data",
+  "audit_path": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+</code><a href="#section-10.7.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="requirement-for-sha-256-in-append-only-logs">
+<section id="section-11">
+      <h2 id="name-requirement-for-sha-256-in-">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-requirement-for-sha-256-in-" class="section-name selfRef">Requirement for SHA-256 in Append-only Logs</a>
+      </h2>
+<p id="section-11-1">To ensure compatibility and prevent inconsistencies across different implementations of Transparency Services, all Append-only Logs used in the VESPER architecture <span class="bcp14">MUST</span> employ SHA-256 as the cryptographic hash function. Specifically:<a href="#section-11-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11-2.1">
+          <p id="section-11-2.1.1">Each entry in the Append-only Log <span class="bcp14">MUST</span> be hashed using the SHA-256 algorithm.<a href="#section-11-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.2">
+          <p id="section-11-2.2.1">The log structure, whether implemented as a Merkle Tree or any other verifiable data structure, <span class="bcp14">MUST</span> utilize SHA-256 for all cryptographic operations.<a href="#section-11-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.3">
+          <p id="section-11-2.3.1">This uniformity in the choice of the hash function guarantees that all participants and auditors can independently verify the integrity and consistency of the logs without compatibility issues.<a href="#section-11-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.4">
+          <p id="section-11-2.4.1">Transparency Services <span class="bcp14">MUST</span> provide cryptographic proofs (inclusion proofs and consistency proofs) based on SHA-256, as detailed in [I-D.draft-ietf-cose-merkle-tree-proofs].<a href="#section-11-2.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-10-3">By mandating the use of SHA-256 for all logs, VESPER ensures a standardized and secure approach to maintaining and verifying the integrity of supply chain data.<a href="#section-10-3" class="pilcrow">¶</a></p>
+<p id="section-11-3">By mandating the use of SHA-256 for all logs, VESPER ensures a standardized and secure approach to maintaining and verifying the integrity of supply chain data.<a href="#section-11-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-11">
+<section id="section-12">
       <h2 id="name-security-considerations">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-11-1">TODO Security<a href="#section-11-1" class="pilcrow">¶</a></p>
+<p id="section-12-1">TODO Security<a href="#section-12-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-12">
+<section id="section-13">
       <h2 id="name-iana-considerations">
-<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-12-1">This document has no IANA actions.<a href="#section-12-1" class="pilcrow">¶</a></p>
+<p id="section-13-1">This document has no IANA actions.<a href="#section-13-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
-<section id="section-13">
+<section id="section-14">
       <h2 id="name-normative-references">
-<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
 <dt id="I-D.ietf-oauth-selective-disclosure-jwt">[I-D.ietf-oauth-selective-disclosure-jwt]</dt>
