@@ -171,7 +171,7 @@ RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-
 ## VV Verification Procedures
 
 11. The VV ensures that the token signature is correct. Optionally, if Key Binding is used, the VV validates the KB-JWT.
-12. The VV verifies the SVT signature and checks that the entity_name in the SVT matches the entity_name in the token.
+12. The VV verifies the SVT signature.  Optionally, VV can request Merkle Tree inclusion proof from the append-only log.
 
 # Vetting Credential Manifest
 
@@ -340,6 +340,18 @@ The following payload is used for the SD-JWT:
     }
   ],
   "svt": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
+  "vcm": {
+      "vcm_version": 1,
+      "vetting_agent": {
+          "agent_name": "Vetting Authority Inc.",
+          "agent_metadata": {}
+      },
+      "vetted_entity": {
+          "entity_id": "VE654321",
+          "entity_name": "Business_42"
+      },
+      "vetting_metadata": []
+  },
   "_sd_alg": "sha-256",
   "cnf": {
     "jwk": {
