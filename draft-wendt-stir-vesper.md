@@ -618,6 +618,211 @@ Response:
 }
 ~~~~~~~~~~~~
 
+# Vesper Transparency Service API
+
+## Add VCM to Log
+
+### Endpoint: /vesper/v1/add-vcm
+- Method: POST
+- Description: Adds a VCM (Vetting Credential Manifest) to the log.
+- Inputs:
+  - vcm: A base64-encoded Vetting Credential Manifest.
+- Outputs:
+  - svt_version: The version of the Signed Vetting Timestamp structure, in decimal.
+  - id: The log ID, base64 encoded.
+  - timestamp: The SVT timestamp, in decimal.
+  - extensions: An opaque type for future expansion. Logs should set this to the empty string. Clients should decode the base64-encoded data and include it in the SVT.
+  - signature: The SVT signature, base64 encoded.
+
+### Example Request
+
+```json
+{
+  "vcm": "base64-encoded-vcm"
+}
+```
+
+### Example Response
+
+```json
+{
+  "svt_version": 1,
+  "id": "base64-encoded-log-id",
+  "timestamp": 1683000000,
+  "extensions": "",
+  "signature": "base64-encoded-signature"
+}
+```
+
+## Retrieve Latest Signed Tree Head
+
+### Endpoint: /vesper/v1/get-sth
+- Method: GET
+- Description: Retrieves the latest signed tree head.
+- Inputs: None
+- Outputs:
+  - tree_size: The size of the tree, in entries, in decimal.
+  - timestamp: The timestamp, in decimal.
+  - sha256_root_hash: The Merkle Tree Hash of the tree, in base64.
+  - tree_head_signature: A TreeHeadSignature for the above data.
+
+### Example Response
+
+```json
+{
+  "tree_size": 100,
+  "timestamp": 1683000000,
+  "sha256_root_hash": "base64-encoded-root-hash",
+  "tree_head_signature": "base64-encoded-signature"
+}
+```
+
+## Retrieve Merkle Consistency Proof between Two Signed Tree Heads
+
+### Endpoint: /vesper/v1/get-sth-consistency
+- Method: GET
+- Description: Retrieves a Merkle consistency proof between two signed tree heads.
+- Inputs:
+  - first: The tree_size of the first tree, in decimal.
+  - second: The tree_size of the second tree, in decimal.
+- Outputs:
+  - consistency: An array of Merkle Tree nodes, base64 encoded.
+
+### Example Request
+
+```
+/vesper/v1/get-sth-consistency?first=50&second=100
+```
+
+### Example Response
+
+```json
+{
+  "consistency": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+```
+
+## Retrieve Merkle Audit Proof from Log by Leaf Hash
+
+### Endpoint: /vesper/v1/get-proof-by-hash
+- Method: GET
+- Description: Retrieves a Merkle audit proof from the log by leaf hash.
+- Inputs:
+  - hash: A base64-encoded leaf hash.
+  - tree_size: The tree_size of the tree on which to base the proof, in decimal.
+- Outputs:
+  - leaf_index: The 0-based index of the end entity corresponding to the `hash` parameter.
+  - audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.
+
+### Example Request
+
+```
+/vesper/v1/get-proof-by-hash?hash=base64-encoded-hash&tree_size=100
+```
+
+### Example Response
+
+```json
+{
+  "leaf_index": 10,
+  "audit_path": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+```
+
+## Retrieve Entries from Log
+
+### Endpoint: /vesper/v1/get-entries
+- Method: GET
+- Description: Retrieves entries from the log.
+- Inputs:
+  - start: 0-based index of first entry to retrieve, in decimal.
+  - end: 0-based index of last entry to retrieve, in decimal.
+- Outputs:
+  - entries: An array of objects, each consisting of:
+    - leaf_input: The base64-encoded MerkleTreeLeaf structure.
+    - extra_data: The base64-encoded unsigned data pertaining to the log entry.
+
+### Example Request
+
+```
+/vesper/v1/get-entries?start=0&end=10
+```
+
+### Example Response
+
+```json
+{
+  "entries": [
+    {
+      "leaf_input": "base64-encoded-leaf1",
+      "extra_data": "base64-encoded-extra-data1"
+    },
+    {
+      "leaf_input": "base64-encoded-leaf2",
+      "extra_data": "base64-encoded-extra-data2"
+    }
+  ]
+}
+```
+
+## Retrieve Accepted Root Certificates
+
+### Endpoint: /vesper/v1/get-roots
+- Method: GET
+- Description: Retrieves the list of accepted root certificates.
+- Inputs: None
+- Outputs:
+  - certificates: An array of base64-encoded root certificates that are acceptable to the log.
+
+### Example Response
+
+```json
+{
+  "certificates": [
+    "base64-encoded-root-cert1",
+    "base64-encoded-root-cert2"
+  ]
+}
+```
+
+## Retrieve Entry + Merkle Audit Proof from Log
+
+### Endpoint: /vesper/v1/get-entry-and-proof
+- Method: GET
+- Description: Retrieves an entry and its Merkle audit proof from the log.
+- Inputs:
+  - leaf_index: The index of the desired entry.
+  - tree_size: The tree_size of the tree for which the proof is desired.
+- Outputs:
+  - leaf_input: The base64-encoded MerkleTreeLeaf structure.
+  - extra_data: The base64-encoded unsigned data.
+  - audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.
+
+### Example Request
+
+```
+/vesper/v1/get-entry-and-proof?leaf_index=10&tree_size=100
+```
+
+### Example Response
+
+```json
+{
+  "leaf_input": "base64-encoded-leaf",
+  "extra_data": "base64-encoded-extra-data",
+  "audit_path": [
+    "base64-encoded-node1",
+    "base64-encoded-node2"
+  ]
+}
+```
+
 # Requirement for SHA-256 in Append-only Logs
 
 To ensure compatibility and prevent inconsistencies across different implementations of Transparency Services, all Append-only Logs used in the VESPER architecture MUST employ SHA-256 as the cryptographic hash function. Specifically:
