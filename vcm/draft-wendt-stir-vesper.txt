@@ -410,8 +410,8 @@ Table of Contents
    1.  The VV ensures that the token signature is correct.  Optionally,
        if Key Binding is used, the VV validates the KB-JWT.
 
-   2.  The VV verifies the SVT signature and checks that the entity_name
-       in the SVT matches the entity_name in the token.
+   2.  The VV verifies the SVT signature.  Optionally, VV can request
+       Merkle Tree inclusion proof from the append-only log.
 
 7.  Vetting Credential Manifest
 
@@ -618,6 +618,18 @@ Table of Contents
        }
      ],
      "svt": "8khAv1U1OSlerP0VkBJrWZ07Cf6JkPudry3lcbwHgeZ",
+     "vcm": {
+         "vcm_version": 1,
+         "vetting_agent": {
+             "agent_name": "Vetting Authority Inc.",
+             "agent_metadata": {}
+         },
+         "vetted_entity": {
+             "entity_id": "VE654321",
+             "entity_name": "Business_42"
+         },
+         "vetting_metadata": []
+     },
      "_sd_alg": "sha-256",
      "cnf": {
        "jwk": {
