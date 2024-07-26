@@ -5,7 +5,7 @@
 Secure Telephone Identity Revisited                             C. Wendt
 Internet-Draft                                                  R. Sliwa
 Intended status: Informational                               Somos, Inc.
-Expires: 26 January 2025                                    25 July 2024
+Expires: 27 January 2025                                    26 July 2024
 
 
                     VESPER - VErifiable STI Personas
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 January 2025.
+   This Internet-Draft will expire on 27 January 2025.
 
 Copyright Notice
 
@@ -392,7 +392,8 @@ Table of Contents
        minimum set of information that is required to be included in the
        VCM.
 
-   2.  The VA registers the VCM with an append-only log.
+   2.  The VA registers the VCM with an append-only log.  Note: Only
+       hash of the VCM data is stored in the log.
 
    3.  The append-only log, upon verification of the VCM and queuing it
        into the log, issues a Signed Vetting Timestamp (SVT).
