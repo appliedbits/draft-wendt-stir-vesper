@@ -160,7 +160,7 @@ RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-
 ## VA Publishes Vetted Information Digest to Transparency Service
 
 6. The VA encapsulates the results of their vetting data in a Vetting Credential Manifest (VCM) (see [Vetting Credential Manifest](#vetting-credential-manifest)). What exactly is included in the VCM is up to the VA and influenced by the process used, but there is a minimum set of information that is required to be included in the VCM.
-7. The VA registers the VCM with an append-only log.
+7. The VA registers the VCM with an append-only log.  Note: Only hash of the VCM data is stored in the log.
 8. The append-only log, upon verification of the VCM and queuing it into the log, issues a Signed Vetting Timestamp (SVT).
 
 ## VE Requests a Vesper Token from VA
