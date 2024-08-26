@@ -65,7 +65,7 @@ The use of vesper tokens in communications will allow for a trust model enabled 
 
 # Overview
 
-The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using JSON Web Tokens (JWT) and Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
+The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
 
 # Terminology
 
@@ -78,6 +78,19 @@ Vetting Verifier: An entity that verifies the verifiable token issued by a Vetti
 Vesper Token: A verifiable token issued by a Vetting Agent to a Vetting Entity containing the disclosable claims. The Vesper Token is represented as a Selective Disclosure JWT (SD-JWT).
 
 Vetting Confirmation Manifest: An envelope that encapsulates the results of the vetting process. The Vetting Confirmation Manifest is used to log the fact that the Vetting Agent vetted and accepted the Vetting Entity with a transparency service.
+
+# What is a Vesper Token?
+
+Vesper tokens introduce a mechanism for verifying the identity and legitimacy of entities within the STIR ecosystem. By representing KYC/KYB credentials as SD-JWTs, Vesper tokens provide a way to prove the legitimacy of entities leasing telephone numbers and signing calls. This document outlines the structure and use of Vesper tokens and describes how they fit into the broader STIR ecosystem.
+
+# Managing Multiple Vesper Tokens
+
+A Vetted Entity (VE) may receive multiple Vesper tokens, each representing different credentials issued by various issuers. For example:
+
+- KYC/KYB Vesper Token: Issued by a VA to confirm the entity’s identity and legitimacy. This token can be presented to a TNSP to establish trust in the entity before leasing a Telephone Number (TN).
+- TNSP Vesper Token: Issued by a TNSP, this token carries credentials related to TN lease and Rich Call Data (RCD). It can be used by the VE to demonstrate that it has the right to use a specific TN and to provide additional context, such as branding or contact information, via RCD.
+
+Depending on the use case, the VE can choose to present all or a subset of these Vesper tokens to a Verifier. For instance, when requesting a TN assignment, the VE might present the KYC/KYB Vesper token to prove its legitimacy and then use the TNSP Vesper token to provide additional details about the TN lease and RCD to signing service (STI-AS). This way VE can create presentation of credentials as a list of one or more Vesper tokens ensuring that only the relevant credentials are shared.
 
 # Vetting Process Overview
 
@@ -196,7 +209,7 @@ The VCM consists of the following key elements:
 
 Here is an example of how the VCM can be structured in JSON:
 
-```json
+~~~~~~~~~~~~~
 {
   "vcm_version": 1,
   "vetting_agent": {
@@ -209,7 +222,7 @@ Here is an example of how the VCM can be structured in JSON:
   },
   "vetting_metadata": []
 }
-```
+~~~~~~~~~~~~~
 
 # Signed Vesper Timestamp
 
@@ -219,17 +232,83 @@ Signed Vesper Timestamp (SVT) is a signed timestamp that is issued by a Transpar
 
 Here is JSON representation of SVT:
 
-```json
+~~~~~~~~~~~~~
 {
 	"LogID": "0x1234567890abcdef",
 	"Timestamp": 1683000000,
 	"Signature": ...
 }
-```
+~~~~~~~~~~~~~
+
+# Use Case Example: Telephone Number Assignment
+1. The VE undergoes KYC/KYB vetting by a VA and receives a KYC/KYB Vesper token.
+2. The VE presents this KYC/KYB token to a TNSP when requesting TN assignment.
+3. The VE may also present a TNSP Vesper token that includes credentials for the TN lease and RCD.
+4. The TNSP verifies the Vesper tokens and assigns the
+5. TN, ensuring that the VE is legitimate and that the additional information (e.g., RCD) is accurate and trustworthy.
+
+TODO: Add diagram from Mural...
+
+# Multi-Vesper Token Presentation
+
+A Vetted Entity (VE), acting as the Holder of multiple Vesper tokens, may need to present a combination of these tokens to satisfy various verification requirements in a single interaction. For instance, in the STIR ecosystem, the VE might first present a KYC/KYB Vesper token to a Telephone Number Service Provider (TNSP) to prove its identity. Once trusted, the TNSP issues a Right To Use (RTU) Vesper token for a specific Telephone Number (TN) and associated Rich Call Data (RCD). The VE can then present both the KYC/KYB and RTU Vesper tokens to the STI-AS when signing a call.
+
+## Structure of Multi-Vesper Presentation
+
+When creating a multi-Vesper token presentation, the VE assembles a package that may contain:
+
+1. Multiple Base SD-JWTs: The core JWTs from each Vesper token (e.g., KYC/KYB and RTU), representing the vetted claims.
+2. Disclosures: The selectively disclosable claims from each token that are relevant to the verifier.
+3. Key Binding JWTs (KB-JWTs): For each SD-JWT, there is an associated KB-JWT to bind the SD-JWT to a specific key pair, ensuring that the tokens are bound to the Holder's (VE’s) key pair.
+
+The presentation package is composed as follows:
+
+~~~~~~~~~~~~~
+<SD-JWT-1>~<Disclosure 1-1>~<Disclosure 1-2>~...~<KB-JWT-1>~<SD-JWT-2>~<Disclosure 2-1>~<Disclosure 2-2>~...~<KB-JWT-2>
+~~~~~~~~~~~~~
+
+In this format:
+
+- <SD-JWT-1> and <SD-JWT-2> represent the KYC/KYB and RTU Vesper tokens, respectively.
+- <Disclosure 1-1>, <Disclosure 1-2>, etc., represent selectively disclosed claims from each token.
+- <KB-JWT-1> and <KB-JWT-2> represent Key Binding JWTs, if Key Binding is used for either or both SD-JWTs.
+
+## Process Flow for Multi-Vesper Presentation
+
+1. TNSP as Issuer: The VE first proves its identity to the TNSP using the KYC/KYB Vesper token.
+2. RTU Vesper Token Issuance: The TNSP, now trusting the VE, issues an RTU Vesper token that includes the TN lease and RCD.
+3. Presentation Assembly: The VE assembles a presentation package with both the KYC/KYB and RTU Vesper tokens, their disclosures, and optionally the KB-JWTs for each SD-JWT.
+4. Verification by STI-AS: The STI-AS, acting as the verifier, validates each SD-JWT, checks the disclosures, and verifies the KB-JWTs to ensure the tokens are bound to the correct key pair.
+5. Call Signing: Based on the verified tokens, the STI-AS completes the call signing, ensuring that the call is associated with a legitimate TN and the correct RCD.
+
+# Preventing Replay Attacks
+
+A replay attack occurs when a malicious actor intercepts a valid token or message and reuses it to gain unauthorized access or perform unauthorized actions. In the context of Vesper tokens, this could involve reusing a token or presentation package to fraudulently sign calls or access services. To address the potential replay attack issue in the Vesper token ecosystem, JWT ID (JTI) claim is used.
+
+## Mitigation Strategy - JWT ID (JTI) Claim
+
+- Description: The JTI claim is a unique identifier for each JWT. This identifier ensures that each token is distinct, even if it contains the same claims. The JTI can be used by the verifier to track tokens and detect if the same token is being reused maliciously.
+
+- Implementation:
+  - When a Vesper token (SD-JWT) is issued, the Vetting Agent (VA) includes a unique jti value in the JWT payload.
+  - Verifiers, such as the STI-AS, should store recent JTI values temporarily (e.g., in a cache) to detect if the same token is being presented multiple times within a short period. This prevents replay attacks using old tokens.
+
+Example:
+
+~~~~~~~~~~~~~
+{
+  "iss": "https://vetting-agent.example.com",
+  "sub": "Business_42",
+  "iat": 1683000000,
+  "exp": 1883000000,
+  "jti": "unique-token-id-12345",
+  ...
+}
+~~~~~~~~~~~~~
 
 # Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
-This document defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.  The Issuer in the context of the vesper token is the VA, the Holder corresponds to the VE, and the Verifier is the VV.
+This section defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.  The Issuer in the context of the vesper token is the VA, the Holder corresponds to the VE, and the Verifier is the VV.
 
 ## SD-JWT and Disclosures
 
