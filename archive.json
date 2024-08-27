@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-25T01:36:07.783032+00:00",
+  "timestamp": "2024-08-27T01:24:42.723408+00:00",
   "repo": "appliedbits/draft-wendt-stir-vesper",
   "labels": [
     {
@@ -84,7 +84,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:16:22Z",
@@ -97,7 +97,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:16:34Z",
@@ -110,7 +110,7 @@
             "abbreviatedOid": "f0822fb"
           },
           "author": "chriswendt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-06-24T07:17:06Z",
@@ -124,24 +124,26 @@
       "id": "PR_kwDOKswe3s52gsaZ",
       "title": "Definition of Vesper transparency log and adjustements to workflow to add transparency steps.",
       "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/2",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "robjsliwa",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-07-25T20:13:04Z",
-      "updatedAt": "2024-07-26T14:05:36Z",
+      "updatedAt": "2024-08-27T00:30:08Z",
       "baseRepository": "appliedbits/draft-wendt-stir-vesper",
       "baseRefName": "main",
       "baseRefOid": "3c925a73f1498ef94a6858f2f79a760b84005b2b",
       "headRepository": "appliedbits/draft-wendt-stir-vesper",
       "headRefName": "vcm",
-      "headRefOid": "d9f559ea1941eb901d27530849e80d329d4812f4",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "d6ae4658ea025b92d808e41f15689ff3e66ee0c5",
+      "closedAt": "2024-08-27T00:30:08Z",
+      "mergedAt": "2024-08-27T00:30:08Z",
+      "mergedBy": "chriswendt",
+      "mergeCommit": {
+        "oid": "821f5c2c29641e8ad1bddb1ad180de75796ca89d"
+      },
       "comments": [],
       "reviews": []
     }
