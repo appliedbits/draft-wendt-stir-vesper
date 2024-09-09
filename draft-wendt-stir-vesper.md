@@ -56,7 +56,7 @@ This document extends the STIR architecture by defining a secure telephone ident
 
 # Introduction
 
-The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in {{RFC8226}}, PASSporTs in {{RFC8225}}, and the SIP Identity header field {{RFC8224}} describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trust of the signer alone to at the time of the communications without has proven to require time and people consuming work to perform after-the-fact investigation and enforcement activities. Other industries, like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB), otherwise referred to as the application of vetting practices of an entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona, as a person or business entity, with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties for intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications. 
+The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in {{RFC8226}}, PASSporTs in {{RFC8225}}, and the SIP Identity header field {{RFC8224}} describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trust of the signer alone to at the time of the communications without has proven to require time and people consuming work to perform after-the-fact investigation and enforcement activities. Other industries, like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB), otherwise referred to as the application of vetting practices of an entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona, as a person or business entity, with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties for intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications.
 
 This document describes the establishment of a "vesper" (VErifiable Sti PERsona) PASSporT type with corresponding “vesper” claims which are signed claims using a three party trust model represented by SD-JWTs and enabled with transparency logs and corresponding receipts that enable either a privacy protecting hash disclosure or a public disclosure that allows for verifiable eco-system trust that those that validate claim information are legitimate actors in the ecosystem. Additionally, the vesper token and claim architecture provides mechanisms for providing selective disclosure of any personally identifying information to be disclosed to those that the persona chooses directly or in limited cases, for example, based on enforcement actions, required for legitimately authorized legal or regulatory activity.
 
@@ -73,7 +73,90 @@ The vetting process for entities involves verifying their identity and legitimac
 
 ## Vesper Architectural Overview
 
-The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values. This document defines the following Claim Agent roles, Vetting Claim Agent (VCA), Telephone Number Claim Agent (TNCA), Rich Call Data Claim Agent (RCDCA), and Consent Claim Agent (CCA). The responsibilities of Claim Agents generally and of each specific type will be detailed in the document and a Claim Agent type registry is established. Future documents may define other Claim Agent types and associated claim key values. Claim Agents make claims about the end entity that is the holder of a telephone number or set of numbers who is referred to as the Subject Entity (SE) as the subject of the claims. All claim agents are required to be registered with a Notary Agent (NA) who acts in a neutral role but critically maintains a graph of authorized and responsible parties that issue claims. These claims are recorded and “notarized” via a transparency log with a corresponding receipt that proves the transaction happened and who issued the claims and the telephone number identity associated. The SE is associated however is opaque for privacy considerations. Claims are optionally able to be made publicly visible for the additional trust and for enabling uniqueness, so either a mistaken or illegitimate claim to an identity attribute can be prevented for those that require that uniqueness to be enforced, i.e. a business name or logo. All of the claims represented by an SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} and a transparency receipt are deposited into a digital “wallet” held by the SE, these selectively disclosable set of claims are then able to be presented by wrapping the selected SD-JWTs as “vesper” claims in a “vesper” PASSporT that is signed by a delegate certificate {{RFC9060}} provided by an authorized telephone number provider and tied to the assigned telephone numbers in the TNAuthList of the delegate certificate. This signed “vesper” PASSporT is then attached to a set of communications with a specific destination party verifier, in the context of STIR this would be delivered using a SIP identity header field verifiable by a STIR Verification Service defined in {{RFC8824}}. The verifier then has proof of both the issuers of the claims, receipts to represent the notarization of the claims being made, and the tie to a authentically delegated certificate confirming the current assignment and right to use the telephone number.
+### Introduction to Vesper Tokens and Trust Model
+
+The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.
+
+#### Key Features of Vesper Tokens
+
+- Selective Disclosure: Entities can choose which information to disclose to different parties.
+- Authorized Use of Telephone Numbers: Vesper tokens ensure that only authorized parties can use telephone numbers.
+- Flexible Use Cases: Vesper tokens can be used for KYC/KYB vetting, Rich Call Data (RCD), and consent claims.  New use-cases can be defined in the future.
+
+### Roles and Responsibilities in the Vesper Ecosystem
+
+The trust framework defines several roles that facilitate claims about telephone numbers and other entity information. These roles, known as Claim Agents, are responsible for making authoritative claims about the subject entity (SE).
+
+#### Claim Agent Roles
+
+- Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes the SE in the ecosystem.
+- Telephone Number Claim Agent (TNCA): Handles the assignment of telephone numbers to the SE.
+- Rich Call Data Claim Agent (RCDCA): Provides vetting and validation of Rich Call Data claims.
+- Consent Claim Agent (CCA): Handles consent claims for allowing SE's to call or message specific telephone numbers.
+
+#### Claim Agent Responsibilities
+
+Claim Agents make claims about the Subject Entity. These agents are registered with a Notary Agent (NA) who maintains a Claim Graph for the Subject Entities and issues transparency receipts for each claim event. Claim Agents issue SD-JWT tokens with the claims and the SE holds these SD-JWT tokens (verifiable claims) in Vesper Wallet (VW).
+
+### Notary Agent - Claim Graph and Transparency Log
+
+In the Vesper ecosystem, Claim Agents issue claims about the Subject Entity.  To ensure trust and accountability between Claim Agents, all interactions are governed by the Notary Agent, which internally operates two key services: the Claim Graph and the Transparency Log.
+
+#### Claim Graph
+
+The Claim Graph is responsible for building and maintaining a graph of claims related to SEs. Each claim issued by a Claim Agent is added to this graph as a node, with relationships represented as edges between entities.
+
+- Snapshot Hashing: Every time a new claim is added or updated in the Claim Graph, the service creates a hash of the current snapshot of the graph. This hash serves as a unique cryptographic representation of the claim state at that moment in time.
+- Transparency: The hashed snapshot is then recorded in the Transparency Log, ensuring that the claims history is transparent, immutable, and auditable. By using cryptographic hashing, the Claim Graph remains secure, and any changes to the claims can be traced and verified.
+
+#### Transparency Log
+
+The Transparency Log is part of the NA’s services and plays a crucial role in ensuring that all claims made by Claim Agents are trustworthy. It allows claims to be verifiable across different agents using cryptographic methods. Once a claim is hashed by the Claim Graph, it is added to the log, making it accessible for verification.
+
+- Receipt Issuance: After each claim is recorded, the NA issues a Receipt to the SE. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.
+- Interaction with Claim Agents: Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.
+
+#### Claim Agents and Privacy
+
+An important feature of this system is its ability to protect the privacy of the SE. Claim Agents are not required to store any private data in the Claim Graph. Instead, they store only the hash of the data, which acts as a representation of the claim without exposing sensitive information.
+
+- Public vs. Private Data: If the SE has public data (e.g., a business name or logo), it can be added to the Claim Graph for greater visibility. This allows other Claim Agents to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.
+
+### Transport - Vesper PASSporT
+
+The SE can use claims stored in their Vesper Wallet to generate a Vesper PASSporT, which includes SD-JWTs and associated NA Receipts. This Vesper PASSporT is signed by a delegate certificate and attached to communications, such as in the case of STIR.
+
+Vesper PASSporT Flow:
+
+1. Using Vesper Wallet, SE creates a Vesper PASSporT containing claims and SD-JWTs.
+2. Vesper PASSporT is signed by a delegate certificate.
+3. The signed PASSporT is attached to a SIP identity header for verification by the destination party.
+
+### Verification and Proof of Authenticity
+
+The Secure Telephone Identity Authentication Service (STI-AS) and the Secure Telephone Identity Verification Service (STI-VS) are responsible for validating the Vesper Token and its claims.
+
+#### STI-AS Verification
+
+When the Vesper Token is created, the STI-AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
+
+- Signature Verification: The STI-AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.
+- Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the STI-AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.
+
+#### STI-VS Verification
+
+Once the Vesper Token reaches the STI-VS, the token undergoes further checks to confirm its authenticity and integrity.
+
+- Payload Verification: The first step for STI-VS is to verify the Vesper Token’s signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the STI-VS will reject the communication.
+- SD-JWT Claim Verification: After validating the Vesper Token, the STI-VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.
+- Public Key Verification: The STI-VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.
+
+#### Final Trust and Intelligence
+
+Once the STI-VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.
+
+- Caller Trust: The successful validation of the Vesper Token and its claims allows the STI-VS to trust that the caller is who they claim to be.
+- Call Intelligence: In addition to verifying identity, the STI-VS can use the claims enclosed within the Vesper Token for further insights. These claims may include additional information about the caller, such as their vetted identity or other metadata (e.g., business name, consent), which can be used to enhance call routing and decision-making.
 
 # Terminology
 
@@ -93,12 +176,12 @@ Vesper PASSporT or Token: A verifiable token that follows the definition of PASS
 
 # The “vesper” PASSporT
 
-A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework: 
+A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework:
 
   * the Claim Agent that is known to be a valid participant in the vesper framework and has a type association with the claims being made
   * the transparency receipt created by the Notary Agent representing the time and claim assertion event recorded
-  
-The Vesper PASSporT is a PASSporT as defined in {{RFC8225}} which is a JSON Web Token {{RFC7519}} and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It MUST include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT. 
+
+The Vesper PASSporT is a PASSporT as defined in {{RFC8225}} which is a JSON Web Token {{RFC7519}} and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It MUST include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT.
 A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying party verification service might understand, but the intention of the Vesper framework is that a Vesper PASSporT contain one or more “vesper” claim objects, defined in the “Vesper Claims” section.
 
 ## Compact Form Not Supported
@@ -151,7 +234,7 @@ In order to represent the vetted claim information about a VE. The SD-JWT MUST i
 iss: Issuer, the Claim Agent.
 sub: Subject, the subject entity represented by a unique entity-id
 iat: Issuance timestamp.
-exp: Expiry timestamp. 
+exp: Expiry timestamp.
 claim-data-hash: Hash of the claim data.
 transparency-receipt: Transparency receipt issued by the transparency service.  (SVCT)
 (optional) cnf: Public key of the Subject Entity, only if key binding is required, defined in {{RFC7800}}
@@ -198,7 +281,7 @@ The Vetting Claim object is defined to include the following key values in the c
 
 ### Telephone Number Claim Agent - “tnca”
 
-The Telephone Number Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.  
+The Telephone Number Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.
 
 Note: the telephone number service provider also should provide the mechanism to provide a delegate certificate with the telephone number resource as part of the TNAuthList.
 
@@ -215,7 +298,7 @@ The Vetting Claim object is defined to include the following key values in the c
 
 ### Rich Call Data Claim Agent - “rcdca”
 
-The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}. 
+The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}.
 
 The Rich Call Data Claim object is defined to include the following key values in the claim object:
 
@@ -233,7 +316,7 @@ The Rich Call Data Claim object is defined to include the following key values i
 
 ### Consent Claim Agent - “cca”
 
-The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number. 
+The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number.
 
 The Consent Claim object is defined to include the following key values in the claim object:
 
@@ -250,7 +333,7 @@ The Consent Claim object is defined to include the following key values in the c
 
 # Notary Agent Overview
 
-The notarization process involves 
+The notarization process involves
 
 
 
@@ -286,7 +369,7 @@ The notary process generally involves the following steps:
 ## Setup and Registration of SE with NA by the VCA
 
 2. Registration of the SE with a NA by a VCA. Note: the VCA as described above is the only Claim Agent type that can register a SE with a NA. The SE creates an authenticated account relationship with the VCA, and a unique entity-id is created.
-3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures. 
+3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures.
 
 RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
 
@@ -296,12 +379,12 @@ RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-
 ## VCA registers claim event to NA
 
 6. The VCA performs a hash over the claim object key values.
-7. The NA registers the claim event, including hash to an append-only transparency log. 
+7. The NA registers the claim event, including hash to an append-only transparency log.
 8. The append-only log, upon verification of the claim event and hash and queuing it into the log, issues a Signed Vesper Claim Timestamp (SVCT).
 
 ## VCA receives notary receipt (SCVT) and delivers claim + receipt to SE to deposit in their wallet
 
-9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information. 
+9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.
 10. The VCA issues an SD-JWT containing the vetting claim information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the data.
 
 ## Additional Claim Agent Procedures
