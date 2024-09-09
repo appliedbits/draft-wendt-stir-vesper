@@ -36,10 +36,12 @@ author:
     country: US
 
 normative:
+  RFC7519:
   RFC7800:
   RFC8224:
   RFC8225:
   RFC8226:
+  RFC9060:
   I-D.ietf-oauth-selective-disclosure-jwt:
   I-D.ietf-sipcore-callinfo-spam:
 
@@ -69,7 +71,9 @@ In the current state of digital identities, the unique identifier used to identi
 
 The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
 
-The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values. This document defines the following Claim Agent roles, Vetting Claim Agent (VCA), Telephone Number Claim Agent (TNCA), Rich Call Data Claim Agent (RCDCA), and Consent Claim Agent (CCA). The responsibilities of Claim Agents generally and of each specific type will be detailed in the document and a Claim Agent type registry is established. Future documents may define other Claim Agent types and associated claim key values. Claim Agents make claims about the end entity that is the holder of a telephone number or set of numbers who is referred to as the Subject Entity (SE) as the subject of the claims. All claim agents are required to be registered with a Notary Agent (NA) who acts in a neutral role but critically maintains a graph of authorized and responsible parties that issue claims. These claims are recorded and “notarized” via a transparency log with a corresponding receipt that proves the transaction happened and who issued the claims and the telephone number identity associated. The SE is associated however is opaque for privacy considerations. Claims are optionally able to be made publicly visible for the additional trust and for enabling uniqueness, so either a mistaken or illegitimate claim to an identity attribute can be prevented for those that require that uniqueness to be enforced, i.e. a business name or logo. All of the claims represented by an SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} and a transparency receipt are deposited into a digital “wallet” held by the SE, these selectively disclosable set of claims are then able to be presented by wrapping the selected SD-JWTs as “vesper” claims in a “vesper” PASSporT that is signed by a delegate certificate provided by an authorized telephone number provider and tied to the assigned telephone numbers in the TNAuthList of the delegate certificate. This signed “vesper” PASSporT is then attached to a set of communications with a specific destination party verifier, in the context of STIR this would be delivered using a SIP identity header field verifiable by a STIR Verification Service defined in {{RFC8824}}. The verifier then has proof of both the issuers of the claims, receipts to represent the notarization of the claims being made, and the tie to a authentically delegated certificate confirming the current assignment and right to use the telephone number.
+## Vesper Architectural Overview
+
+The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values. This document defines the following Claim Agent roles, Vetting Claim Agent (VCA), Telephone Number Claim Agent (TNCA), Rich Call Data Claim Agent (RCDCA), and Consent Claim Agent (CCA). The responsibilities of Claim Agents generally and of each specific type will be detailed in the document and a Claim Agent type registry is established. Future documents may define other Claim Agent types and associated claim key values. Claim Agents make claims about the end entity that is the holder of a telephone number or set of numbers who is referred to as the Subject Entity (SE) as the subject of the claims. All claim agents are required to be registered with a Notary Agent (NA) who acts in a neutral role but critically maintains a graph of authorized and responsible parties that issue claims. These claims are recorded and “notarized” via a transparency log with a corresponding receipt that proves the transaction happened and who issued the claims and the telephone number identity associated. The SE is associated however is opaque for privacy considerations. Claims are optionally able to be made publicly visible for the additional trust and for enabling uniqueness, so either a mistaken or illegitimate claim to an identity attribute can be prevented for those that require that uniqueness to be enforced, i.e. a business name or logo. All of the claims represented by an SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} and a transparency receipt are deposited into a digital “wallet” held by the SE, these selectively disclosable set of claims are then able to be presented by wrapping the selected SD-JWTs as “vesper” claims in a “vesper” PASSporT that is signed by a delegate certificate {{RFC9060}} provided by an authorized telephone number provider and tied to the assigned telephone numbers in the TNAuthList of the delegate certificate. This signed “vesper” PASSporT is then attached to a set of communications with a specific destination party verifier, in the context of STIR this would be delivered using a SIP identity header field verifiable by a STIR Verification Service defined in {{RFC8824}}. The verifier then has proof of both the issuers of the claims, receipts to represent the notarization of the claims being made, and the tie to a authentically delegated certificate confirming the current assignment and right to use the telephone number.
 
 # Terminology
 
@@ -87,129 +91,226 @@ Subject Entity (SE): An entity that is vetted by a Vetting Agent and holds the v
 
 Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in {{RFC8225}} created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains “vesper” claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent (NA).
 
-Vetting Confirmation Manifest: An envelope that encapsulates the results of the vetting process. The Vetting Confirmation Manifest is used to log the fact that the Vetting Agent vetted and accepted the Vetting Entity with a transparency service.
+# The “vesper” PASSporT
 
-# What is a Vesper Token?
+A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework: 
 
-Vesper tokens introduce a mechanism for verifying the identity and legitimacy of entities within the STIR ecosystem. By representing KYC/KYB credentials as SD-JWTs, Vesper tokens provide a way to prove the legitimacy of entities leasing telephone numbers and signing calls. This document outlines the structure and use of Vesper tokens and describes how they fit into the broader STIR ecosystem.
+  * the Claim Agent that is known to be a valid participant in the vesper framework and has a type association with the claims being made
+  * the transparency receipt created by the Notary Agent representing the time and claim assertion event recorded
+  
+The Vesper PASSporT is a PASSporT as defined in {{RFC8225}} which is a JSON Web Token {{RFC7519}} and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It MUST include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT. 
+A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying party verification service might understand, but the intention of the Vesper framework is that a Vesper PASSporT contain one or more “vesper” claim objects, defined in the “Vesper Claims” section.
 
-# Managing Multiple Vesper Tokens
+## Compact Form Not Supported
 
-A Vetted Entity (VE) may receive multiple Vesper tokens, each representing different credentials issued by various issuers. For example:
+The use of the compact form of PASSporT is not specified for a “vesper” PASSporT primarily because when using the {{RFC8224}} defined identity header field as the transport of a “vesper” PASSporT there will not be any corresponding vesper information or claims provided in plain text or unprotected, nor should there be.
 
-- KYC/KYB Vesper Token: Issued by a VA to confirm the entity’s identity and legitimacy. This token can be presented to a TNSP to establish trust in the entity before leasing a Telephone Number (TN).
-- TNSP Vesper Token: Issued by a TNSP, this token carries credentials related to TN lease and Rich Call Data (RCD). It can be used by the VE to demonstrate that it has the right to use a specific TN and to provide additional context, such as branding or contact information, via RCD.
+# Vesper Claims
 
-Depending on the use case, the VE can choose to present all or a subset of these Vesper tokens to a Verifier. For instance, when requesting a TN assignment, the VE might present the KYC/KYB Vesper token to prove its legitimacy and then use the TNSP Vesper token to provide additional details about the TN lease and RCD to signing service (STI-AS). This way VE can create presentation of credentials as a list of one or more Vesper tokens ensuring that only the relevant credentials are shared.
+A Vesper Claim is defined as a JWT claim {{RFC7519}} JSON object with a claim key that is the string “vesper” and with a claim value that is a JSON object containing the following key values:
 
-# Vetting Process Overview
+* a “type” key with the claim value as the string that defines the claim agent type defined in the “Claim Agent” section of this document or future claim agent types defined and registered in claim agent IANA registry
+* a “claim-token” key with a claim value of the SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} which represents the actual signed claims from the Claim Agent and defined in the section “Vesper Claim SD-JWT”
+* a “receipt” key with the claim value of the Signed Vesper Timestamp the Claim Agent received from the Notary Agent defined in the “Signed Vesper Timestamp” section of the document.
 
-The vetting process involves verifying the identity and legitimacy of a Vetting Entity (VE) through KYC and KYB vetting procedures. The vetting procedures are not the subject of this document, but the successful results of the vetting procedures are captured in a Vetting Confirmation Manifest (VCM), which serves as an indication that the vetting process was completed successfully.
 
-After the Vetting Agent (VA) completes the vetting process, it can issue a verifiable token containing zero or more disclosable claims about the VE. The Vetting Entity (VE) holds the verifiable token and can present it to Vetting Verifiers (VV) to prove their identity and legitimacy. The VV verifies the verifiable token to ensure that the VE is who they claim to be.
+## Vesper Claim SD-JWT (Selective Disclosure JSON Web Tokens)
 
-# Vetting Process Procedures
+This section defines the vesper claims object as a SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The claim and issuance process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and more generally the three-party model (i.e. Issuer, Holder, Verifier) defined in SD-JWT.  The Issuer in the context of the vesper token is the Claim Agent, the Holder corresponds to the Subject Entity, and the Verifier is the the receiver of the Vesper Claim, which in the context of this document would be contained in a Vesper Claim object that is signed inside of a Vesper PASSporT.
 
-The vetting process generally involves the following steps:
+## SD-JWT and Disclosures
 
-~~~~~~~~~~~~~~
+SD-JWT is a digitally signed JSON document containing digests over the selectively disclosable claims with the Disclosures outside the document. Disclosures can be omitted without breaking the signature, and modifying them can be detected. Selectively disclosable claims can be individual object properties (name-value pairs) or array elements. When presenting an SD-JWT to a Verifier, the Holder only includes the Disclosures for the claims that it wants to reveal to that Verifier. An SD-JWT can also contain clear-text claims that are always disclosed to the Verifier.
 
- ┌───────────────────┐                                              ┌─────────────────────────┐                               
- │Subject Entity (SE)│                                              │Vetting Claim Agent (VCA)│                               
- └─────────┬─────────┘                                              └────────────┬────────────┘                               
-           │                  Register and submit information                    │                                                   
-           │────────────────────────────────────────────────────────────────────>│                                                   
-           │                                                                     │                                                   
-           │             Create authenticated account and entity_id              │
-╔══════════╧═════════════════════════════════════════════════════════════════════╧══════════╗
-║VA submits uniquely identifiable information                                               ║
-╚══════════╤═════════════════════════════════════════════════════════════════════╤══════════╝
- ┌─────────┴─────────┐                                              ┌────────────┴────────────┐
- │Subject Entity (SE)│                                              │Vetting Claim Agent (VCA)│
- └───────────────────┘                                              └─────────────────────────┘                               
+To disclose to a Verifier a subset of the SD-JWT claim values, a Holder sends only the Disclosures of those selectively released claims to the Verifier as part of the SD-JWT. The use of Key Binding is an optional feature.
 
-~~~~~~~~~~~~~~~
+## Vesper Claim SD-JWT Data Formats
 
-## Setup and Registration of VE with VA
+An SD-JWT is composed of
 
-1. Registration of the Vetting Entity (VE) with a Vetting Authority (VA). The VE creates an authenticated account relationship with the VA, and a unique entity_id is created.
-2. The VE submits a set of information to describe itself with uniquely identifiable entity-specific information. This document describes a baseline set of information claims that SHOULD be included, but anticipates future specifications that correspond to future communications ecosystem policies and best practices that may extend that set of information, including the syntax and definitions. The submission of information to the VA is RECOMMENDED to follow the format and syntax of what will be defined later in the document as the token claim format for each set of information, but this document does not specifically define a protocol for the submission of information, only the token that represents the results of the process.
-3. The VA performs the vetting functions and KYC/KYB checks according to their procedures. The vetting functions can be performed in many ways in different countries and legal jurisdictions, and therefore, this document does not specify any specifics on how the VA performs these vetting functions and is out of scope for this document.
+* an Claim Agent signed JWT, and
+* zero or more Disclosures.
+
+The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde (‘~’) character as follows:
+
+~~~~~~~~~~~
+<Issuer-signed JWT>~<Disclosure 1>~<Disclosure 2>~...~<Disclosure N>~
+~~~~~~~~~~~
+
+The payload of a vesper token as an SD-JWT is a JSON object according to the following rules:
+
+The payload MAY contain the _sd_alg key described in Section 5.1.1 of {{I-D.ietf-oauth-selective-disclosure-jwt}}.
+The payload MAY contain one or more digests of Disclosures to enable selective disclosure of the respective claims, created and formatted as described in Section 5.2.
+The payload MAY contain one or more decoy digests to obscure the actual number of claims in the SD-JWT, created and formatted as described in Section 5.2.5.
+The payload MAY contain one or more non-selectively disclosable claims.
+The payload MAY contain the Holder’s public key(s) or reference(s) thereto, as explained in Section 5.1.2.
+The payload MAY contain further claims such as iss, iat, etc. as defined or required by the application using SD-JWTs.
+
+In order to represent the vetted claim information about a VE. The SD-JWT MUST include the following claims:
+
+iss: Issuer, the Claim Agent.
+sub: Subject, the subject entity represented by a unique entity-id
+iat: Issuance timestamp.
+exp: Expiry timestamp. 
+claim-data-hash: Hash of the claim data.
+transparency-receipt: Transparency receipt issued by the transparency service.  (SVCT)
+(optional) cnf: Public key of the Subject Entity, only if key binding is required, defined in {{RFC7800}}
+
+# Claim Agents
+
+Claim Agents are entities that act as issuers in the three party trust model, but generally validate information provided by a Subject Entity via either checking an authorized source or via a vetting procedure.  The details of either of these processes are very likely application or jurisdiction specific and should follow an eco-system specific set of policies and therefore are out-of-scope of this document.
+
+There are different types of claims that can be validated on behalf of a subject entity, but specific to telephone number identities and the entities that are assigned the right to use telephone numbers and more generally the subject and focus of this document there are two required claim types defined in this document and two optional supplemental claim types defined in this document.  It is anticipated that future specifications may define new claim types with additional relevant information that requires trust and validation and therefore an IANA registry for Vesper Claim Agent types is setup to register unique type indicators.
+
+## Claim Agent Types and Claim Values
+
+Each Claim Agent Type has a corresponding unique string that uniquely identifies a Claim Agent as a particular type and the associated claim object generated by a claim agent to include defined set of claim key values that include both required and optional key values.
+
+### Vetting Claim Agent - “vca”
+
+The Vetting Claim Agent is a required claim agent data type and is also the first claim that MUST be established to establish a globally unique entity-id to represent the Subject Entity in the Notary Agent uniquely.
+
+The Vetting Claim object is defined to include the following key values in the claim object:
+
+~~~~~~~~~~~~~
++---------------------+-------------+------------------------------------+
+| Claim Info Key      | Value Type  | Value Description                  |
++---------------------+-------------+------------------------------------+
+| address             | JSON object |                                    |
++---------------------+-------------+------------------------------------+
+| street_address      | String      |                                    |
+| locality            | String      |                                    |
+| region              | String      |                                    |
+| country             | String      |                                    |
+| postal_code         | String      |                                    |
++---------------------+-------------+------------------------------------+
+| contact_given_name  | String      |                                    |
+| contact_family_name | String      |                                    |
+| contact_email       | String      |                                    |
+| contact_phone_num   | String      |                                    |
++---------------------+-------------+------------------------------------+
+| business_ids        | JSON Array  |                                    |
++---------------------+-------------+------------------------------------+
+| EIN                 | String      |                                    |
++---------------------+-------------+------------------------------------+
+~~~~~~~~~~~~~
+
+
+### Telephone Number Claim Agent - “tnca”
+
+The Telephone Number Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.  
+
+Note: the telephone number service provider also should provide the mechanism to provide a delegate certificate with the telephone number resource as part of the TNAuthList.
+
+The Vetting Claim object is defined to include the following key values in the claim object:
+
+~~~~~~~~~~~~~
++---------------------+-------------+------------------------------------+
+| Claim Info Key      | Value Type  | Value Description                  |
++---------------------+-------------+------------------------------------+
+| telephone_num       | Value Array | Array of e.164 Strings             |
++---------------------+-------------+------------------------------------+
+~~~~~~~~~~~~~
+
+
+### Rich Call Data Claim Agent - “rcdca”
+
+The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}. 
+
+The Rich Call Data Claim object is defined to include the following key values in the claim object:
+
+~~~~~~~~~~~~~
++---------------------+-------------+------------------------------------+
+| Claim Info Key      | Value Type  | Value Description                  |
++---------------------+-------------+------------------------------------+
+| rcd Array           | JSON Array  | Array of rcd claims objects        |
++---------------------+-------------+------------------------------------+
+| rcd                 | JSON Object | rcd claim                          |
+| rcdi                | JSON Object | rcdi claim                         |
+| crn                 | JSON Object | call reason claim                  |
++---------------------+-------------+------------------------------------+
+~~~~~~~~~~~~~
+
+### Consent Claim Agent - “cca”
+
+The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number. 
+
+The Consent Claim object is defined to include the following key values in the claim object:
+
+~~~~~~~~~~~~~
++---------------------+-------------+------------------------------------+
+| Claim Info Key      | Value Type  | Value Description                  |
++---------------------+-------------+------------------------------------+
+| consent_assertion   | JSON Array  | Array of consent_assertion objects |
++---------------------+-------------+------------------------------------+
+| consent_type        | String      | consent_type                       |
+| destination_tn      | e.164 array | array of destination tns           |
++---------------------+-------------+------------------------------------+
+~~~~~~~~~~~~~
+
+# Notary Agent Overview
+
+The notarization process involves 
+
+
+
+## Transparency Service
+
+Description of Transparency Service
+
+### Signed Vesper Claim Timestamp
+
+Signed Vesper Claim Timestamp (SVCT) is a signed timestamp that is issued by a Transparency Service to confirm that the claim event info has been successfully registered and appended to the log. The SVCT is used to verify the integrity of the claim event info and ensure that it has not been tampered with.
+
+### JSON Reprsentation of SVCT
+
+Here is JSON representation of SVCT:
+
+~~~~~~~~~~~~~
+{
+	“LogID”: “0x1234567890abcdef”,
+	“Timestamp”: 1683000000,
+	“Signature”: ...
+}
+~~~~~~~~~~~~~
+
+# Notary Agent Procedures
+
+The notary process generally involves the following steps:
+
+
+## Setup and Registration of Claim Agents with NA
+
+1. Registration of the Claim Agent with a NA
+
+## Setup and Registration of SE with NA by the VCA
+
+2. Registration of the SE with a NA by a VCA. Note: the VCA as described above is the only Claim Agent type that can register a SE with a NA. The SE creates an authenticated account relationship with the VCA, and a unique entity-id is created.
+3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures. 
 
 RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
 
-4. The entity generates a public/private key pair, or the VA does it on the entity's behalf.
-5. The public key is registered with the VA.
+4. The entity generates a public/private key pair, or the VCA does it on the entity's behalf.
+5. The public key is registered with the VCA.
 
-## VA Publishes Vetted Information Digest to Transparency Service
+## VCA registers claim event to NA
 
-6. The VA encapsulates the results of their vetting data in a Vetting Credential Manifest (VCM) (see [Vetting Credential Manifest](#vetting-credential-manifest)). What exactly is included in the VCM is up to the VA and influenced by the process used, but there is a minimum set of information that is required to be included in the VCM.
-7. The VA registers the VCM with an append-only log.  Note: Only hash of the VCM data is stored in the log.
-8. The append-only log, upon verification of the VCM and queuing it into the log, issues a Signed Vetting Timestamp (SVT).
+6. The VCA performs a hash over the claim object key values.
+7. The NA registers the claim event, including hash to an append-only transparency log. 
+8. The append-only log, upon verification of the claim event and hash and queuing it into the log, issues a Signed Vesper Claim Timestamp (SVCT).
 
-## VE Requests a Vesper Token from VA
+## VCA receives notary receipt (SCVT) and delivers claim + receipt to SE to deposit in their wallet
 
-9. The VE acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information. Optionally, the VE can use the VA's hosted wallet service APIs if available.
-10. The VA issues an SD-JWT containing the KYC/KYB information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the VCM data.
+9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information. 
+10. The VCA issues an SD-JWT containing the vetting claim information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the data.
 
-## VV Verification Procedures
+## Additional Claim Agent Procedures
 
-11. The VV ensures that the token signature is correct. Optionally, if Key Binding is used, the VV validates the KB-JWT.
-12. The VV verifies the SVT signature.  Optionally, VV can request Merkle Tree inclusion proof from the append-only log.
+11. After the VCA has established the SE with its entity-id at the NA, additional claims can be made for that SE by another claim agent (e.g. telephone number claims, RCD claims, or consent claims)
+12. The Claim Agent performs a hash over the claim object key values but can also submit public claims intended to be disclosed for transparency monitoring.
+13. The NA registers the claim event, including either hashed or public claims or both.
 
-# Vetting Credential Manifest
 
-The Vetting Credential Manifest (VCM) is used as an envelope for identifying the results of the vetting process. This draft does not define or recommend any specific vetting process. Instead, the VCM provides a common envelope for the vetting results, which can be used to cryptographically ensure that the included data references have not been tampered with.
-
-The data used within the VCM is determined by the Vetting Agent (VA), and the documents list can be empty or as simple as a reference to the identifier that represents the Vetted Entity (VE).
-
-## VCM Structure
-
-The VCM consists of the following key elements:
-
-- VCM Version: Version of the VCM format.
-- Vetting Agent Information
-  - agent_name: Name of the vetting agent.
-  - agent_metadata: Additional metadata about the vetting agent (optional).
-- Vetted Entity Information
-  - entity_id: Unique identifier for the vetted entity (unique within the Vetting Agent's scope).
-  - entity_name: Name of the vetted entity.
-- vetting_metadata: Additional metadata about the vetting process (optional).
-
-## JSON Representation of VCM
-
-Here is an example of how the VCM can be structured in JSON:
-
-~~~~~~~~~~~~~
-{
-  "vcm_version": 1,
-  "vetting_agent": {
-    "agent_name": "Vetting Authority Inc.",
-    "agent_metadata": {}
-  },
-  "vetted_entity": {
-    "entity_id": "VE654321",
-    "entity_name": "Business_42"
-  },
-  "vetting_metadata": []
-}
-~~~~~~~~~~~~~
-
-# Signed Vesper Timestamp
-
-Signed Vesper Timestamp (SVT) is a signed timestamp that is issued by a Transparency Service to confirm that the VCM has been successfully registered and appended to the log. The SVT is used to verify the integrity of the VCM and ensure that it has not been tampered with.
-
-## JSON Reprsentation of SVT
-
-Here is JSON representation of SVT:
-
-~~~~~~~~~~~~~
-{
-	"LogID": "0x1234567890abcdef",
-	"Timestamp": 1683000000,
-	"Signature": ...
-}
-~~~~~~~~~~~~~
 
 # Use Case Example: Telephone Number Assignment
 1. The VE undergoes KYC/KYB vetting by a VA and receives a KYC/KYB Vesper token.
@@ -277,63 +378,7 @@ Example:
 }
 ~~~~~~~~~~~~~
 
-# Selective Disclosure JSON Web Tokens (SD-JWT) for Vetted information
 
-This section defines the vesper token using the SD-JWT, defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}. The vetting process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and generally the three-party model (i.e. Issuer, Holder, Verifier) defined in that document.  The Issuer in the context of the vesper token is the VA, the Holder corresponds to the VE, and the Verifier is the VV.
-
-## SD-JWT and Disclosures
-
-SD-JWT is a digitally signed JSON document containing digests over the selectively disclosable claims with the Disclosures outside the document. Disclosures can be omitted without breaking the signature, and modifying them can be detected. Selectively disclosable claims can be individual object properties (name-value pairs) or array elements. When presenting an SD-JWT to a Verifier, the Holder only includes the Disclosures for the claims that it wants to reveal to that Verifier. An SD-JWT can also contain clear-text claims that are always disclosed to the Verifier.
-
-To disclose to a Verifier a subset of the SD-JWT claim values, a Holder sends only the Disclosures of those selectively released claims to the Verifier as part of the SD-JWT. The use of Key Binding is an optional feature.
-
-## SD-JWT Verification
-
-The Verifier receives either an SD-JWT or an SD-JWT+KB from the Holder, verifies the signature on the SD-JWT (or the the SD-JWT inside the SD-JWT+KB) using the Issuer's public key, verifies the signature on the KB-JWT using the public key included (or referenced) in the SD-JWT, and calculates the digests over the Holder-Selected Disclosures and verifies that each digest is contained in the SD-JWT.
-
-## Vesper token SD-JWT and SD-JWT+KB Data Formats
-
-An SD-JWT is composed of
-
-* an Issuer-signed JWT, and
-* zero or more Disclosures.
-
-An SD-JWT+KB is composed of
-
-* an SD-JWT, and
-* a Key Binding JWT.
-
-The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde ('~') character as follows:
-
-~~~~~~~~~~~
-<Issuer-signed JWT>~<Disclosure 1>~<Disclosure 2>~...~<Disclosure N>~
-~~~~~~~~~~~
-
-The serialized format for an SD-JWT+KB extends the SD-JWT format by concatenating a Key Binding JWT.
-
-~~~~~~~~~~~
-<Issuer-signed JWT>~<Disclosure 1>~<Disclosure 2>~...~<Disclosure N>~<KB>
-~~~~~~~~~~~
-
-The payload of a vesper token as an SD-JWT is a JSON object according to the following rules:
-
-The payload MAY contain the _sd_alg key described in Section 5.1.1 of {{I-D.ietf-oauth-selective-disclosure-jwt}}.
-The payload MAY contain one or more digests of Disclosures to enable selective disclosure of the respective claims, created and formatted as described in Section 5.2.
-The payload MAY contain one or more decoy digests to obscure the actual number of claims in the SD-JWT, created and formatted as described in Section 5.2.5.
-The payload MAY contain one or more non-selectively disclosable claims.
-The payload MAY contain the Holder's public key(s) or reference(s) thereto, as explained in Section 5.1.2.
-The payload MAY contain further claims such as iss, iat, etc. as defined or required by the application using SD-JWTs.
-
-
-In order to represent the vetted claim information about a VE. The SD-JWT MUST include the following claims:
-
-iss: Issuer, the Vetting Agent.
-sub: Subject, the vetted entity represented by a unique entity_id
-iat: Issuance timestamp.
-exp: Expiry timestamp.
-kyc_data_hash: Hash of the KYC/KYB data.
-transparency_receipt: Transparency receipt issued by the transparency service.
-(optional) cnf: Public key of the vetted entity, only if key binding is required, defined in {{RFC7800}}
 
 ## Example Issuance
 
@@ -947,7 +992,21 @@ TODO Security
 
 # IANA Considerations
 
-This document has no IANA actions.
+## JSON Web Token claims
+
+This specification requests that the IANA add two new claims to the JSON Web Token Claims registry as defined in [RFC7519].
+
+Claim Name: “vesper”
+
+Claim Description: A JSON object that includes both an SD-JWT object containing Vesper Claims from a Vesper Claim Agent and a Notary Agent transparency receipt object as required by the STIR Vesper framework
+
+Change Controller: IESG
+
+Specification Document(s): [RFCThis]
+
+## PASSporT Types
+
+This specification requests that the IANA add a new entry to the Personal Assertion Token (PASSporT) Extensions registry for the type “vesper” which is specified in [RFCThis].
 
 
 --- back
