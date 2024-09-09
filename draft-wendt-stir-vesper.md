@@ -616,6 +616,163 @@ Response:
 - entity_id: The ID of the SE whose history is being retrieved.
 - history: A list of all events associated with the SE, including timestamps and Notary Receipts.
 
+## Vesper Wallet Flows
+
+The Vesper Wallet manages claims, cryptographic keys, and the construction of Vesper PASSporTs. It securely stores all claims (in the form of SD-JWTs) along with the corresponding Notary Receipts, which prove that the claims have been notarized by the Notary Agent (NA). Additionally, the Vesper Wallet handles the generation and management of key pairs used for signing PASSporTs and requesting delegate certificates.
+
+### Vesper Wallet Key Pair Generation
+
+The Vesper Wallet creates and manages a public/private key pair. This key pair is used for two purposes:
+
+- Requesting Delegate Certificate: The public key is sent to a Certificate Authority (CA) to obtain a Delegate Certificate, which authorizes the SE to use specific telephone numbers (TNs).
+- Signing Vesper PASSporTs: The private key is used to sign Vesper PASSporTs, which are cryptographically bound to the SE’s claims.
+
+Key Pair Generation Flow:
+~~~~~~~~~~~
++-------------------+                 +-----------------+
+|  Vesper Wallet    |                 | Certificate     |
+|   (VW)            |                 |    Authority    |
++-------------------+                 +-----------------+
+      |                                        |
+      |<-- Create public/private key pair      |
+      |                                        |
+      |---> Request Delegate Certificate  ---->|
+      |        (Includes public key)           |
+      |                                        |
+      |<---- Delegate Certificate issued ------|
+      |                                        |
+~~~~~~~~~~~
+
+### Storage of SD-JWTs and Notary Receipts
+
+The Vesper Wallet stores SD-JWTs for each claim type, along with the corresponding Notary Receipts. These SD-JWTs represent claims such as KYC, telephone number assignment, and rich call data (RCD). The Notary Receipts are proof that each claim has been logged in the Transparency Log by the NA.
+
+SD-JWT Storage Structure:
+~~~~~~~~~~~
++------------------+       +-----------------+
+|   Vesper Wallet  |       |  Claims Storage |
++------------------+       +-----------------+
+      |                             |
+      |--> Stores SD-JWTs --------->|
+      |      + Notary Receipts      |
+      |                             |
+      +-----------------------------+
+~~~~~~~~~~~
+
+Each claim stored in the Vesper Wallet contains:
+
+- SD-JWT: The selective disclosure JWT containing the claim.
+- Notary Receipt: Proof from the Transparency Log that the claim was notarized.
+
+### Building the Vesper Token
+
+When the SE needs to present claims (e.g., during a phone call), the Vesper Wallet constructs a Vesper Token, which serves as a presentation of the claims to the Verification Service (VS). The Vesper Token contains:
+
+1. Claim Type: Identifies the type of claim (e.g., KYC, TN, RCD).
+2. SD-JWT: The SD-JWT for the claim, containing selectively disclosable claims.
+3. Notary Receipt: The Notary Receipt that verifies the claim was recorded in the Transparency Log.
+
+Vesper Token Structure:
+~~~~~~~~~~~
+{
+  ...
+  "claims": [
+    {
+      "type": "vca",
+      "sd_jwt": "eyJhbGciOi...",
+      "receipt": "NotaryReceipt1234"
+    },
+    {
+      "type": "tnca",
+      "sd_jwt": "eyJhbGci...",
+      "receipt": "NotaryReceipt5678"
+    },
+    {
+      "type": "rcdca",
+      "sd_jwt: "eyJhbGci...",
+      "receipt": "NotaryReceipt8901"
+    }
+  ]
+  ...
+}
+~~~~~~~~~~~
+
+Once the Vesper Token is built, it is included in a Vesper PASSporT. The Vesper PASSporT is a specialized form of PASSporT that encapsulates multiple Vesper Tokens and is signed by the SE’s private key (the same private key associated with the Delegate Certificate).
+
+### Signing the Vesper PASSporT
+
+The Vesper PASSporT is signed using the SE’s private key, which is associated with the Delegate Certificate. This signature binds the claims and their associated receipts to the SE and ensures that the Vesper PASSporT can be trusted by the Verification Service (VS).
+
+Signing the Vesper PASSporT:
+~~~~~~~~~~~
++-------------------+        +--------------------+
+|  Vesper Wallet    |        | Delegate Certificate|
++-------------------+        +--------------------+
+      |                                |
+      |<-- Uses private key to sign    |
+      |   Vesper PASSporT              |
+      |                                |
+~~~~~~~~~~~
+
+The signed Vesper PASSporT is then sent to the Authentication Service (AS), which includes it in the SIP header during a call.
+
+### Passing the Vesper PASSporT to the Authentication Service (AS)
+
+Once the Vesper PASSporT is signed, it is passed to the Authentication Service (AS). The AS inserts the Vesper PASSporT into the SIP header, which is transmitted as part of the phone call. This allows the Verification Service (VS) to receive the Vesper PASSporT for validation.
+
+Sending Vesper PASSporT:
+~~~~~~~~~~~
++-------------------+       +----------------------+
+|  Vesper Wallet    |       | Authentication       |
+|   (VW)            |       |     Service (AS)     |
++-------------------+       +----------------------+
+      |                                 |
+      |-- Pass Vesper PASSporT -------->|
+      |      to AS                      |
+      |                                 |
+~~~~~~~~~~~
+
+### Verification of Vesper PASSporT by VS
+
+When the Verification Service (VS) receives the Vesper PASSporT, it performs several verification steps to ensure the validity of the claims:
+
+1. Signature Verification: The VS checks the signature on the Vesper PASSporT using the public key from the Delegate Certificate to confirm that the SE legitimately signed the token.
+2. SD-JWT Verification: The VS goes through the SD-JWTs inside the Vesper PASSporT and verifies their individual signatures. Each SD-JWT contains a JWK (JSON Web Key) representing the public key used to sign the claim.
+
+JWK Claim Example:
+~~~~~~~~~~~
+{
+  "alg": "RS256",
+  "typ": "JWT",
+  "jwk": {
+    "kty": "RSA",
+    "kid": "key-id",
+    "n": "...",
+    "e": "..."
+  }
+}
+~~~~~~~~~~~
+
+3. Receipt Validation: For each SD-JWT, presence of Notary Receipt should be sufficient to accept the claims.  However, VS may optionally choose to verify the Notary Receipts against the Transparency Log to ensure that the claims were notarized by the NA.  This step would be done out of the call path in different process or service.  If the receipt is not valid, the VS will put the Vesper PASSporT claims on the black list for the future calls.
+
+Verification Process:
+~~~~~~~~~~~
++-------------------+        +---------------------+
+| Verification      |        |  Transparency Log   |
+|  Service (VS)     |        |                     |
++-------------------+        +---------------------+
+      |                                 |
+      |----> Verifies Vesper PASSporT   |
+      |     signature (Delegate Cert)   |
+      |                                 |
+      |--> Verifies SD-JWTs signatures  |
+      |                                 |
+      |--- Validates Notary Receipts -->|
+      |                                 |
+~~~~~~~~~~~
+
+Once the Vesper PASSporT and its claims are verified, the VS can make decisions based on the presented claims, such as authenticating the call and allowing it to proceed.
+
 # The “vesper” PASSporT
 
 A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework:
