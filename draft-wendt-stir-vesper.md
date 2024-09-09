@@ -71,58 +71,58 @@ In the current state of digital identities, the unique identifier used to identi
 
 The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
 
-## Vesper Architectural Overview
+# Vesper Architectural Overview
 
-### Introduction to Vesper Tokens and Trust Model
+## Introduction to Vesper Tokens and Trust Model
 
 The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.
 
-#### Key Features of Vesper Tokens
+### Key Features of Vesper Tokens
 
 - Selective Disclosure: Entities can choose which information to disclose to different parties.
 - Authorized Use of Telephone Numbers: Vesper tokens ensure that only authorized parties can use telephone numbers.
 - Flexible Use Cases: Vesper tokens can be used for KYC/KYB vetting, Rich Call Data (RCD), and consent claims.  New use-cases can be defined in the future.
 
-### Roles and Responsibilities in the Vesper Ecosystem
+## Roles and Responsibilities in the Vesper Ecosystem
 
 The trust framework defines several roles that facilitate claims about telephone numbers and other entity information. These roles, known as Claim Agents, are responsible for making authoritative claims about the subject entity (SE).
 
-#### Claim Agent Roles
+### Claim Agent Roles
 
 - Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes the SE in the ecosystem.
 - Telephone Number Claim Agent (TNCA): Handles the assignment of telephone numbers to the SE.
 - Rich Call Data Claim Agent (RCDCA): Provides vetting and validation of Rich Call Data claims.
 - Consent Claim Agent (CCA): Handles consent claims for allowing SE's to call or message specific telephone numbers.
 
-#### Claim Agent Responsibilities
+### Claim Agent Responsibilities
 
 Claim Agents make claims about the Subject Entity. These agents are registered with a Notary Agent (NA) who maintains a Claim Graph for the Subject Entities and issues transparency receipts for each claim event. Claim Agents issue SD-JWT tokens with the claims and the SE holds these SD-JWT tokens (verifiable claims) in Vesper Wallet (VW).
 
-### Notary Agent - Claim Graph and Transparency Log
+## Notary Agent - Claim Graph and Transparency Log
 
 In the Vesper ecosystem, Claim Agents issue claims about the Subject Entity.  To ensure trust and accountability between Claim Agents, all interactions are governed by the Notary Agent, which internally operates two key services: the Claim Graph and the Transparency Log.
 
-#### Claim Graph
+### Claim Graph
 
 The Claim Graph is responsible for building and maintaining a graph of claims related to SEs. Each claim issued by a Claim Agent is added to this graph as a node, with relationships represented as edges between entities.
 
 - Snapshot Hashing: Every time a new claim is added or updated in the Claim Graph, the service creates a hash of the current snapshot of the graph. This hash serves as a unique cryptographic representation of the claim state at that moment in time.
 - Transparency: The hashed snapshot is then recorded in the Transparency Log, ensuring that the claims history is transparent, immutable, and auditable. By using cryptographic hashing, the Claim Graph remains secure, and any changes to the claims can be traced and verified.
 
-#### Transparency Log
+### Transparency Log
 
 The Transparency Log is part of the NA’s services and plays a crucial role in ensuring that all claims made by Claim Agents are trustworthy. It allows claims to be verifiable across different agents using cryptographic methods. Once a claim is hashed by the Claim Graph, it is added to the log, making it accessible for verification.
 
 - Receipt Issuance: After each claim is recorded, the NA issues a Receipt to the SE. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.
 - Interaction with Claim Agents: Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.
 
-#### Claim Agents and Privacy
+### Claim Agents and Privacy
 
 An important feature of this system is its ability to protect the privacy of the SE. Claim Agents are not required to store any private data in the Claim Graph. Instead, they store only the hash of the data, which acts as a representation of the claim without exposing sensitive information.
 
 - Public vs. Private Data: If the SE has public data (e.g., a business name or logo), it can be added to the Claim Graph for greater visibility. This allows other Claim Agents to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.
 
-### Transport - Vesper PASSporT
+## Transport - Vesper PASSporT
 
 The SE can use claims stored in their Vesper Wallet to generate a Vesper PASSporT, which includes SD-JWTs and associated NA Receipts. This Vesper PASSporT is signed by a delegate certificate and attached to communications, such as in the case of STIR.
 
@@ -132,11 +132,11 @@ Vesper PASSporT Flow:
 2. Vesper PASSporT is signed by a delegate certificate.
 3. The signed PASSporT is attached to a SIP identity header for verification by the destination party.
 
-### Verification and Proof of Authenticity
+## Verification and Proof of Authenticity
 
 The Authentication Service (AS) and the Verification Service (VS) are responsible for validating the Vesper Token and its claims.
 
-#### AS Verification
+### AS Verification
 
 When the Vesper Token is created, the AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
 
@@ -145,7 +145,7 @@ When the Vesper Token is created, the AS verifies its signature. This is a impor
 
 NOTE: The relationship between Vesper Wallet that creates Vesper Token and the AS in practice will be likely a trusted relationship and therefore AS may chose to trust the Vesper Token without further verification.
 
-#### STI-VS Verification
+### STI-VS Verification
 
 Once the Vesper Token reaches the VS, the token undergoes further checks to confirm its authenticity and integrity.
 
@@ -153,7 +153,7 @@ Once the Vesper Token reaches the VS, the token undergoes further checks to conf
 - SD-JWT Claim Verification: After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.
 - Public Key Verification: The VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.
 
-#### Final Trust and Intelligence
+### Final Trust and Intelligence
 
 Once the VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.
 
