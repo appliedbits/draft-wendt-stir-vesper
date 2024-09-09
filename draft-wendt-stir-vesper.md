@@ -134,29 +134,31 @@ Vesper PASSporT Flow:
 
 ### Verification and Proof of Authenticity
 
-The Secure Telephone Identity Authentication Service (STI-AS) and the Secure Telephone Identity Verification Service (STI-VS) are responsible for validating the Vesper Token and its claims.
+The Authentication Service (AS) and the Verification Service (VS) are responsible for validating the Vesper Token and its claims.
 
-#### STI-AS Verification
+#### AS Verification
 
-When the Vesper Token is created, the STI-AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
+When the Vesper Token is created, the AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
 
-- Signature Verification: The STI-AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.
-- Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the STI-AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.
+- Signature Verification: The AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.
+- Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.
+
+NOTE: The relationship between Vesper Wallet that creates Vesper Token and the AS in practice will be likely a trusted relationship and therefore AS may chose to trust the Vesper Token without further verification.
 
 #### STI-VS Verification
 
-Once the Vesper Token reaches the STI-VS, the token undergoes further checks to confirm its authenticity and integrity.
+Once the Vesper Token reaches the VS, the token undergoes further checks to confirm its authenticity and integrity.
 
-- Payload Verification: The first step for STI-VS is to verify the Vesper Token’s signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the STI-VS will reject the communication.
-- SD-JWT Claim Verification: After validating the Vesper Token, the STI-VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.
-- Public Key Verification: The STI-VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.
+- Payload Verification: The first step for VS is to verify the Vesper Token’s signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the VS will reject the communication.
+- SD-JWT Claim Verification: After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.
+- Public Key Verification: The VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.
 
 #### Final Trust and Intelligence
 
-Once the STI-VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.
+Once the VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.
 
-- Caller Trust: The successful validation of the Vesper Token and its claims allows the STI-VS to trust that the caller is who they claim to be.
-- Call Intelligence: In addition to verifying identity, the STI-VS can use the claims enclosed within the Vesper Token for further insights. These claims may include additional information about the caller, such as their vetted identity or other metadata (e.g., business name, consent), which can be used to enhance call routing and decision-making.
+- Caller Trust: The successful validation of the Vesper Token and its claims allows the VS to trust that the caller is who they claim to be.
+- Call Intelligence: In addition to verifying identity, the VS can use the claims enclosed within the Vesper Token for further insights. These claims may include additional information about the caller, such as their vetted identity or other metadata (e.g., business name, consent), which can be used to enhance call routing and decision-making.
 
 # Terminology
 
