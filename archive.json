@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-08T01:39:54.993243+00:00",
+  "timestamp": "2024-09-10T01:35:16.260614+00:00",
   "repo": "appliedbits/draft-wendt-stir-vesper",
   "labels": [
     {
@@ -144,6 +144,32 @@
       "mergeCommit": {
         "oid": "821f5c2c29641e8ad1bddb1ad180de75796ca89d"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOKswe3s563EvY",
+      "title": "Updates for Vesper Architecture Overview.",
+      "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/3",
+      "state": "OPEN",
+      "author": "robjsliwa",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-09T14:23:35Z",
+      "updatedAt": "2024-09-09T20:53:23Z",
+      "baseRepository": "appliedbits/draft-wendt-stir-vesper",
+      "baseRefName": "main",
+      "baseRefOid": "ec4ab67e811ddcb0c31da1ae8bc812e53d958ec2",
+      "headRepository": "appliedbits/draft-wendt-stir-vesper",
+      "headRefName": "vao_updates",
+      "headRefOid": "5bfe198abc84741364323943daae446d632734dd",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
