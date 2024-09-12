@@ -57,7 +57,7 @@ This document extends the STIR architecture by defining a secure telephone ident
 
 # Introduction
 
-The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in {{RFC8226}}, PASSporTs in {{RFC8225}}, and the SIP Identity header field {{RFC8224}} describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trust of the signer alone to at the time of the communications without has proven to require time and people consuming work to perform after-the-fact investigation and enforcement activities. Other industries, like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB), otherwise referred to as the application of vetting practices of an entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona, as a person or business entity, with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties for intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications. 
+The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in {{RFC8226}}, PASSporTs in {{RFC8225}}, and the SIP Identity header field {{RFC8224}} describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trust of the signer alone to at the time of the communications without has proven to require time and people consuming work to perform after-the-fact investigation and enforcement activities. Other industries, like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB), otherwise referred to as the application of vetting practices of an entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona, as a person or business entity, with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties for intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications.
 
 This document describes the establishment of a "vesper" (VErifiable Sti PERsona) PASSporT type with corresponding “vesper” claims which are signed claims using a three party trust model represented by SD-JWTs and enabled with transparency logs and corresponding receipts that enable either a privacy protecting hash disclosure or a public disclosure that allows for verifiable eco-system trust that those that validate claim information are legitimate actors in the ecosystem. Additionally, the vesper token and claim architecture provides mechanisms for providing selective disclosure of any personally identifying information to be disclosed to those that the persona chooses directly or in limited cases, for example, based on enforcement actions, required for legitimately authorized legal or regulatory activity.
 
@@ -72,9 +72,94 @@ In the current state of digital identities, the unique identifier used to identi
 
 The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.
 
-## Vesper Architectural Overview
+# Vesper Architectural Overview
 
-The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values. This document defines the following Claim Agent roles, Vetting Claim Agent (VCA), Right to Use Claim Agent (RTUCA), Rich Call Data Claim Agent (RCDCA), and Consent Claim Agent (CCA). The responsibilities of Claim Agents generally and of each specific type will be detailed in the document and a Claim Agent type registry is established. Future documents may define other Claim Agent types and associated claim key values. Claim Agents make claims about the end entity that is the holder of a telephone number or set of numbers who is referred to as the Subject Entity (SE) as the subject of the claims. All claim agents are required to be registered with a Notary Agent (NA) who acts in a neutral role but critically maintains a graph of authorized and responsible parties that issue claims. These claims are recorded and “notarized” via a transparency log with a corresponding receipt that proves the transaction happened and who issued the claims and the telephone number identity associated. The SE is associated however is opaque for privacy considerations. Claims are optionally able to be made publicly visible for the additional trust and for enabling uniqueness, so either a mistaken or illegitimate claim to an identity attribute can be prevented for those that require that uniqueness to be enforced, i.e. a business name or logo. All of the claims represented by an SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} and a transparency receipt are deposited into a digital “wallet” held by the SE, these selectively disclosable set of claims are then able to be presented by wrapping the selected SD-JWTs as “vesper” claims in a “vesper” PASSporT that is signed by a delegate certificate {{RFC9060}} provided by an authorized telephone number provider and tied to the assigned telephone numbers in the TNAuthList of the delegate certificate. This signed “vesper” PASSporT is then attached to a set of communications with a specific destination party verifier, in the context of STIR this would be delivered using a SIP identity header field verifiable by a STIR Verification Service defined in {{RFC8824}}. The verifier then has proof of both the issuers of the claims, receipts to represent the notarization of the claims being made, and the tie to a authentically delegated certificate confirming the current assignment and right to use the telephone number.
+## Introduction to Vesper Tokens and Trust Model
+
+The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.
+
+### Key Features of Vesper Tokens
+
+- Selective Disclosure: Entities can choose which information to disclose to different parties.
+- Authorized Use of Telephone Numbers: Vesper tokens ensure that only authorized parties can use telephone numbers.
+- Flexible Use Cases: Vesper tokens can be used for KYC/KYB vetting, Rich Call Data (RCD), and consent claims.  New use-cases can be defined in the future.
+
+## Roles and Responsibilities in the Vesper Ecosystem
+
+The trust framework defines several roles that facilitate claims about telephone numbers and other entity information. These roles, known as Claim Agents, are responsible for making authoritative claims about the subject entity (SE).
+
+### Claim Agent Roles
+
+- Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes the SE in the ecosystem.
+- Telephone Number Claim Agent (TNCA): Handles the assignment of telephone numbers to the SE.
+- Rich Call Data Claim Agent (RCDCA): Provides vetting and validation of Rich Call Data claims.
+- Consent Claim Agent (CCA): Handles consent claims for allowing SE's to call or message specific telephone numbers.
+
+### Claim Agent Responsibilities
+
+Claim Agents make claims about the Subject Entity. These agents are registered with a Notary Agent (NA) who maintains a Claim Graph for the Subject Entities and issues transparency receipts for each claim event. Claim Agents issue SD-JWT tokens with the claims and the SE holds these SD-JWT tokens (verifiable claims) in Vesper Wallet (VW).
+
+## Notary Agent - Claim Graph and Transparency Log
+
+In the Vesper ecosystem, Claim Agents issue claims about the Subject Entity.  To ensure trust and accountability between Claim Agents, all interactions are governed by the Notary Agent, which internally operates two key services: the Claim Graph and the Transparency Log.
+
+### Claim Graph
+
+The Claim Graph is responsible for building and maintaining a graph of claims related to SEs. Each claim issued by a Claim Agent is added to this graph as a node, with relationships represented as edges between entities.
+
+- Snapshot Hashing: Every time a new claim is added or updated in the Claim Graph, the service creates a hash of the current snapshot of the graph. This hash serves as a unique cryptographic representation of the claim state at that moment in time.
+- Transparency: The hashed snapshot is then recorded in the Transparency Log, ensuring that the claims history is transparent, immutable, and auditable. By using cryptographic hashing, the Claim Graph remains secure, and any changes to the claims can be traced and verified.
+
+### Transparency Log
+
+The Transparency Log is part of the NA’s services and plays a crucial role in ensuring that all claims made by Claim Agents are trustworthy. It allows claims to be verifiable across different agents using cryptographic methods. Once a claim is hashed by the Claim Graph, it is added to the log, making it accessible for verification.
+
+- Receipt Issuance: After each claim is recorded, the NA issues a Receipt to the SE. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.
+- Interaction with Claim Agents: Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.
+
+### Claim Agents and Privacy
+
+An important feature of this system is its ability to protect the privacy of the SE. Claim Agents are not required to store any private data in the Claim Graph. Instead, they store only the hash of the data, which acts as a representation of the claim without exposing sensitive information.
+
+- Public vs. Private Data: If the SE has public data (e.g., a business name or logo), it can be added to the Claim Graph for greater visibility. This allows other Claim Agents to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.
+
+## Transport - Vesper PASSporT
+
+The SE can use claims stored in their Vesper Wallet to generate a Vesper PASSporT, which includes SD-JWTs and associated NA Receipts. This Vesper PASSporT is signed by a delegate certificate and attached to communications, such as in the case of STIR.
+
+Vesper PASSporT Flow:
+
+1. Using Vesper Wallet, SE creates a Vesper PASSporT containing claims and SD-JWTs.
+2. Vesper PASSporT is signed by a delegate certificate.
+3. The signed PASSporT is attached to a SIP identity header for verification by the destination party.
+
+## Verification and Proof of Authenticity
+
+The Authentication Service (AS) and the Verification Service (VS) are responsible for validating the Vesper Token and its claims.
+
+### AS Verification
+
+When the Vesper Token is created, the AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
+
+- Signature Verification: The AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.
+- Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.
+
+NOTE: The relationship between Vesper Wallet that creates Vesper Token and the AS in practice will be likely a trusted relationship and therefore AS may chose to trust the Vesper Token without further verification.
+
+### STI-VS Verification
+
+Once the Vesper Token reaches the VS, the token undergoes further checks to confirm its authenticity and integrity.
+
+- Payload Verification: The first step for VS is to verify the Vesper Token’s signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the VS will reject the communication.
+- SD-JWT Claim Verification: After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.
+- Public Key Verification: The VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.
+
+### Final Trust and Intelligence
+
+Once the VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.
+
+- Caller Trust: The successful validation of the Vesper Token and its claims allows the VS to trust that the caller is who they claim to be.
+- Call Intelligence: In addition to verifying identity, the VS can use the claims enclosed within the Vesper Token for further insights. These claims may include additional information about the caller, such as their vetted identity or other metadata (e.g., business name, consent), which can be used to enhance call routing and decision-making.
 
 # Terminology
 
@@ -92,14 +177,611 @@ Subject Entity (SE): An entity that is vetted by a Vetting Agent and holds the v
 
 Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in {{RFC8225}} created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains “vesper” claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent (NA).
 
+# Vesper Achitecture
+
+The Vesper architecture is designed around the concept of creating a secure Persona for every Subject Entity within the system. This Persona is characterized by its verifiability, privacy-preserving nature, tamper resistance, and auditability. It enables SEs to interact with other entities confidently, knowing that their claims and credentials are cryptographically secured and independently verifiable. The architecture ensures that sensitive information is protected while still allowing for seamless, trust-based exchanges between parties.
+
+The Vesper architecture employs the following key entities to manage and maintain these secure Personas:
+
+- Subject Entities (SEs): The organizations whose claims are being issued and verified within the system.
+- Issuing Agents (IAs): Trusted entities responsible for issuing verifiable credentials that establish the identity and claims of SEs.
+- Claim Agents (CAs): Entities that facilitate the exchange of claims between SEs and verify the validity of these claims.
+- Notary Agent (NA): A central authority that ensures the integrity, transparency, and auditability of interactions by maintaining a verifiable log of claims and transactions, ensuring tamper-proof records.
+
+## High Level Flow
+
+The Vesper framework follows a high-level flow that involves the provisioning of the Subject Entity and the subsequent management of claims through different Claim Agents. This section outlines the primary interactions between the SE, the Issuing Agent (IA), the Telephone Number Claim Agent (TNCA), and other services. The flow ends with the SE making a phone call, with the relevant claims encapsulated in a Vesper PASSporT for verification by the Verification Service.
+
+This overview provides the context for more detailed explanations in subsequent sections.
+
+High-Level Flow:
+
+1. IA Provisions SE:
+   - The SE is first vetted by the IA, which performs KYC checks.
+   - Once the SE is validated, the event is captured in the Notary Agent (NA) via the Claim Graph (CG) and Transparency Service (TS).
+   - The SE receives an SD-JWT containing the KYC claims and a Transparency Receipt, which are stored in the Vesper Wallet (VW).
+2. SE Contacts TNCA for Telephone Number Assignment:
+   - The SE interacts with the Telephone Number Claim Agent (TNCA) to obtain telephone numbers.
+   - The TNCA assigns one or more TNs and records the event in the NA, returning an SD-JWT with the assigned TNs and a corresponding Transparency Receipt.
+   - The SE stores this data in the VW.
+3. SE Contacts RCD Claim Agent for Rich Call Data:
+   - The SE contacts the Rich Call Data Claim Agent to enrich the telephone call data.
+   - The RCD Claim Agent verifies the SE’s claims and adds Rich Call Data to the CG.
+   - An SD-JWT containing the new claims and a Transparency Receipt is returned to the SE, which is stored in the VW.
+4. SE Makes a Phone Call:
+   - When the SE makes a phone call, the Vesper Wallet builds a Vesper PASSporT by encapsulating the relevant claims (e.g., KYC, TN assignment, and RCD) into a JWT.
+   - The Authentication Service (AS) includes the Vesper PASSporT in the SIP header of the call.
+5. Verification Service (VS) Verifies Vesper PASSporT:
+   - The VS receives the Vesper PASSporT and verifies the token and included SD-JWTs.
+   - Based on the validated claims, the VS makes decisions regarding the call’s authenticity and proceeds accordingly.
+
+~~~~~~~~~~~
++--------------+                    +----------+          +-----------+
+|   Subject    |                    | Issuing  |          | Notary    |
+|   Entity     |                    |  Agent   |          |  Agent    |
++--------------+                    +----------+          +-----------+
+      |                                  |                      |
+      |<-------- SE creates account -----|                      |
+      |                                  |                      |
+      |----- Provides KYC values ------->|                      |
+      |                                  |                      |
+      |<----- KYC Validation complete ---|                      |
+      |                                  |                      |
+      |                                  |                      |
+      |------- KYC notarization ------------------------------->|
+      |                                  |                      |
+      |<-- Receives KYC SD-JWT+Receipt --|                      |
+      |                                  |                      |
++--------------+                    +----------+          +-----------+
+| Vesper Wallet|                    | Claim    |          | Notary    |
+|    (VW)      |                    |  Agents  |          |  Agent    |
++--------------+                    +----------+          +-----------+
+      |                                  |                      |
+      |-- Requests TN from TNCA -------->|                      |
+      |                                  |                      |
+      |<--- Receives TN SD-JWT+Receipt --|                      |
+      |                                  |                      |
+      |-- Requests RCD Claims ---------->|                      |
+      |                                  |                      |
+      |<-- Receives RCD SD-JWT+Receipt --|                      |
+      |                                  |                      |
++--------------+                    +----------+          +-----------+
+|  Phone Call  |                    | Verifier |          |  Verifier |
+| (Vesper PASS)|                    | Service  |          |  Service  |
++--------------+                    +----------+          +-----------+
+      |                                  |                      |
+      |- Vesper PASSporT in SIP Header ->|                      |
+      |                                  |                      |
+      |                                  |<------ Verified ---- |
+~~~~~~~~~~~
+
+## Notary Agent Flows
+
+The Notary Agent (NA) is responsible for maintaining the integrity and transparency of Subject Entity (SE) claims through the Claim Graph (CG) and Transparency Log. This section provides an in-depth look at how the NA processes claims, records changes to the Claim Graph, and ensures verifiable, immutable records in the Transparency Log. It also explores how Issuing Agents (IAs) and Claim Agents (CAs) interact with the NA, and how trust is established across the Vesper framework.
+
+### Claim Graph
+
+The CG is a dynamic structure that represents the identity of an SE and tracks all claims related to that identity. Each SE is represented as a node (or IdentityRoot), and additional claims are linked to this root through edges. These claims can represent actions such as KYC validation, telephone number assignments, and rich call data.
+
+Note: While the Claim Graph is conceptually a graph, its internal representation can be stored as JSON objects in a document database or tables in SQL database for performance optimization.
+
+### Merkle Tree and Transparency Log
+
+The Transparency Log is implemented as a Merkle Tree to provide an immutable and cryptographically secure log of claim changes. Each change to the SE’s identity or associated claims results in a new “leaf” being added to the Merkle Tree. This tree structure enables the creation of Notary Receipts, which are verifiable cryptographic proofs that a particular claim was recorded at a specific time.
+
+### Issuance Agent (IA) Provisions New Subject Entity
+
+The process begins when the Issuing Agent provisions a new SE. The IA performs KYC checks on the SE and records the SE’s identity in the Claim Graph. The NA creates a new IdentityRoot node for the SE, representing their entity in the system.
+
+Claim Graph Structure (Entity Creation):
+~~~~~~~~~~~
+[entity_id]   --->    {
+                        node_type: IdentityRoot,
+                        entity_id: 12345,
+                        attributes: { ... }
+                      }
+
+Transparency Log:
+------------------
+Tree:        h(d0)
+             /
+           d0 (Initial creation event)
+~~~~~~~~~~~
+
+At this point, the SE is issued an SD-JWT containing their KYC claims and a Notary Receipt, which they store in their Vesper Wallet (VW).
+
+### Issuance Agent Adds KYC Claims
+
+After creating the SE, the IA adds the KYC claims to the Claim Graph, linking them to the IdentityRoot node. These KYC claims are hashed for privacy.
+
+Claim Graph Structure (Adding KYC Claims):
+~~~~~~~~~~~
+[entity_id] --- has_kyc ---> [hashed KYC data]
+
+Internal Representation:
+{
+  node_type: IdentityRoot,
+  entity_id: 12345,
+  attributes: { ... },
+  has_kyc: { hashed_data }
+}
+
+Transparency Log:
+------------------
+Tree:
+       h01
+      /   \
+    h0    h1
+
+Leaves:
+   d0    d1 (KYC claims added)
+~~~~~~~~~~~
+
+The KYC claims are stored in the Transparency Log, and the SE receives an updated SD-JWT with the KYC claims, along with a Notary Receipt that proves the claims have been recorded immutably. This SD-JWT is presented as proof of identity and KYC verification in subsequent interactions with Claim Agents. The x-vesper-kyc header is used to present this SD-JWT to future Claim Agents.
+
+### Claim Agent Adds Telephone Number (TN) Assignment
+
+The SE contacts the Telephone Number Claim Agent (TNCA) to request the assignment of one or more telephone numbers (TNs). The TNCA verifies the SE’s identity using the KYC SD-JWT in the x-vesper-kyc header to retrieve the SE’s entity_id. After validation, the TNCA assigns a telephone number to the SE and updates the Claim Graph.
+
+Claim Graph Structure (Adding TN Assignment):
+~~~~~~~~~~~
+[Telephone Number] <--- assigned_tn --- [entity_id] --- has_kyc ---> [hashed KYC data]
+
+Internal Representation:
+{
+  node_type: IdentityRoot,
+  entity_id: 12345,
+  attributes: { ... },
+  has_kyc: { hashed_data },
+  assigned_tn: { telephone_number }
+}
+
+Transparency Log:
+------------------
+Tree:
+       h02
+      /   \
+    h01   h2
+   /   \
+ h0    h1
+
+Leaves:
+   d0    d1    d2 (TN assignment added)
+~~~~~~~~~~~
+
+The TN assignment event is logged in the Transparency Log, and the SE receives an SD-JWT containing the telephone number claims and a new Notary Receipt. This SD-JWT is also stored in the SE’s Vesper Wallet for future use.
+
+### Claim Agent Adds Rich Call Data (RCD)
+
+Next, the SE contacts the Rich Call Data (RCD) Claim Agent to enrich the SE’s telephone call data. The RCD Claim Agent verifies the SE’s identity using the KYC SD-JWT and adds the RCD claims to the Claim Graph.
+
+Claim Graph Structure (Adding RCD Data):
+
+~~~~~~~~~~~
+[Telephone Number] <--- assigned_tn --- [entity_id] --- has_kyc ---> [hashed KYC data]
+                                            |
+                                         has_rcd
+                                            |
+                                          [RCD]
+
+Internal Representation:
+{
+  node_type: IdentityRoot,
+  entity_id: 12345,
+  attributes: { ... },
+  has_kyc: { hashed_data },
+  assigned_tn: { telephone_number },
+  has_rcd: { rich_call_data }
+}
+
+Transparency Log:
+------------------
+Tree:
+          hroot
+         /    \
+      h01     h23
+     /   \   /   \
+   h0    h1 h2   h3
+
+Leaves:
+   d0    d1   d2   d3 (RCD data added)
+~~~~~~~~~~~
+
+Once again, this event is recorded in the Transparency Log, and the SE receives an updated SD-JWT with the RCD claims and a Notary Receipt. The SE stores this SD-JWT in their Vesper Wallet for future verification.
+
+### Using SD-JWT for Trust
+
+Each step in the claim process relies on the SD-JWT issued by the Issuing Agent and passed via the x-vesper-kyc header. Claim Agents (CAs) can trust the SE based on the following process:
+
+1. The SE presents the KYC SD-JWT and receipt to the CA in the API request.
+2. The CA verifies the SD-JWT signature and checks the Transparency Receipt to confirm that the KYC event was logged and notarized by the NA.
+3. Once verified, the CA can trust the SE’s identity and entity_id, allowing further claims (such as TN assignment or RCD claims) to be added securely.
+
+## Notary Agent API
+
+The Notary Agent (NA) exposes a set of APIs that allow Issuing Agents (IAs), Claim Agents (CAs), and other authorized participants in the Vesper ecosystem to interact with the Claim Graph (CG) and the Transparency Log. These APIs are designed to provide secure, auditable interactions for creating entities, adding claims, and verifying Notary Receipts. This section outlines the key APIs available for interacting with the NA and provides an overview of their functionality.
+
+### Create Subject Entity (SE) API
+
+This API is used by an Issuing Agent (IA) to provision a new Subject Entity (SE) in the system. The SE is created in the Claim Graph, and a record is added to the Transparency Log.
+
+Endpoint:
+POST /na/entity/create
+
+Request:
+~~~~~~~~~~~
+{
+  "entity_data": {
+    "entity_name": "Company A",
+    "address": "123 Main St",
+    "contact_email": "info@companya.com",
+    "contact_phone": "+1234567890"
+  },
+  "issuing_agent": {
+    "id": "ia-001",
+    "public_key": "public-key-ia-001"
+  }
+}
+~~~~~~~~~~~
+
+Response:
+~~~~~~~~~~~
+{
+  "entity_id": "12345",
+  "notary_receipt": "NotaryReceipt1234",
+  "sd_jwt": "eyJhbGciOi..."
+}
+~~~~~~~~~~~
+
+- entity_data: Information about the SE being created.
+- issuing_agent: The IA creating the SE, including its ID and public key.
+- entity_id: The unique identifier assigned to the SE.
+- notary_receipt: A cryptographic proof that the entity creation was logged in the Transparency Log.
+- sd_jwt: The SD-JWT containing the KYC claims and the entity_id for the SE.
+
+### Add KYC Claims API
+
+Once an SE has been created, the IA uses this API to add KYC claims to the Claim Graph. This API also records the event in the Transparency Log and issues a new Notary Receipt.
+
+Endpoint:
+POST /na/entity/{entity_id}/kyc
+
+Request:
+~~~~~~~~~~~
+{
+  "entity_id": "12345",
+  "kyc_data": {
+    "full_name": "John Doe",
+    "document_id": "ID123456789",
+    "issue_date": "2023-01-15"
+  },
+  "issuing_agent": {
+    "id": "ia-001",
+    "signature": "signature-of-kyc-data"
+  }
+}
+~~~~~~~~~~~
+
+Response:
+~~~~~~~~~~~
+{
+  "notary_receipt": "NotaryReceipt5678",
+  "sd_jwt": "eyJhbGciOi..."
+}
+~~~~~~~~~~~
+
+- kyc_data: The KYC claims (hashed for privacy) being added to the SE’s Claim Graph.
+- issuing_agent: Information about the IA making the request, including a signature over the data.
+- notary_receipt: The Notary Receipt showing that the KYC claims were recorded.
+- sd_jwt: An SD-JWT containing the KYC claims and the entity_id.
+
+### Add Telephone Number (TN) Assignment API
+
+The Telephone Number Claim Agent (TNCA) uses this API to assign one or more telephone numbers to an SE. The event is logged in the Transparency Log, and an updated SD-JWT is issued to the SE.
+
+Endpoint:
+POST /na/entity/{entity_id}/tn/assign
+
+Request:
+~~~~~~~~~~~
+{
+  "entity_id": "12345",
+  "tn_data": {
+    "telephone_numbers": ["+1234567890", "+9876543210"]
+  },
+  "claim_agent": {
+    "id": "tnca-001",
+    "public_key": "public-key-ca-001",
+    "signature": "signature-of-tn-data"
+  }
+}
+~~~~~~~~~~~
+
+Response:
+~~~~~~~~~~~
+{
+  "notary_receipt": "NotaryReceipt7890",
+  "sd_jwt": "eyJhbGciOi..."
+}
+~~~~~~~~~~~
+
+- tn_data: The telephone numbers being assigned to the SE.
+- claim_agent: Information about the TNCA making the request.
+- notary_receipt: Proof that the TN assignment was recorded in the Transparency Log.
+- sd_jwt: An updated SD-JWT containing the assigned TN claims and the entity_id.
+
+### Add Rich Call Data (RCD) Claims API
+
+The Rich Call Data (RCD) Claim Agent uses this API to add RCD claims to the SE’s Claim Graph. The RCD data is linked to the SE’s telephone numbers, and the event is logged in the Transparency Log.
+
+Endpoint:
+POST /na/entity/{entity_id}/rcd
+
+Request:
+~~~~~~~~~~~
+{
+  "entity_id": "12345",
+  "rcd_data": {
+    "call_reason": "Business Inquiry",
+    "rcd": {
+      "caller_name": "Company A",
+      "caller_location": "123 Main St"
+    }
+  },
+  "claim_agent": {
+    "id": "rcdca-001",
+    "public_key": "public-key-ca-002",
+    "signature": "signature-of-rcd-data"
+  }
+}
+~~~~~~~~~~~
+
+Response:
+~~~~~~~~~~~
+{
+  "notary_receipt": "NotaryReceipt8901",
+  "sd_jwt": "eyJhbGciOi..."
+}
+~~~~~~~~~~~
+
+- rcd_data: The RCD claims being added to the SE’s identity.
+- claim_agent: Information about the RCD Claim Agent making the request.
+- notary_receipt: The updated Notary Receipt showing that the RCD claims were recorded.
+- sd_jwt: An updated SD-JWT containing the RCD claims and the entity_id.
+
+### Verify Notary Receipt API
+
+Any verifier can use this API to check the validity of a Notary Receipt. This allows third parties (such as Verification Services) to confirm that a claim was logged in the Transparency Log.
+
+Endpoint:
+POST /na/verify/receipt
+
+Request:
+~~~~~~~~~~~
+{
+  "receipt": "NotaryReceipt1234"
+}
+~~~~~~~~~~~
+
+Response:
+~~~~~~~~~~~
+{
+  "status": "verified",
+  "log_entry": {
+    "entity_id": "12345",
+    "timestamp": "2024-09-09T12:00:00Z",
+    "claims": {
+      "kyc": "verified",
+      "tn": "verified",
+      "rcd": "verified"
+    }
+  }
+}
+~~~~~~~~~~~
+
+- receipt: The Notary Receipt being verified.
+- status: Whether the receipt is valid and recorded in the Transparency Log.
+- log_entry: Details about the entity_id, timestamp, and verified claims.
+
+### Retrieve Entity History API
+
+This API allows authorized participants to retrieve the entire history of an SE from the Transparency Log, including all claims added over time.
+
+Endpoint:
+GET /na/entity/{entity_id}/history
+
+Response:
+~~~~~~~~~~~
+{
+  "entity_id": "12345",
+  "history": [
+    {
+      "timestamp": "2024-09-09T12:00:00Z",
+      "event": "Entity Created",
+      "notary_receipt": "NotaryReceipt1234"
+    },
+    {
+      "timestamp": "2024-09-10T10:00:00Z",
+      "event": "KYC Claims Added",
+      "notary_receipt": "NotaryReceipt5678"
+    },
+    {
+      "timestamp": "2024-09-11T11:00:00Z",
+      "event": "TN Assignment Added",
+      "notary_receipt": "NotaryReceipt7890"
+    }
+  ]
+}
+~~~~~~~~~~~
+
+- entity_id: The ID of the SE whose history is being retrieved.
+- history: A list of all events associated with the SE, including timestamps and Notary Receipts.
+
+## Vesper Wallet Flows
+
+The Vesper Wallet manages claims, cryptographic keys, and the construction of Vesper PASSporTs. It securely stores all claims (in the form of SD-JWTs) along with the corresponding Notary Receipts, which prove that the claims have been notarized by the Notary Agent (NA). Additionally, the Vesper Wallet handles the generation and management of key pairs used for signing PASSporTs and requesting delegate certificates.
+
+### Vesper Wallet Key Pair Generation
+
+The Vesper Wallet creates and manages a public/private key pair. This key pair is used for two purposes:
+
+- Requesting Delegate Certificate: The public key is sent to a Certificate Authority (CA) to obtain a Delegate Certificate, which authorizes the SE to use specific telephone numbers (TNs).
+- Signing Vesper PASSporTs: The private key is used to sign Vesper PASSporTs, which are cryptographically bound to the SE’s claims.
+
+Key Pair Generation Flow:
+~~~~~~~~~~~
++-------------------+                 +-----------------+
+|  Vesper Wallet    |                 | Certificate     |
+|   (VW)            |                 |    Authority    |
++-------------------+                 +-----------------+
+      |                                        |
+      |<-- Create public/private key pair      |
+      |                                        |
+      |---> Request Delegate Certificate  ---->|
+      |        (Includes public key)           |
+      |                                        |
+      |<---- Delegate Certificate issued ------|
+      |                                        |
+~~~~~~~~~~~
+
+### Storage of SD-JWTs and Notary Receipts
+
+The Vesper Wallet stores SD-JWTs for each claim type, along with the corresponding Notary Receipts. These SD-JWTs represent claims such as KYC, telephone number assignment, and rich call data (RCD). The Notary Receipts are proof that each claim has been logged in the Transparency Log by the NA.
+
+SD-JWT Storage Structure:
+~~~~~~~~~~~
++------------------+       +-----------------+
+|   Vesper Wallet  |       |  Claims Storage |
++------------------+       +-----------------+
+      |                             |
+      |--> Stores SD-JWTs --------->|
+      |      + Notary Receipts      |
+      |                             |
+      +-----------------------------+
+~~~~~~~~~~~
+
+Each claim stored in the Vesper Wallet contains:
+
+- SD-JWT: The selective disclosure JWT containing the claim.
+- Notary Receipt: Proof from the Transparency Log that the claim was notarized.
+
+### Building the Vesper Token
+
+When the SE needs to present claims (e.g., during a phone call), the Vesper Wallet constructs a Vesper Token, which serves as a presentation of the claims to the Verification Service (VS). The Vesper Token contains:
+
+1. Claim Type: Identifies the type of claim (e.g., KYC, TN, RCD).
+2. SD-JWT: The SD-JWT for the claim, containing selectively disclosable claims.
+3. Notary Receipt: The Notary Receipt that verifies the claim was recorded in the Transparency Log.
+
+Vesper Token Structure:
+~~~~~~~~~~~
+{
+  ...
+  "claims": [
+    {
+      "type": "vca",
+      "sd_jwt": "eyJhbGciOi...",
+      "receipt": "NotaryReceipt1234"
+    },
+    {
+      "type": "tnca",
+      "sd_jwt": "eyJhbGci...",
+      "receipt": "NotaryReceipt5678"
+    },
+    {
+      "type": "rcdca",
+      "sd_jwt: "eyJhbGci...",
+      "receipt": "NotaryReceipt8901"
+    }
+  ]
+  ...
+}
+~~~~~~~~~~~
+
+Once the Vesper Token is built, it is included in a Vesper PASSporT. The Vesper PASSporT is a specialized form of PASSporT that encapsulates multiple Vesper Tokens and is signed by the SE’s private key (the same private key associated with the Delegate Certificate).
+
+### Signing the Vesper PASSporT
+
+The Vesper PASSporT is signed using the SE’s private key, which is associated with the Delegate Certificate. This signature binds the claims and their associated receipts to the SE and ensures that the Vesper PASSporT can be trusted by the Verification Service (VS).
+
+Signing the Vesper PASSporT:
+~~~~~~~~~~~
++-------------------+        +--------------------+
+|  Vesper Wallet    |        | Delegate Certificate|
++-------------------+        +--------------------+
+      |                                |
+      |<-- Uses private key to sign    |
+      |   Vesper PASSporT              |
+      |                                |
+~~~~~~~~~~~
+
+The signed Vesper PASSporT is then sent to the Authentication Service (AS), which includes it in the SIP header during a call.
+
+### Passing the Vesper PASSporT to the Authentication Service (AS)
+
+Once the Vesper PASSporT is signed, it is passed to the Authentication Service (AS). The AS inserts the Vesper PASSporT into the SIP header, which is transmitted as part of the phone call. This allows the Verification Service (VS) to receive the Vesper PASSporT for validation.
+
+Sending Vesper PASSporT:
+~~~~~~~~~~~
++-------------------+       +----------------------+
+|  Vesper Wallet    |       | Authentication       |
+|   (VW)            |       |     Service (AS)     |
++-------------------+       +----------------------+
+      |                                 |
+      |-- Pass Vesper PASSporT -------->|
+      |      to AS                      |
+      |                                 |
+~~~~~~~~~~~
+
+### Verification of Vesper PASSporT by VS
+
+When the Verification Service (VS) receives the Vesper PASSporT, it performs several verification steps to ensure the validity of the claims:
+
+1. Signature Verification: The VS checks the signature on the Vesper PASSporT using the public key from the Delegate Certificate to confirm that the SE legitimately signed the token.
+2. SD-JWT Verification: The VS goes through the SD-JWTs inside the Vesper PASSporT and verifies their individual signatures. Each SD-JWT contains a JWK (JSON Web Key) representing the public key used to sign the claim.
+
+JWK Claim Example:
+~~~~~~~~~~~
+{
+  "alg": "RS256",
+  "typ": "JWT",
+  "jwk": {
+    "kty": "RSA",
+    "kid": "key-id",
+    "n": "...",
+    "e": "..."
+  }
+}
+~~~~~~~~~~~
+
+3. Receipt Validation: For each SD-JWT, presence of Notary Receipt should be sufficient to accept the claims.  However, VS may optionally choose to verify the Notary Receipts against the Transparency Log to ensure that the claims were notarized by the NA.  This step would be done out of the call path in different process or service.  If the receipt is not valid, the VS will put the Vesper PASSporT claims on the black list for the future calls.
+
+Verification Process:
+~~~~~~~~~~~
++-------------------+        +---------------------+
+| Verification      |        |  Transparency Log   |
+|  Service (VS)     |        |                     |
++-------------------+        +---------------------+
+      |                                 |
+      |----> Verifies Vesper PASSporT   |
+      |     signature (Delegate Cert)   |
+      |                                 |
+      |--> Verifies SD-JWTs signatures  |
+      |                                 |
+      |--- Validates Notary Receipts -->|
+      |                                 |
+~~~~~~~~~~~
+
+Once the Vesper PASSporT and its claims are verified, the VS can make decisions based on the presented claims, such as authenticating the call and allowing it to proceed.
+
 # The “vesper” PASSporT
 
-A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework: 
+A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework:
 
 * the Claim Agent that is known to be a valid participant in the vesper framework and has a type association with the claims being made
 * the transparency receipt created by the Notary Agent representing the time and claim assertion event recorded
-  
-The Vesper PASSporT is a PASSporT as defined in {{RFC8225}} which is a JSON Web Token {{RFC7519}} and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It MUST include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT. 
+
+The Vesper PASSporT is a PASSporT as defined in {{RFC8225}} which is a JSON Web Token {{RFC7519}} and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It MUST include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT.
 A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying party verification service might understand, but the intention of the Vesper framework is that a Vesper PASSporT contain one or more “vesper” claim objects, defined in the “Vesper Claims” section.
 
 ## Compact Form and Other Representations of Vesper Information
@@ -152,7 +834,7 @@ In order to represent the vetted claim information about a VE. The SD-JWT MUST i
 iss: Issuer, the Claim Agent.
 sub: Subject, the subject entity represented by a unique entity-id
 iat: Issuance timestamp.
-exp: Expiry timestamp. 
+exp: Expiry timestamp.
 claim-data-hash: Hash of the claim data.
 transparency-receipt: Transparency receipt issued by the transparency service.  (SVCT)
 (optional) cnf: Public key of the Subject Entity, only if key binding is required, defined in {{RFC7800}}
@@ -199,7 +881,7 @@ The Vetting Claim object is defined to include the following key values in the c
 
 ### Right to Use Claim Agent - “rtuca”
 
-The Right to Use Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.  
+The Right to Use Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.
 
 Note: the telephone number service provider also should provide the mechanism to provide a delegate certificate with the telephone number resource as part of the TNAuthList.
 
@@ -216,7 +898,7 @@ The Vetting Claim object is defined to include the following key values in the c
 
 ### Rich Call Data Claim Agent - “rcdca”
 
-The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}. 
+The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}.
 
 The Rich Call Data Claim object is defined to include the following key values in the claim object:
 
@@ -234,7 +916,7 @@ The Rich Call Data Claim object is defined to include the following key values i
 
 ### Consent Claim Agent - “cca”
 
-The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number. 
+The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number.
 
 The Consent Claim object is defined to include the following key values in the claim object:
 
@@ -286,7 +968,7 @@ The notary process generally involves the following steps:
 ## Setup and Registration of SE with NA by the VCA
 
 2. Registration of the SE with a NA by a VCA. Note: the VCA as described above is the only Claim Agent type that can register a SE with a NA. The SE creates an authenticated account relationship with the VCA, and a unique entity-id is created.
-3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures. 
+3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures.
 
 RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
 
@@ -296,12 +978,12 @@ RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-
 ## VCA registers claim event to NA
 
 6. The VCA performs a hash over the claim object key values.
-7. The NA registers the claim event, including hash to an append-only transparency log. 
+7. The NA registers the claim event, including hash to an append-only transparency log.
 8. The append-only log, upon verification of the claim event and hash and queuing it into the log, issues a Signed Vesper Claim Timestamp (SVCT).
 
 ## VCA receives notary receipt (SCVT) and delivers claim + receipt to SE to deposit in their wallet
 
-9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information. 
+9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.
 10. The VCA issues an SD-JWT containing the vetting claim information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the data.
 
 ## Additional Claim Agent Procedures
@@ -329,27 +1011,17 @@ When creating a multiple Vesper Claim presentation, the SE assembles a package t
 
 1. Multiple Base SD-JWTs: The core JWTs from each Vesper token (e.g., KYC/KYB and RTU), representing the vetted claims.
 2. Disclosures: The selectively disclosable claims from each token that are relevant to the verifier.
-3. Key Binding JWTs (KB-JWTs): For each SD-JWT, there is an associated KB-JWT to bind the SD-JWT to a specific key pair, ensuring that the tokens are bound to the Holder's (SE’s) key pair.
 
 The presentation package is composed as follows:
 
 ~~~~~~~~~~~~~
-<SD-JWT-1>~<Disclosure 1-1>~<Disclosure 1-2>~...~<KB-JWT-1>~<SD-JWT-2>~<Disclosure 2-1>~<Disclosure 2-2>~...~<KB-JWT-2>
+<SD-JWT-1>~<Disclosure 1-1>~<Disclosure 1-2>~...<SD-JWT-2>~<Disclosure 2-1>~<Disclosure 2-2>~
 ~~~~~~~~~~~~~
 
 In this format:
 
 - <SD-JWT-1> and <SD-JWT-2> represent the KYC/KYB and RTU Vesper tokens, respectively.
 - <Disclosure 1-1>, <Disclosure 1-2>, etc., represent selectively disclosed claims from each token.
-- <KB-JWT-1> and <KB-JWT-2> represent Key Binding JWTs, if Key Binding is used for either or both SD-JWTs.
-
-## Process Flow for Multi-Vesper Presentation
-
-1. TNSP as Issuer: The VE first proves its identity to the TNSP using the KYC/KYB Vesper token.
-2. RTU Vesper Token Issuance: The TNSP, now trusting the VE, issues an RTU Vesper token that includes the TN lease and RCD.
-3. Presentation Assembly: The VE assembles a presentation package with both the KYC/KYB and RTU Vesper tokens, their disclosures, and optionally the KB-JWTs for each SD-JWT.
-4. Verification by STI-AS: The STI-AS, acting as the verifier, validates each SD-JWT, checks the disclosures, and verifies the KB-JWTs to ensure the tokens are bound to the correct key pair.
-5. Call Signing: Based on the verified tokens, the STI-AS completes the call signing, ensuring that the call is associated with a legitimate TN and the correct RCD.
 
 # Preventing Replay Attacks
 
@@ -612,332 +1284,9 @@ U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
 
 Presentation
 
-The following non-normative example shows a Vesper PASSporT as it would be sent from the Holder (SE) to the Verifier. 
+The following non-normative example shows a Vesper PASSporT as it would be sent from the Holder (SE) to the Verifier.
 
 Add Example
-
-# API Endpoints
-
-The vetting service provides the following APIs:
-
-## Request Vetting Token API
-
-~~~~~~~~~~~~~
-Endpoint: /api/request-vetting-token
-Method: POST
-Description: Requests a vetting token (SD-JWT) from the Vetting Authority (VA).
-Headers:
-  Authorization: Bearer (VE's m2m bearer token)
-~~~~~~~~~~~~~
-
-Request Body:
-
-~~~~~~~~~~~~
-{
-  "entity_id": "unique-entity-id",
-  "key_binding": true,
-  "public_key_jwk": {
-    "kty": "RSA",
-    "e": "AQAB",
-    "n": "lsO0Qe0Qu7FwZQ22T5vlqXN...",
-    "alg": "RS256"
-  }
-}
-~~~~~~~~~~~~
-
-Response:
-
-~~~~~~~~~~~~
-{
-  "status": "success",
-  "vetting_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "transparency_receipt": {
-    "log_entry_id": "transparency-log-001",
-    "receipt": {
-      "hash": "abc123...",
-      "timestamp": "2024-06-11T12:35:00Z",
-      "signature": "transparency-service-signature"
-    }
-  }
-}
-~~~~~~~~~~~~
-
-Note: entity_id is generated by VA. The mechanism how persona is vetted is not subject of this document. This API can only be called after the vetting was complete and entity_id was issued.
-
-## Public API for Verifiers
-
-~~~~~~~~~~~~~
-Endpoint: /api/verify-vetted-info
-Method: POST
-Description: Verifies the validity of transparency receipt.
-Request Body:
-~~~~~~~~~~~~~
-
-~~~~~~~~~~~~
-{
-  "transparency_receipt": {
-    "log_entry_id": "transparency-log-001",
-    "receipt": {
-      "hash": "abc123...",
-      "timestamp": "2024-06-11T12:35:00Z",
-      "signature": "transparency-service-signature"
-    }
-  }
-}
-~~~~~~~~~~~~
-
-Response:
-
-~~~~~~~~~~~~
-{
-  "status": "success",
-  "message": "Vetted information verified successfully."
-}
-~~~~~~~~~~~~
-
-# Vesper Transparency Log Usage
-
-1.	VCM Submission:
-- When a VA issues a proof of vetting for VE, it submits the Vetting Confirmation Manifest (VCM) to a Vesper Certificate Transparency (VESPER CT) log server.
-- The log server records the VCM in its append-only log.
-2.	Generating the SVT:
-- The log server generates a Signed Vetting Timestamp (SVT) for the submitted VCM.
-- The SVT includes the following fields:
-- Version: Indicates the version of the SVT.
-- Log ID: A unique identifier for the VESPER CT log server, typically the hash of the log server’s public key.
-- Timestamp: The time at which the certificate was submitted to the log, measured in milliseconds since the Unix epoch.
-- Signature: A digital signature created by the log server using its private key. This signature covers the log ID, timestamp, and VCM data.
-3.	SVT Delivery:
-- The VA receives the SVT from the log server and delivers it as part of the Vesper token.
-4.	VV Verification:
-•	When VV receives a Vesper token and embedded SVT, it performs the following steps to verify the SVT:
-•	Extract the Log ID: The VV extracts the log ID from the SVT.
-•	Retrieve the Public Key: Using the log ID, the VV retrieves the corresponding public key from its list of trusted Vesper logs.
-•	Verify the Signature: The VV verifies the SVT’s signature using the log server’s public key. This ensures that the SVT was indeed issued by the log server and has not been tampered with.
-5.	Merkle Tree Inclusion Proof (Optional but recommended):
-•	To further ensure that the VCM is in the log, the VV can request a Merkle Tree inclusion proof from the log server. This proof demonstrates that the VCM is part of the log’s Merkle Tree without revealing the entire log.
-•	The proof consists of:
-•	Leaf Node: The hash of the VCM.
-•	Path: A sequence of hashes that demonstrate the VCM's inclusion in the Merkle Tree.
-6.	Validation:
-•	The VV validates the Merkle Tree proof by reconstructing the Merkle Tree hash from the leaf node and the path provided by the log server.
-•	By comparing the reconstructed hash to the known root hash of the log’s Merkle Tree (obtained from periodic signed tree heads), the VV can confirm the VCM's inclusion.
-
-# Vesper Transparency Service API
-
-## Add VCM to Log
-
-### Endpoint: /vesper/v1/add-vcm
-- Method: POST
-- Description: Adds a VCM (Vetting Credential Manifest) to the log.
-- Inputs:
-  - vcm: A base64-encoded Vetting Credential Manifest.
-- Outputs:
-  - svt_version: The version of the Signed Vetting Timestamp structure, in decimal.
-  - id: The log ID, base64 encoded.
-  - timestamp: The SVT timestamp, in decimal.
-  - extensions: An opaque type for future expansion. Logs should set this to the empty string. Clients should decode the base64-encoded data and include it in the SVT.
-  - signature: The SVT signature, base64 encoded.
-
-### Example Request
-
-```json
-{
-  "vcm": "base64-encoded-vcm"
-}
-```
-
-### Example Response
-
-```json
-{
-  "svt_version": 1,
-  "id": "base64-encoded-log-id",
-  "timestamp": 1683000000,
-  "extensions": "",
-  "signature": "base64-encoded-signature"
-}
-```
-
-## Retrieve Latest Signed Tree Head
-
-### Endpoint: /vesper/v1/get-sth
-- Method: GET
-- Description: Retrieves the latest signed tree head.
-- Inputs: None
-- Outputs:
-  - tree_size: The size of the tree, in entries, in decimal.
-  - timestamp: The timestamp, in decimal.
-  - sha256_root_hash: The Merkle Tree Hash of the tree, in base64.
-  - tree_head_signature: A TreeHeadSignature for the above data.
-
-### Example Response
-
-```json
-{
-  "tree_size": 100,
-  "timestamp": 1683000000,
-  "sha256_root_hash": "base64-encoded-root-hash",
-  "tree_head_signature": "base64-encoded-signature"
-}
-```
-
-## Retrieve Merkle Consistency Proof between Two Signed Tree Heads
-
-### Endpoint: /vesper/v1/get-sth-consistency
-- Method: GET
-- Description: Retrieves a Merkle consistency proof between two signed tree heads.
-- Inputs:
-  - first: The tree_size of the first tree, in decimal.
-  - second: The tree_size of the second tree, in decimal.
-- Outputs:
-  - consistency: An array of Merkle Tree nodes, base64 encoded.
-
-### Example Request
-
-```
-/vesper/v1/get-sth-consistency?first=50&second=100
-```
-
-### Example Response
-
-```json
-{
-  "consistency": [
-    "base64-encoded-node1",
-    "base64-encoded-node2"
-  ]
-}
-```
-
-## Retrieve Merkle Audit Proof from Log by Leaf Hash
-
-### Endpoint: /vesper/v1/get-proof-by-hash
-- Method: GET
-- Description: Retrieves a Merkle audit proof from the log by leaf hash.
-- Inputs:
-  - hash: A base64-encoded leaf hash.
-  - tree_size: The tree_size of the tree on which to base the proof, in decimal.
-- Outputs:
-  - leaf_index: The 0-based index of the end entity corresponding to the `hash` parameter.
-  - audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.
-
-### Example Request
-
-```
-/vesper/v1/get-proof-by-hash?hash=base64-encoded-hash&tree_size=100
-```
-
-### Example Response
-
-```json
-{
-  "leaf_index": 10,
-  "audit_path": [
-    "base64-encoded-node1",
-    "base64-encoded-node2"
-  ]
-}
-```
-
-## Retrieve Entries from Log
-
-### Endpoint: /vesper/v1/get-entries
-- Method: GET
-- Description: Retrieves entries from the log.
-- Inputs:
-  - start: 0-based index of first entry to retrieve, in decimal.
-  - end: 0-based index of last entry to retrieve, in decimal.
-- Outputs:
-  - entries: An array of objects, each consisting of:
-    - leaf_input: The base64-encoded MerkleTreeLeaf structure.
-    - extra_data: The base64-encoded unsigned data pertaining to the log entry.
-
-### Example Request
-
-```
-/vesper/v1/get-entries?start=0&end=10
-```
-
-### Example Response
-
-```json
-{
-  "entries": [
-    {
-      "leaf_input": "base64-encoded-leaf1",
-      "extra_data": "base64-encoded-extra-data1"
-    },
-    {
-      "leaf_input": "base64-encoded-leaf2",
-      "extra_data": "base64-encoded-extra-data2"
-    }
-  ]
-}
-```
-
-## Retrieve Accepted Root Certificates
-
-### Endpoint: /vesper/v1/get-roots
-- Method: GET
-- Description: Retrieves the list of accepted root certificates.
-- Inputs: None
-- Outputs:
-  - certificates: An array of base64-encoded root certificates that are acceptable to the log.
-
-### Example Response
-
-```json
-{
-  "certificates": [
-    "base64-encoded-root-cert1",
-    "base64-encoded-root-cert2"
-  ]
-}
-```
-
-## Retrieve Entry + Merkle Audit Proof from Log
-
-### Endpoint: /vesper/v1/get-entry-and-proof
-- Method: GET
-- Description: Retrieves an entry and its Merkle audit proof from the log.
-- Inputs:
-  - leaf_index: The index of the desired entry.
-  - tree_size: The tree_size of the tree for which the proof is desired.
-- Outputs:
-  - leaf_input: The base64-encoded MerkleTreeLeaf structure.
-  - extra_data: The base64-encoded unsigned data.
-  - audit_path: An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen VCM.
-
-### Example Request
-
-```
-/vesper/v1/get-entry-and-proof?leaf_index=10&tree_size=100
-```
-
-### Example Response
-
-```json
-{
-  "leaf_input": "base64-encoded-leaf",
-  "extra_data": "base64-encoded-extra-data",
-  "audit_path": [
-    "base64-encoded-node1",
-    "base64-encoded-node2"
-  ]
-}
-```
-
-# Requirement for SHA-256 in Append-only Logs
-
-To ensure compatibility and prevent inconsistencies across different implementations of Transparency Services, all Append-only Logs used in the VESPER architecture MUST employ SHA-256 as the cryptographic hash function. Specifically:
-
-- Each entry in the Append-only Log MUST be hashed using the SHA-256 algorithm.
-- The log structure, whether implemented as a Merkle Tree or any other verifiable data structure, MUST utilize SHA-256 for all cryptographic operations.
-- This uniformity in the choice of the hash function guarantees that all participants and auditors can independently verify the integrity and consistency of the logs without compatibility issues.
-- Transparency Services MUST provide cryptographic proofs (inclusion proofs and consistency proofs) based on SHA-256, as detailed in [I-D.draft-ietf-cose-merkle-tree-proofs].
-
-By mandating the use of SHA-256 for all logs, VESPER ensures a standardized and secure approach to maintaining and verifying the integrity of supply chain data.
 
 # Security Considerations
 
