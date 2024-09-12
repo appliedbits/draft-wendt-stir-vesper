@@ -42,9 +42,9 @@ normative:
   RFC8224:
   RFC8225:
   RFC8226:
-  RFC9060:
   I-D.ietf-oauth-selective-disclosure-jwt:
   I-D.ietf-sipcore-callinfo-spam:
+  I-D.ietf-stir-passport-rcd:
 
 informative:
 
@@ -216,43 +216,43 @@ High-Level Flow:
    - Based on the validated claims, the VS makes decisions regarding the call’s authenticity and proceeds accordingly.
 
 ~~~~~~~~~~~
-+--------------+                    +----------+          +-----------+
-|   Subject    |                    | Issuing  |          | Notary    |
-|   Entity     |                    |  Agent   |          |  Agent    |
-+--------------+                    +----------+          +-----------+
-      |                                  |                      |
-      |<-------- SE creates account -----|                      |
-      |                                  |                      |
-      |----- Provides KYC values ------->|                      |
-      |                                  |                      |
-      |<----- KYC Validation complete ---|                      |
-      |                                  |                      |
-      |                                  |                      |
-      |------- KYC notarization ------------------------------->|
-      |                                  |                      |
-      |<-- Receives KYC SD-JWT+Receipt --|                      |
-      |                                  |                      |
-+--------------+                    +----------+          +-----------+
-| Vesper Wallet|                    | Claim    |          | Notary    |
-|    (VW)      |                    |  Agents  |          |  Agent    |
-+--------------+                    +----------+          +-----------+
-      |                                  |                      |
-      |-- Requests TN from TNCA -------->|                      |
-      |                                  |                      |
-      |<--- Receives TN SD-JWT+Receipt --|                      |
-      |                                  |                      |
-      |-- Requests RCD Claims ---------->|                      |
-      |                                  |                      |
-      |<-- Receives RCD SD-JWT+Receipt --|                      |
-      |                                  |                      |
-+--------------+                    +----------+          +-----------+
-|  Phone Call  |                    | Verifier |          |  Verifier |
-| (Vesper PASS)|                    | Service  |          |  Service  |
-+--------------+                    +----------+          +-----------+
-      |                                  |                      |
-      |- Vesper PASSporT in SIP Header ->|                      |
-      |                                  |                      |
-      |                                  |<------ Verified ---- |
++--------------+                    +----------+       +-----------+
+|   Subject    |                    | Issuing  |       | Notary    |
+|   Entity     |                    |  Agent   |       |  Agent    |
++--------------+                    +----------+       +-----------+
+      |                                  |                   |
+      |<-------- SE creates account -----|                   |
+      |                                  |                   |
+      |----- Provides KYC values ------->|                   |
+      |                                  |                   |
+      |<----- KYC Validation complete ---|                   |
+      |                                  |                   |
+      |                                  |                   |
+      |------- KYC notarization ---------------------------->|
+      |                                  |                   |
+      |<-- Receives KYC SD-JWT+Receipt --|                   |
+      |                                  |                   |
++--------------+                    +----------+       +-----------+
+| Vesper Wallet|                    | Claim    |       | Notary    |
+|    (VW)      |                    |  Agents  |       |  Agent    |
++--------------+                    +----------+       +-----------+
+      |                                  |                   |
+      |-- Requests TN from TNCA -------->|                   |
+      |                                  |                   |
+      |<--- Receives TN SD-JWT+Receipt --|                   |
+      |                                  |                   |
+      |-- Requests RCD Claims ---------->|                   |
+      |                                  |                   |
+      |<-- Receives RCD SD-JWT+Receipt --|                   |
+      |                                  |                   |
++--------------+                    +----------+       +-----------+
+|  Phone Call  |                    | Verifier |       |  Verifier |
+| (Vesper PASS)|                    | Service  |       |  Service  |
++--------------+                    +----------+       +-----------+
+      |                                  |                   |
+      |- Vesper PASSporT in SIP Header ->|                   |
+      |                                  |                   |
+      |                                  |<---- Verified --- |
 ~~~~~~~~~~~
 
 ## Notary Agent Flows
@@ -274,7 +274,8 @@ The Transparency Log is implemented as a Merkle Tree to provide an immutable and
 The process begins when the Issuing Agent provisions a new SE. The IA performs KYC checks on the SE and records the SE’s identity in the Claim Graph. The NA creates a new IdentityRoot node for the SE, representing their entity in the system.
 
 Claim Graph Structure (Entity Creation):
-~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~
 [entity_id]   --->    {
                         node_type: IdentityRoot,
                         entity_id: 12345,
@@ -282,11 +283,11 @@ Claim Graph Structure (Entity Creation):
                       }
 
 Transparency Log:
-------------------
+__________________
 Tree:        h(d0)
              /
            d0 (Initial creation event)
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 At this point, the SE is issued an SD-JWT containing their KYC claims and a Notary Receipt, which they store in their Vesper Wallet (VW).
 
@@ -295,7 +296,8 @@ At this point, the SE is issued an SD-JWT containing their KYC claims and a Nota
 After creating the SE, the IA adds the KYC claims to the Claim Graph, linking them to the IdentityRoot node. These KYC claims are hashed for privacy.
 
 Claim Graph Structure (Adding KYC Claims):
-~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~
 [entity_id] --- has_kyc ---> [hashed KYC data]
 
 Internal Representation:
@@ -307,7 +309,7 @@ Internal Representation:
 }
 
 Transparency Log:
-------------------
+__________________
 Tree:
        h01
       /   \
@@ -315,7 +317,7 @@ Tree:
 
 Leaves:
    d0    d1 (KYC claims added)
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 The KYC claims are stored in the Transparency Log, and the SE receives an updated SD-JWT with the KYC claims, along with a Notary Receipt that proves the claims have been recorded immutably. This SD-JWT is presented as proof of identity and KYC verification in subsequent interactions with Claim Agents. The x-vesper-kyc header is used to present this SD-JWT to future Claim Agents.
 
@@ -324,8 +326,9 @@ The KYC claims are stored in the Transparency Log, and the SE receives an update
 The SE contacts the Telephone Number Claim Agent (TNCA) to request the assignment of one or more telephone numbers (TNs). The TNCA verifies the SE’s identity using the KYC SD-JWT in the x-vesper-kyc header to retrieve the SE’s entity_id. After validation, the TNCA assigns a telephone number to the SE and updates the Claim Graph.
 
 Claim Graph Structure (Adding TN Assignment):
+
 ~~~~~~~~~~~
-[Telephone Number] <--- assigned_tn --- [entity_id] --- has_kyc ---> [hashed KYC data]
+[TN] <- assigned_tn -- [entity_id] -- has_kyc -> [hashed KYC data]
 
 Internal Representation:
 {
@@ -337,7 +340,7 @@ Internal Representation:
 }
 
 Transparency Log:
-------------------
+_________________
 Tree:
        h02
       /   \
@@ -358,11 +361,11 @@ Next, the SE contacts the Rich Call Data (RCD) Claim Agent to enrich the SE’s 
 Claim Graph Structure (Adding RCD Data):
 
 ~~~~~~~~~~~
-[Telephone Number] <--- assigned_tn --- [entity_id] --- has_kyc ---> [hashed KYC data]
-                                            |
-                                         has_rcd
-                                            |
-                                          [RCD]
+[TN] <- assigned_tn -- [entity_id] -- has_kyc -> [hashed KYC data]
+                            |
+                         has_rcd
+                            |
+                          [RCD]
 
 Internal Representation:
 {
@@ -375,7 +378,7 @@ Internal Representation:
 }
 
 Transparency Log:
-------------------
+_________________
 Tree:
           hroot
          /    \
@@ -409,6 +412,7 @@ Endpoint:
 POST /na/entity/create
 
 Request:
+
 ~~~~~~~~~~~
 {
   "entity_data": {
@@ -425,6 +429,7 @@ Request:
 ~~~~~~~~~~~
 
 Response:
+
 ~~~~~~~~~~~
 {
   "entity_id": "12345",
@@ -447,6 +452,7 @@ Endpoint:
 POST /na/entity/{entity_id}/kyc
 
 Request:
+
 ~~~~~~~~~~~
 {
   "entity_id": "12345",
@@ -463,6 +469,7 @@ Request:
 ~~~~~~~~~~~
 
 Response:
+
 ~~~~~~~~~~~
 {
   "notary_receipt": "NotaryReceipt5678",
@@ -483,7 +490,8 @@ Endpoint:
 POST /na/entity/{entity_id}/tn/assign
 
 Request:
-~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~
 {
   "entity_id": "12345",
   "tn_data": {
@@ -495,9 +503,10 @@ Request:
     "signature": "signature-of-tn-data"
   }
 }
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Response:
+
 ~~~~~~~~~~~
 {
   "notary_receipt": "NotaryReceipt7890",
@@ -518,6 +527,7 @@ Endpoint:
 POST /na/entity/{entity_id}/rcd
 
 Request:
+
 ~~~~~~~~~~~
 {
   "entity_id": "12345",
@@ -537,6 +547,7 @@ Request:
 ~~~~~~~~~~~
 
 Response:
+
 ~~~~~~~~~~~
 {
   "notary_receipt": "NotaryReceipt8901",
@@ -557,6 +568,7 @@ Endpoint:
 POST /na/verify/receipt
 
 Request:
+
 ~~~~~~~~~~~
 {
   "receipt": "NotaryReceipt1234"
@@ -564,6 +576,7 @@ Request:
 ~~~~~~~~~~~
 
 Response:
+
 ~~~~~~~~~~~
 {
   "status": "verified",
@@ -591,6 +604,7 @@ Endpoint:
 GET /na/entity/{entity_id}/history
 
 Response:
+
 ~~~~~~~~~~~
 {
   "entity_id": "12345",
@@ -629,6 +643,7 @@ The Vesper Wallet creates and manages a public/private key pair. This key pair i
 - Signing Vesper PASSporTs: The private key is used to sign Vesper PASSporTs, which are cryptographically bound to the SE’s claims.
 
 Key Pair Generation Flow:
+
 ~~~~~~~~~~~
 +-------------------+                 +-----------------+
 |  Vesper Wallet    |                 | Certificate     |
@@ -649,6 +664,7 @@ Key Pair Generation Flow:
 The Vesper Wallet stores SD-JWTs for each claim type, along with the corresponding Notary Receipts. These SD-JWTs represent claims such as KYC, telephone number assignment, and rich call data (RCD). The Notary Receipts are proof that each claim has been logged in the Transparency Log by the NA.
 
 SD-JWT Storage Structure:
+
 ~~~~~~~~~~~
 +------------------+       +-----------------+
 |   Vesper Wallet  |       |  Claims Storage |
@@ -674,6 +690,7 @@ When the SE needs to present claims (e.g., during a phone call), the Vesper Wall
 3. Notary Receipt: The Notary Receipt that verifies the claim was recorded in the Transparency Log.
 
 Vesper Token Structure:
+
 ~~~~~~~~~~~
 {
   ...
@@ -705,12 +722,13 @@ Once the Vesper Token is built, it is included in a Vesper PASSporT. The Vesper 
 The Vesper PASSporT is signed using the SE’s private key, which is associated with the Delegate Certificate. This signature binds the claims and their associated receipts to the SE and ensures that the Vesper PASSporT can be trusted by the Verification Service (VS).
 
 Signing the Vesper PASSporT:
+
 ~~~~~~~~~~~
-+-------------------+        +--------------------+
-|  Vesper Wallet    |        | Delegate Certificate|
-+-------------------+        +--------------------+
++-------------------+       +----------------------+
+|  Vesper Wallet    |       | Delegate Certificate |
++-------------------+       +----------------------+
       |                                |
-      |<-- Uses private key to sign    |
+      |<-- Uses private key to sign  --|
       |   Vesper PASSporT              |
       |                                |
 ~~~~~~~~~~~
@@ -722,6 +740,7 @@ The signed Vesper PASSporT is then sent to the Authentication Service (AS), whic
 Once the Vesper PASSporT is signed, it is passed to the Authentication Service (AS). The AS inserts the Vesper PASSporT into the SIP header, which is transmitted as part of the phone call. This allows the Verification Service (VS) to receive the Vesper PASSporT for validation.
 
 Sending Vesper PASSporT:
+
 ~~~~~~~~~~~
 +-------------------+       +----------------------+
 |  Vesper Wallet    |       | Authentication       |
@@ -741,6 +760,7 @@ When the Verification Service (VS) receives the Vesper PASSporT, it performs sev
 2. SD-JWT Verification: The VS goes through the SD-JWTs inside the Vesper PASSporT and verifies their individual signatures. Each SD-JWT contains a JWK (JSON Web Key) representing the public key used to sign the claim.
 
 JWK Claim Example:
+
 ~~~~~~~~~~~
 {
   "alg": "RS256",
@@ -757,6 +777,7 @@ JWK Claim Example:
 3. Receipt Validation: For each SD-JWT, presence of Notary Receipt should be sufficient to accept the claims.  However, VS may optionally choose to verify the Notary Receipts against the Transparency Log to ensure that the claims were notarized by the NA.  This step would be done out of the call path in different process or service.  If the receipt is not valid, the VS will put the Vesper PASSporT claims on the black list for the future calls.
 
 Verification Process:
+
 ~~~~~~~~~~~
 +-------------------+        +---------------------+
 | Verification      |        |  Transparency Log   |
@@ -856,26 +877,26 @@ The Vetting Claim Agent is a required claim agent data type and is also the firs
 The Vetting Claim object is defined to include the following key values in the claim object:
 
 ~~~~~~~~~~~~~
-+---------------------+-------------+------------------------------------+
-| Claim Info Key      | Value Type  | Value Description                  |
-+---------------------+-------------+------------------------------------+
-| address             | JSON object |                                    |
-+---------------------+-------------+------------------------------------+
-| street_address      | String      |                                    |
-| locality            | String      |                                    |
-| region              | String      |                                    |
-| country             | String      |                                    |
-| postal_code         | String      |                                    |
-+---------------------+-------------+------------------------------------+
-| contact_given_name  | String      |                                    |
-| contact_family_name | String      |                                    |
-| contact_email       | String      |                                    |
-| contact_phone_num   | String      |                                    |
-+---------------------+-------------+------------------------------------+
-| business_ids        | JSON Array  |                                    |
-+---------------------+-------------+------------------------------------+
-| EIN                 | String      |                                    |
-+---------------------+-------------+------------------------------------+
++---------------------+-------------+------------------------------+
+| Claim Info Key      | Value Type  | Value Description            |
++---------------------+-------------+------------------------------+
+| address             | JSON object |                              |
++---------------------+-------------+------------------------------+
+| street_address      | String      |                              |
+| locality            | String      |                              |
+| region              | String      |                              |
+| country             | String      |                              |
+| postal_code         | String      |                              |
++---------------------+-------------+------------------------------+
+| contact_given_name  | String      |                              |
+| contact_family_name | String      |                              |
+| contact_email       | String      |                              |
+| contact_phone_num   | String      |                              |
++---------------------+-------------+------------------------------+
+| business_ids        | JSON Array  |                              |
++---------------------+-------------+------------------------------+
+| EIN                 | String      |                              |
++---------------------+-------------+------------------------------+
 ~~~~~~~~~~~~~
 
 
@@ -888,30 +909,30 @@ Note: the telephone number service provider also should provide the mechanism to
 The Vetting Claim object is defined to include the following key values in the claim object:
 
 ~~~~~~~~~~~~~
-+---------------------+-------------+------------------------------------+
-| Claim Info Key      | Value Type  | Value Description                  |
-+---------------------+-------------+------------------------------------+
-| telephone_num       | Value Array | Array of e.164 Strings             |
-+---------------------+-------------+------------------------------------+
++---------------------+-------------+------------------------------+
+| Claim Info Key      | Value Type  | Value Description            |
++---------------------+-------------+------------------------------+
+| telephone_num       | Value Array | Array of e.164 Strings       |
++---------------------+-------------+------------------------------+
 ~~~~~~~~~~~~~
 
 
 ### Rich Call Data Claim Agent - “rcdca”
 
-The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I.D-ietf-stir-passport-rcd}}.
+The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in {{I-D.ietf-stir-passport-rcd}}.
 
 The Rich Call Data Claim object is defined to include the following key values in the claim object:
 
 ~~~~~~~~~~~~~
-+---------------------+-------------+------------------------------------+
-| Claim Info Key      | Value Type  | Value Description                  |
-+---------------------+-------------+------------------------------------+
-| rcd Array           | JSON Array  | Array of rcd claims objects        |
-+---------------------+-------------+------------------------------------+
-| rcd                 | JSON Object | rcd claim                          |
-| rcdi                | JSON Object | rcdi claim                         |
-| crn                 | JSON Object | call reason claim                  |
-+---------------------+-------------+------------------------------------+
++---------------------+-------------+------------------------------+
+| Claim Info Key      | Value Type  | Value Description            |
++---------------------+-------------+------------------------------+
+| rcd Array           | JSON Array  | Array of rcd claims objects  |
++---------------------+-------------+------------------------------+
+| rcd                 | JSON Object | rcd claim                    |
+| rcdi                | JSON Object | rcdi claim                   |
+| crn                 | JSON Object | call reason claim            |
++---------------------+-------------+------------------------------+
 ~~~~~~~~~~~~~
 
 ### Consent Claim Agent - “cca”
@@ -921,14 +942,14 @@ The Consent Claim Agent is an optional claim agent data type and is tied to a co
 The Consent Claim object is defined to include the following key values in the claim object:
 
 ~~~~~~~~~~~~~
-+---------------------+-------------+------------------------------------+
-| Claim Info Key      | Value Type  | Value Description                  |
-+---------------------+-------------+------------------------------------+
-| consent_assertion   | JSON Array  | Array of consent_assertion objects |
-+---------------------+-------------+------------------------------------+
-| consent_type        | String      | consent_type                       |
-| destination_tn      | e.164 array | array of destination tns           |
-+---------------------+-------------+------------------------------------+
++---------------------+-------------+------------------------------+
+| Claim Info Key      | Value Type  | Value Description            |
++---------------------+-------------+------------------------------+
+| consent_assertion   | JSON Array  | Array consent_assertion objs |
++---------------------+-------------+------------------------------+
+| consent_type        | String      | consent_type                 |
+| destination_tn      | e.164 array | array of destination tns     |
++---------------------+-------------+------------------------------+
 ~~~~~~~~~~~~~
 
 # Notary Agent Overview
@@ -1015,13 +1036,14 @@ When creating a multiple Vesper Claim presentation, the SE assembles a package t
 The presentation package is composed as follows:
 
 ~~~~~~~~~~~~~
-<SD-JWT-1>~<Disclosure 1-1>~<Disclosure 1-2>~...<SD-JWT-2>~<Disclosure 2-1>~<Disclosure 2-2>~
+<SD-JWT-1>~<Disclosure 1-1>~<Disclosure 1-2>~...<SD-JWT-2>~
+  <Disclosure 2-1>~<Disclosure 2-2>~
 ~~~~~~~~~~~~~
 
 In this format:
 
-- <SD-JWT-1> and <SD-JWT-2> represent the KYC/KYB and RTU Vesper tokens, respectively.
-- <Disclosure 1-1>, <Disclosure 1-2>, etc., represent selectively disclosed claims from each token.
+- \<SD-JWT-1\> and \<SD-JWT-2\> represent the KYC/KYB and RTU Vesper tokens, respectively.
+- \<Disclosure 1-1\>, \<Disclosure 1-2\>, etc., represent selectively disclosed claims from each token.
 
 # Preventing Replay Attacks
 
@@ -1174,7 +1196,8 @@ SHA-256 Hash: JzYjH4svliH0R3PyEMfeZu6Jt69u5qehZo7F7EPYlSE
 Disclosure:
 WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWlsIiwgImpvaG5kb2VA
 ZXhhbXBsZS5jb20iXQ
-Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "contact_email", "johndoe@example.com"]
+Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "contact_email",
+   "johndoe@example.com"]
 ~~~~~~~~~~~~~
 
 Claim phone_number:
@@ -1216,7 +1239,8 @@ Array Entry:
 ~~~~~~~~~~~~~
 SHA-256 Hash: pFndjkZ_VCzmyTa6UjlZo3dh-ko8aIKQc9DlGzhaVYo
 Disclosure: WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIlVTIl0
-Contents: ["lklxF5jMYlGTPUovMNIvCA", "{"nam":"Business_42","icn":"https://example.com/logo.png"}"]
+Contents: ["lklxF5jMYlGTPUovMNIvCA", "{"nam":"Business_42",
+  "icn":"https://example.com/logo.png"}"]
 ~~~~~~~~~~~~~
 
 Array Entry:
