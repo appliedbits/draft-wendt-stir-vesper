@@ -76,7 +76,7 @@ The vetting process for entities involves verifying their identity and legitimac
 
 ## Introduction to Vesper Tokens and Trust Model
 
-The use of vesper tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.
+The use of Vesper Tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.
 
 ### Key Features of Vesper Tokens
 
@@ -139,7 +139,7 @@ The Authentication Service (AS) and the Verification Service (VS) are responsibl
 
 ### AS Verification
 
-When the Vesper Token is created, the AS verifies its signature. This is a important step in preventing unauthorized or tampered tokens from being used. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
+When the Vesper Token is created, the AS verifies its signature. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.
 
 - Signature Verification: The AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.
 - Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.
@@ -163,7 +163,7 @@ Once the VS completes these verifications, it can trust the caller’s identity 
 
 # Terminology
 
-Claim Agent: An entity that is either authorized or trusted in the eco-system to make claims of persona-related information and issues verifiable selectively disclosable tokens containing the vetted claim information. A Claim Agent can be a trusted third party or a service provider that performs the vetting of persona-related information. Claim Agent is a role catagory where their are defined a set of specific claim agent types with associated claim attribute key values that are either required or optional by specification.
+Claim Agent: An entity that is either authorized or trusted in the eco-system to make claims of persona-related information and issues verifiable selectively disclosable tokens containing the vetted claim information. A Claim Agent can be a trusted third party or a service provider that performs the vetting of persona-related information. Claim Agent is a role category where their are defined a set of specific claim agent types with associated claim attribute key values that are either required or optional by specification.
 
 Vetting Claim Agent (VCA): The Claim Agent entity that initiates and establishes a Subject Entity into the eco-system. Its role is to vet a set of claims that are related to the persona like physical address, business identifiers, contact information and other identifying information. Generally, this information is not disclosed as part of a typical communications transaction, although nothing prevents it.  However, it’s an important set of information to establish the existence and legal standing of a persona. This information is also relevant to a potential legal or policy enforcement action if that becomes required based on alleged illegal or policy violations, something the VCA would be the responsible party to facilitate.
 
@@ -175,7 +175,9 @@ Consent Claim Agent (CCA): The Claim Agent entity that is responsible for handli
 
 Subject Entity (SE): An entity that is vetted by a Vetting Agent and holds the verifiable token containing the vetted information. The Vetting Entity can be a person or a business entity.
 
-Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in {{RFC8225}} created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains “vesper” claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent (NA).
+Notary Agent (NA): The entity that maintains the Claim Graph and Transparency Log. The Notary Agent is responsible for ensuring the integrity and transparency of the claims made by the Claim Agents. The Notary Agent issues receipts for each claim event, which are used to verify the authenticity of the claims. The Notary Agent role is likely performed by a neutral party in the ecosystem.
+
+Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in {{RFC8225}} created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains “vesper” claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent.
 
 # Vesper Achitecture
 
@@ -951,66 +953,6 @@ The Consent Claim object is defined to include the following key values in the c
 | destination_tn      | e.164 array | array of destination tns     |
 +---------------------+-------------+------------------------------+
 ~~~~~~~~~~~~~
-
-# Notary Agent Overview
-
-The notarization process involves two main logical components the time-stamped and signed formalization of a claim transaction between a Claim Agent and a Subject Entity and the associated submission of those transactions to a monitorable transparency service that provides digital receipts that can be used to prove that the transaction was notarized by an authorized notary agent. The Notary Agent role is likely performed by a neutral party in the ecosystem. Because telephone number assignment is a key and required vesper claim a notary role may make sense to be directly associated with telephone number assignment administration.
-The key interfaces provided by a Notary Agent is the registration of Claim Agents and Subject Entities with unique entity-ids and the corresponding claim event submission and Signed Vesper Claim Timestamp (SVCT) responses, APIs and transparency service log monitoring APIs. These are described in detail in the sections below.
-
-## Transparency Service
-
-Description of Transparency Service
-
-### Signed Vesper Claim Timestamp
-
-Signed Vesper Claim Timestamp (SVCT) is a signed timestamp that is issued by a Transparency Service to confirm that the claim event info has been successfully registered and appended to the log. The SVCT is used to verify the integrity of the claim event info and ensure that it has not been tampered with.
-
-### JSON Reprsentation of SVCT
-
-Here is JSON representation of SVCT:
-
-~~~~~~~~~~~~~
-{
-  “LogID”: “0x1234567890abcdef”,
-  “Timestamp”: 1683000000,
-  “Signature”: ...
-}
-~~~~~~~~~~~~~
-
-# Notary Agent Procedures
-
-The notary process generally involves the following steps:
-
-Setup and Registration of Claim Agents with NA
-
-1. Registration of the Claim Agent with a NA
-
-Setup and Registration of SE with NA by the VCA
-
-2. Registration of the SE with a NA by a VCA. Note: the VCA as described above is the only Claim Agent type that can register a SE with a NA. The SE creates an authenticated account relationship with the VCA, and a unique entity-id is created.
-3. The SE provides the VCA claim information and performs the vetting and KYC checks according to their procedures.
-
-RECOMMENDED but optional use of Key Binding (KB) as defined in {{I-D.ietf-oauth-selective-disclosure-jwt}}:
-
-4. The entity generates a public/private key pair, or the VCA does it on the entity's behalf.
-5. The public key is registered with the VCA.
-
-VCA registers claim event to NA
-
-6. The VCA performs a hash over the claim object key values.
-7. The NA registers the claim event, including hash to an append-only transparency log.
-8. The append-only log, upon verification of the claim event and hash and queuing it into the log, issues a Signed Vesper Claim Timestamp (SVCT).
-
-VCA receives notary receipt (SCVT) and delivers claim + receipt to SE to deposit in their wallet
-
-9. The SE wallet acts as a holder of Vetting Credentials and provides a method for verifiers to request the vetted information.
-10. The VCA issues an SD-JWT containing the vetting claim information, the public key in a CNF claim (per SD-JWT RFC draft), and the transparency receipt, including the hash of the data.
-
-Additional Claim Agent Procedures
-
-11. After the VCA has established the SE with its entity-id at the NA, additional claims can be made for that SE by another claim agent (e.g. Right to Use claims, RCD claims, or consent claims)
-12. The Claim Agent performs a hash over the claim object key values but can also submit public claims intended to be disclosed for transparency monitoring.
-13. The NA registers the claim event, including either hashed or public claims or both.
 
 # Vesper PASSporT Token as a wrapper for Multiple Vesper Claims Presentation
 
