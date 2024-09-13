@@ -5,7 +5,7 @@
 Secure Telephone Identity Revisited                             C. Wendt
 Internet-Draft                                                  R. Sliwa
 Intended status: Standards Track                             Somos, Inc.
-Expires: 16 March 2025                                 12 September 2024
+Expires: 17 March 2025                                 13 September 2024
 
 
      VESPER PASSporT and Identity Tokens - VErifiable STI Personas
@@ -78,7 +78,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 March 2025.
+   This Internet-Draft will expire on 17 March 2025.
 
 Copyright Notice
 
@@ -112,7 +112,7 @@ Table of Contents
      4.4.  Transport - Vesper PASSporT
      4.5.  Verification and Proof of Authenticity
        4.5.1.  AS Verification
-       4.5.2.  STI-VS Verification
+       4.5.2.  Verification
        4.5.3.  Final Trust and Intelligence
    5.  Terminology
    6.  Vesper Achitecture
@@ -120,8 +120,8 @@ Table of Contents
      6.2.  Notary Agent Flows
        6.2.1.  Claim Graph
        6.2.2.  Merkle Tree and Transparency Log
-       6.2.3.  Issuance Agent (IA) Provisions New Subject Entity
-       6.2.4.  Issuance Agent Adds KYC Claims
+       6.2.3.  Vetting Claim Agent (VCA) Provisions New Subject Entity
+       6.2.4.  Vetting Claim Agent Adds KYC Claims
        6.2.5.  Claim Agent Adds Telephone Number (TN) Assignment
        6.2.6.  Claim Agent Adds Rich Call Data (RCD)
        6.2.7.  Using SD-JWT for Trust
@@ -158,24 +158,17 @@ Table of Contents
        10.1.1.  Signed Vesper Claim Timestamp
        10.1.2.  JSON Reprsentation of SVCT
    11. Notary Agent Procedures
-     11.1.  Setup and Registration of Claim Agents with NA
-     11.2.  Setup and Registration of SE with NA by the VCA
-     11.3.  VCA registers claim event to NA
-     11.4.  VCA receives notary receipt (SCVT) and delivers claim +
-            receipt to SE to deposit in their wallet
-     11.5.  Additional Claim Agent Procedures
-   12. Use Case Example: Telephone Number Assignment
-   13. Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
+   12. Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
            Presentation
-     13.1.  Structure of multiple Vesper Claim Presentation
-   14. Preventing Replay Attacks
-     14.1.  Mitigation Strategy - JWT ID (JTI) Claim
-     14.2.  Example Issuance
-   15. Security Considerations
-   16. IANA Considerations
-     16.1.  JSON Web Token claims
-     16.2.  PASSporT Types
-   17. Normative References
+     12.1.  Structure of multiple Vesper Claim Presentation
+   13. Preventing Replay Attacks
+     13.1.  Mitigation Strategy - JWT ID (JTI) Claim
+     13.2.  Example Issuance
+   14. Security Considerations
+   15. IANA Considerations
+     15.1.  JSON Web Token claims
+     15.2.  PASSporT Types
+   16. Normative References
    Acknowledgments
    Authors' Addresses
 
@@ -313,7 +306,7 @@ Table of Contents
    *  Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes
       the SE in the ecosystem.
 
-   *  Telephone Number Claim Agent (TNCA): Handles the assignment of
+   *  Right To Use Claim Agent (RTUCA): Handles the assignment of
       telephone numbers to the SE.
 
    *  Rich Call Data Claim Agent (RCDCA): Provides vetting and
@@ -333,9 +326,14 @@ Table of Contents
 4.3.  Notary Agent - Claim Graph and Transparency Log
 
    In the Vesper ecosystem, Claim Agents issue claims about the Subject
-   Entity.  To ensure trust and accountability between Claim Agents, all
-   interactions are governed by the Notary Agent, which internally
-   operates two key services: the Claim Graph and the Transparency Log.
+   Entity.  To ensure trust and accountability between Claim Agents and
+   Subject Entities, all interactions are notarized to the participants
+   responsible by the Notary Agent, which internally operates two key
+   services: the Claim Graph and the Transparency Log.  Importantly,
+   these notarizations can be privacy protected using hashes or can be
+   used for public transparency to be monitored for mis-claims made by
+   other Subject Entities and handled through a resolution process that
+   is eco-system specific (and not defined in this document).
 
 4.3.1.  Claim Graph
 
@@ -435,10 +433,11 @@ Table of Contents
    and therefore AS may chose to trust the Vesper Token without further
    verification.
 
-4.5.2.  STI-VS Verification
+4.5.2.  Verification
 
-   Once the Vesper Token reaches the VS, the token undergoes further
-   checks to confirm its authenticity and integrity.
+   Once the Vesper Token reaches the Verification Service (VS), the
+   token undergoes further checks to confirm its authenticity and
+   integrity.
 
    *  Payload Verification: The first step for VS is to verify the
       Vesper Token’s signature.  This ensures that the token has not
@@ -530,24 +529,20 @@ Table of Contents
 6.  Vesper Achitecture
 
    The Vesper architecture is designed around the concept of creating a
-   secure Persona for every Subject Entity within the system.  This
-   Persona is characterized by its verifiability, privacy-preserving
-   nature, tamper resistance, and auditability.  It enables SEs to
-   interact with other entities confidently, knowing that their claims
-   and credentials are cryptographically secured and independently
-   verifiable.  The architecture ensures that sensitive information is
-   protected while still allowing for seamless, trust-based exchanges
-   between parties.
+   secure Persona for each Subject Entity (SE) within an eco-system.
+   This Persona is characterized by its verifiability, privacy-
+   preserving nature, tamper resistance, and auditability.  It enables
+   SEs to interact with other entities confidently, knowing that their
+   claims and credentials are cryptographically secured and
+   independently verifiable.  The architecture ensures that sensitive
+   information is protected while still allowing for seamless, trust-
+   based exchanges between parties.
 
    The Vesper architecture employs the following key entities to manage
    and maintain these secure Personas:
 
    *  Subject Entities (SEs): The organizations whose claims are being
       issued and verified within the system.
-
-   *  Issuing Agents (IAs): Trusted entities responsible for issuing
-      verifiable credentials that establish the identity and claims of
-      SEs.
 
    *  Claim Agents (CAs): Entities that facilitate the exchange of
       claims between SEs and verify the validity of these claims.
@@ -562,10 +557,13 @@ Table of Contents
    The Vesper framework follows a high-level flow that involves the
    provisioning of the Subject Entity and the subsequent management of
    claims through different Claim Agents.  This section outlines the
-   primary interactions between the SE, the Issuing Agent (IA), the
-   Telephone Number Claim Agent (TNCA), and other services.  The flow
-   ends with the SE making a phone call, with the relevant claims
-   encapsulated in a Vesper PASSporT for verification by the
+   primary interactions between the SE, the Vetting Claim Agent (VCA),
+   the Right To Use Claim Agent (RTUCA), and potentially other Claim
+   Agent services.  The flow ends with the SE generating a Vesper
+   PASSporT presentation in order to, for example, use with a STIR
+   Authentication Service while making a phone call.  This Vesper
+   PASSporT presentation will include the relevant claims and selected
+   disclosures intended for that call for verification by the
    Verification Service.
 
    This overview provides the context for more detailed explanations in
@@ -573,9 +571,9 @@ Table of Contents
 
    High-Level Flow:
 
-   1.  IA Provisions SE:
+   1.  VCA Provisions SE:
 
-       *  The SE is first vetted by the IA, which performs KYC checks.
+       *  The SE is first vetted by the VCA, which performs KYC checks.
 
        *  Once the SE is validated, the event is captured in the Notary
           Agent (NA) via the Claim Graph (CG) and Transparency Service
@@ -585,14 +583,15 @@ Table of Contents
           Transparency Receipt, which are stored in the Vesper Wallet
           (VW).
 
-   2.  SE Contacts TNCA for Telephone Number Assignment:
+   2.  SE Contacts RTUCA corresponding to their Telephone Number
+       Assignment:
 
-       *  The SE interacts with the Telephone Number Claim Agent (TNCA)
-          to obtain telephone numbers.
+       *  The SE interacts with the Right To Use Claim Agent (RTUCA) to
+          obtain telephone numbers.
 
-       *  The TNCA assigns one or more TNs and records the event in the
-          NA, returning an SD-JWT with the assigned TNs and a
-          corresponding Transparency Receipt.
+       *  The RTUCA claims and validates one or more TNs and records the
+          event in the NA, returning an SD-JWT with the assigned TNs and
+          a corresponding Transparency Receipt.
 
        *  The SE stores this data in the VW.
 
@@ -625,8 +624,9 @@ Table of Contents
           regarding the call’s authenticity and proceeds accordingly.
 
    +--------------+                    +----------+       +-----------+
-   |   Subject    |                    | Issuing  |       | Notary    |
-   |   Entity     |                    |  Agent   |       |  Agent    |
+   |   Subject    |                    | Vetting  |       | Notary    |
+   |   Entity     |                    |  Claim   |       |  Agent    |
+   |              |                    |  Agent   |       |           |
    +--------------+                    +----------+       +-----------+
          |                                  |                   |
          |<-------- SE creates account -----|                   |
@@ -645,7 +645,7 @@ Table of Contents
    |    (VW)      |                    |  Agents  |       |  Agent    |
    +--------------+                    +----------+       +-----------+
          |                                  |                   |
-         |-- Requests TN from TNCA -------->|                   |
+         |-- Requests TN from RTUCA ------->|                   |
          |                                  |                   |
          |<--- Receives TN SD-JWT+Receipt --|                   |
          |                                  |                   |
@@ -669,9 +669,8 @@ Table of Contents
    Graph (CG) and Transparency Log. This section provides an in-depth
    look at how the NA processes claims, records changes to the Claim
    Graph, and ensures verifiable, immutable records in the Transparency
-   Log. It also explores how Issuing Agents (IAs) and Claim Agents (CAs)
-   interact with the NA, and how trust is established across the Vesper
-   framework.
+   Log. It also explores how Claim Agents (CAs) interact with the NA,
+   and how trust is established across the Vesper framework.
 
 6.2.1.  Claim Graph
 
@@ -695,12 +694,12 @@ Table of Contents
    the creation of Notary Receipts, which are verifiable cryptographic
    proofs that a particular claim was recorded at a specific time.
 
-6.2.3.  Issuance Agent (IA) Provisions New Subject Entity
+6.2.3.  Vetting Claim Agent (VCA) Provisions New Subject Entity
 
-   The process begins when the Issuing Agent provisions a new SE.  The
-   IA performs KYC checks on the SE and records the SE’s identity in the
-   Claim Graph.  The NA creates a new IdentityRoot node for the SE,
-   representing their entity in the system.
+   The process begins when the Vetting Claim Agent provisions a new SE.
+   The VCA performs KYC checks on the SE and records the SE’s identity
+   in the Claim Graph.  The NA creates a new IdentityRoot node for the
+   SE, representing their entity in the system.
 
    Claim Graph Structure (Entity Creation):
 
@@ -719,11 +718,11 @@ Table of Contents
    At this point, the SE is issued an SD-JWT containing their KYC claims
    and a Notary Receipt, which they store in their Vesper Wallet (VW).
 
-6.2.4.  Issuance Agent Adds KYC Claims
+6.2.4.  Vetting Claim Agent Adds KYC Claims
 
-   After creating the SE, the IA adds the KYC claims to the Claim Graph,
-   linking them to the IdentityRoot node.  These KYC claims are hashed
-   for privacy.
+   After creating the SE, the VCA adds the KYC claims to the Claim
+   Graph, linking them to the IdentityRoot node.  These KYC claims are
+   hashed for privacy.
 
    Claim Graph Structure (Adding KYC Claims):
 
@@ -756,10 +755,10 @@ Table of Contents
 
 6.2.5.  Claim Agent Adds Telephone Number (TN) Assignment
 
-   The SE contacts the Telephone Number Claim Agent (TNCA) to request
-   the assignment of one or more telephone numbers (TNs).  The TNCA
+   The SE contacts the Right To Use Claim Agent (RTUCA) to request the
+   assignment of one or more telephone numbers (TNs).  The RTUCA
    verifies the SE’s identity using the KYC SD-JWT in the x-vesper-kyc
-   header to retrieve the SE’s entity_id.  After validation, the TNCA
+   header to retrieve the SE’s entity_id.  After validation, the RTUCA
    assigns a telephone number to the SE and updates the Claim Graph.
 
    Claim Graph Structure (Adding TN Assignment):
@@ -788,9 +787,9 @@ Table of Contents
       d0    d1    d2 (TN assignment added)
 
    The TN assignment event is logged in the Transparency Log, and the SE
-   receives an SD-JWT containing the telephone number claims and a new
-   Notary Receipt.  This SD-JWT is also stored in the SE’s Vesper Wallet
-   for future use.
+   receives an SD-JWT containing the telephone number Right to Use
+   claims and a new Notary Receipt.  This SD-JWT is also stored in the
+   SE’s Vesper Wallet for future use.
 
 6.2.6.  Claim Agent Adds Rich Call Data (RCD)
 
@@ -838,35 +837,35 @@ Table of Contents
 
    Each step in the claim process relies on the SD-JWT issued by the
    Issuing Agent and passed via the x-vesper-kyc header.  Claim Agents
-   (CAs) can trust the SE based on the following process:
+   can trust the SE based on the following process:
 
-   1.  The SE presents the KYC SD-JWT and receipt to the CA in the API
-       request.
+   1.  The SE presents the KYC SD-JWT and receipt to the Claim Agent in
+       the API request.
 
-   2.  The CA verifies the SD-JWT signature and checks the Transparency
-       Receipt to confirm that the KYC event was logged and notarized by
-       the NA.
+   2.  The Claim Agent verifies the SD-JWT signature and checks the
+       Transparency Receipt to confirm that the KYC event was logged and
+       notarized by the NA.
 
-   3.  Once verified, the CA can trust the SE’s identity and entity_id,
-       allowing further claims (such as TN assignment or RCD claims) to
-       be added securely.
+   3.  Once verified, the Claim Agent can trust the SE’s identity and
+       entity_id, allowing further claims (such as TN assignment or RCD
+       claims) to be added securely.
 
 6.3.  Notary Agent API
 
-   The Notary Agent (NA) exposes a set of APIs that allow Issuing Agents
-   (IAs), Claim Agents (CAs), and other authorized participants in the
-   Vesper ecosystem to interact with the Claim Graph (CG) and the
-   Transparency Log. These APIs are designed to provide secure,
-   auditable interactions for creating entities, adding claims, and
-   verifying Notary Receipts.  This section outlines the key APIs
-   available for interacting with the NA and provides an overview of
-   their functionality.
+   The Notary Agent (NA) exposes a set of APIs that allow Claim Agents
+   and other authorized participants in the Vesper ecosystem to interact
+   with the Claim Graph (CG) and the Transparency Log. These APIs are
+   designed to provide secure, auditable interactions for creating
+   entities, adding claims, and verifying Notary Receipts.  This section
+   outlines the key APIs available for interacting with the NA and
+   provides an overview of their functionality.
 
 6.3.1.  Create Subject Entity (SE) API
 
-   This API is used by an Issuing Agent (IA) to provision a new Subject
-   Entity (SE) in the system.  The SE is created in the Claim Graph, and
-   a record is added to the Transparency Log.
+   This API is used by a Claim Agent, generally always a Vetting Claim
+   Agent (VCA), to provision a new Subject Entity (SE) in the system.
+   The SE is created in the Claim Graph, and a record is added to the
+   Transparency Log.
 
    Endpoint: POST /na/entity/create
 
@@ -879,9 +878,9 @@ Table of Contents
        "contact_email": "info@companya.com",
        "contact_phone": "+1234567890"
      },
-     "issuing_agent": {
-       "id": "ia-001",
-       "public_key": "public-key-ia-001"
+     "claim_agent": {
+       "id": "vca-001",
+       "public_key": "public-key-vca-001"
      }
    }
 
@@ -893,24 +892,20 @@ Table of Contents
      "sd_jwt": "eyJhbGciOi..."
    }
 
-   *  entity_data: Information about the SE being created.
-
-   *  issuing_agent: The IA creating the SE, including its ID and public
-      key.
-
-   *  entity_id: The unique identifier assigned to the SE.
-
-   *  notary_receipt: A cryptographic proof that the entity creation was
-      logged in the Transparency Log.
-
-   *  sd_jwt: The SD-JWT containing the KYC claims and the entity_id for
-      the SE.
+   entity_data: Information about the SE being created.
+   claim_agent: The VCA creating the SE, including its ID and public
+   key.
+   entity_id: The unique identifier assigned to the SE.
+   notary_receipt: A cryptographic proof that the entity creation was
+   logged in the Transparency Log.
+   sd_jwt: The SD-JWT containing the KYC claims and the entity_id for
+   the SE.
 
 6.3.2.  Add KYC Claims API
 
-   Once an SE has been created, the IA uses this API to add KYC claims
-   to the Claim Graph.  This API also records the event in the
-   Transparency Log and issues a new Notary Receipt.
+   Once an SE has been created, the Vetting Claim Agent uses this API to
+   add KYC claims to the Claim Graph.  This API also records the event
+   in the Transparency Log and issues a new Notary Receipt.
 
    Endpoint: POST /na/entity/{entity_id}/kyc
 
@@ -924,7 +919,7 @@ Table of Contents
        "issue_date": "2023-01-15"
      },
      "issuing_agent": {
-       "id": "ia-001",
+       "id": "vca-001",
        "signature": "signature-of-kyc-data"
      }
    }
@@ -936,21 +931,18 @@ Table of Contents
      "sd_jwt": "eyJhbGciOi..."
    }
 
-   *  kyc_data: The KYC claims (hashed for privacy) being added to the
-      SE’s Claim Graph.
-
-   *  issuing_agent: Information about the IA making the request,
-      including a signature over the data.
-
-   *  notary_receipt: The Notary Receipt showing that the KYC claims
-      were recorded.
-
-   *  sd_jwt: An SD-JWT containing the KYC claims and the entity_id.
+   kyc_data: The KYC claims (hashed for privacy) being added to the SE’s
+   Claim Graph.
+   claim_agent: Information about the VCA making the request, including
+   a signature over the data.
+   notary_receipt: The Notary Receipt showing that the KYC claims were
+   recorded.
+   sd_jwt: An SD-JWT containing the KYC claims and the entity_id.
 
 6.3.3.  Add Telephone Number (TN) Assignment API
 
-   The Telephone Number Claim Agent (TNCA) uses this API to assign one
-   or more telephone numbers to an SE.  The event is logged in the
+   The Right To Use Claim Agent (RTUCA) uses this API to assign one or
+   more telephone numbers to an SE.  The event is logged in the
    Transparency Log, and an updated SD-JWT is issued to the SE.
 
    Endpoint: POST /na/entity/{entity_id}/tn/assign
@@ -963,7 +955,7 @@ Table of Contents
        "telephone_numbers": ["+1234567890", "+9876543210"]
      },
      "claim_agent": {
-       "id": "tnca-001",
+       "id": "rtuca-001",
        "public_key": "public-key-ca-001",
        "signature": "signature-of-tn-data"
      }
@@ -976,15 +968,12 @@ Table of Contents
      "sd_jwt": "eyJhbGciOi..."
    }
 
-   *  tn_data: The telephone numbers being assigned to the SE.
-
-   *  claim_agent: Information about the TNCA making the request.
-
-   *  notary_receipt: Proof that the TN assignment was recorded in the
-      Transparency Log.
-
-   *  sd_jwt: An updated SD-JWT containing the assigned TN claims and
-      the entity_id.
+   tn_data: The telephone numbers being assigned to the SE.
+   claim_agent: Information about the RTUCA making the request.
+   notary_receipt: Proof that the TN assignment was recorded in the
+   Transparency Log.
+   sd_jwt: An updated SD-JWT containing the assigned TN claims and the
+   entity_id.
 
 6.3.4.  Add Rich Call Data (RCD) Claims API
 
@@ -1019,16 +1008,13 @@ Table of Contents
      "sd_jwt": "eyJhbGciOi..."
    }
 
-   *  rcd_data: The RCD claims being added to the SE’s identity.
-
-   *  claim_agent: Information about the RCD Claim Agent making the
-      request.
-
-   *  notary_receipt: The updated Notary Receipt showing that the RCD
-      claims were recorded.
-
-   *  sd_jwt: An updated SD-JWT containing the RCD claims and the
-      entity_id.
+   rcd_data: The RCD claims being added to the SE’s identity.
+   claim_agent: Information about the RCD Claim Agent making the
+   request.
+   notary_receipt: The updated Notary Receipt showing that the RCD
+   claims were recorded.
+   sd_jwt: An updated SD-JWT containing the RCD claims and the
+   entity_id.
 
 6.3.5.  Verify Notary Receipt API
 
@@ -1059,13 +1045,11 @@ Table of Contents
      }
    }
 
-   *  receipt: The Notary Receipt being verified.
-
-   *  status: Whether the receipt is valid and recorded in the
-      Transparency Log.
-
-   *  log_entry: Details about the entity_id, timestamp, and verified
-      claims.
+   receipt: The Notary Receipt being verified.
+   status: Whether the receipt is valid and recorded in the Transparency
+   Log.
+   log_entry: Details about the entity_id, timestamp, and verified
+   claims.
 
 6.3.6.  Retrieve Entity History API
 
@@ -1098,10 +1082,9 @@ Table of Contents
      ]
    }
 
-   *  entity_id: The ID of the SE whose history is being retrieved.
-
-   *  history: A list of all events associated with the SE, including
-      timestamps and Notary Receipts.
+   entity_id: The ID of the SE whose history is being retrieved.
+   history: A list of all events associated with the SE, including
+   timestamps and Notary Receipts.
 
 6.4.  Vesper Wallet Flows
 
@@ -1588,20 +1571,20 @@ Table of Contents
    Here is JSON representation of SVCT:
 
    {
-           “LogID”: “0x1234567890abcdef”,
-           “Timestamp”: 1683000000,
-           “Signature”: ...
+     “LogID”: “0x1234567890abcdef”,
+     “Timestamp”: 1683000000,
+     “Signature”: ...
    }
 
 11.  Notary Agent Procedures
 
    The notary process generally involves the following steps:
 
-11.1.  Setup and Registration of Claim Agents with NA
+   Setup and Registration of Claim Agents with NA
 
    1.  Registration of the Claim Agent with a NA
 
-11.2.  Setup and Registration of SE with NA by the VCA
+   Setup and Registration of SE with NA by the VCA
 
    1.  Registration of the SE with a NA by a VCA.  Note: the VCA as
        described above is the only Claim Agent type that can register a
@@ -1619,7 +1602,7 @@ Table of Contents
 
    2.  The public key is registered with the VCA.
 
-11.3.  VCA registers claim event to NA
+   VCA registers claim event to NA
 
    1.  The VCA performs a hash over the claim object key values.
 
@@ -1630,8 +1613,8 @@ Table of Contents
        hash and queuing it into the log, issues a Signed Vesper Claim
        Timestamp (SVCT).
 
-11.4.  VCA receives notary receipt (SCVT) and delivers claim + receipt
-       to SE to deposit in their wallet
+   VCA receives notary receipt (SCVT) and delivers claim + receipt to SE
+   to deposit in their wallet
 
    1.  The SE wallet acts as a holder of Vetting Credentials and
        provides a method for verifiers to request the vetted
@@ -1642,7 +1625,7 @@ Table of Contents
        draft), and the transparency receipt, including the hash of the
        data.
 
-11.5.  Additional Claim Agent Procedures
+   Additional Claim Agent Procedures
 
    1.  After the VCA has established the SE with its entity-id at the
        NA, additional claims can be made for that SE by another claim
@@ -1655,25 +1638,7 @@ Table of Contents
    3.  The NA registers the claim event, including either hashed or
        public claims or both.
 
-12.  Use Case Example: Telephone Number Assignment
-
-   1.  The VE undergoes KYC/KYB vetting by a VA and receives a KYC/KYB
-       Vesper token.
-
-   2.  The VE presents this KYC/KYB token to a TNSP when requesting TN
-       assignment.
-
-   3.  The VE may also present a TNSP Vesper token that includes
-       credentials for the TN lease and RCD.
-
-   4.  The TNSP verifies the Vesper tokens and assigns the
-
-   5.  TN, ensuring that the VE is legitimate and that the additional
-       information (e.g., RCD) is accurate and trustworthy.
-
-   TODO: Add diagram ...
-
-13.  Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
+12.  Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
      Presentation
 
    A Subject Entity (SE), acting as the Holder of multiple Vesper claims
@@ -1686,7 +1651,7 @@ Table of Contents
    associated Rich Call Data (RCD).  The SE can then present both the
    vetting and RTU Vesper claims to the AS when signing a call.
 
-13.1.  Structure of multiple Vesper Claim Presentation
+12.1.  Structure of multiple Vesper Claim Presentation
 
    When creating a multiple Vesper Claim presentation, the SE assembles
    a package that may contain:
@@ -1710,7 +1675,7 @@ Table of Contents
    *  <Disclosure 1-1>, <Disclosure 1-2>, etc., represent selectively
       disclosed claims from each token.
 
-14.  Preventing Replay Attacks
+13.  Preventing Replay Attacks
 
    A replay attack occurs when a malicious actor intercepts a valid
    token or message and reuses it to gain unauthorized access or perform
@@ -1719,7 +1684,7 @@ Table of Contents
    calls or access services.  To address the potential replay attack
    issue in the Vesper token ecosystem, JWT ID (JTI) claim is used.
 
-14.1.  Mitigation Strategy - JWT ID (JTI) Claim
+13.1.  Mitigation Strategy - JWT ID (JTI) Claim
 
    *  Description: The JTI claim is a unique identifier for each JWT.
       This identifier ensures that each token is distinct, even if it
@@ -1729,10 +1694,10 @@ Table of Contents
 
    *  Implementation:
 
-      -  When a Vesper token (SD-JWT) is issued, the Vetting Agent (VA)
+      -  When a Vesper token (SD-JWT) is issued, the Claim Agent
          includes a unique jti value in the JWT payload.
 
-      -  Verifiers, such as the STI-AS, should store recent JTI values
+      -  Verifiers, such as the AS, should store recent JTI values
          temporarily (e.g., in a cache) to detect if the same token is
          being presented multiple times within a short period.  This
          prevents replay attacks using old tokens.
@@ -1740,7 +1705,7 @@ Table of Contents
    Example:
 
    {
-     "iss": "https://vetting-agent.example.com",
+     "iss": "https://vetting-claim-agent.example.com",
      "sub": "Business_42",
      "iat": 1683000000,
      "exp": 1883000000,
@@ -1748,7 +1713,7 @@ Table of Contents
      ...
    }
 
-14.2.  Example Issuance
+13.2.  Example Issuance
 
    The Issuer is using the following input claim set:
 
@@ -1804,7 +1769,7 @@ Table of Contents
        "gbOsI4Edq2x2Kw-w5wPEzakob9hV1cRD0ATN3oQL9JM",
        "jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4"
      ],
-     "iss": "https://vetting-agent.example.com",
+     "iss": "https://vetting-claim-agent.example.com",
      "iat": 1683000000,
      "exp": 1883000000,
      "sub": "Business_42",
@@ -1975,13 +1940,13 @@ Table of Contents
 
    Add Example
 
-15.  Security Considerations
+14.  Security Considerations
 
    TODO Security
 
-16.  IANA Considerations
+15.  IANA Considerations
 
-16.1.  JSON Web Token claims
+15.1.  JSON Web Token claims
 
    This specification requests that the IANA add two new claims to the
    JSON Web Token Claims registry as defined in [RFC7519].
@@ -1996,13 +1961,13 @@ Table of Contents
 
    Specification Document(s): [RFCThis]
 
-16.2.  PASSporT Types
+15.2.  PASSporT Types
 
    This specification requests that the IANA add a new entry to the
    Personal Assertion Token (PASSporT) Extensions registry for the type
    “vesper” which is specified in [RFCThis].
 
-17.  Normative References
+16.  Normative References
 
    [I-D.ietf-oauth-selective-disclosure-jwt]
               Fett, D., Yasuda, K., and B. Campbell, "Selective
