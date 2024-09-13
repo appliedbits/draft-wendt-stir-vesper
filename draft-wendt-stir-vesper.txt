@@ -153,22 +153,17 @@ Table of Contents
        9.1.2.  Right to Use Claim Agent - “rtuca”
        9.1.3.  Rich Call Data Claim Agent - “rcdca”
        9.1.4.  Consent Claim Agent - “cca”
-   10. Notary Agent Overview
-     10.1.  Transparency Service
-       10.1.1.  Signed Vesper Claim Timestamp
-       10.1.2.  JSON Reprsentation of SVCT
-   11. Notary Agent Procedures
-   12. Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
+   10. Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
            Presentation
-     12.1.  Structure of multiple Vesper Claim Presentation
-   13. Preventing Replay Attacks
-     13.1.  Mitigation Strategy - JWT ID (JTI) Claim
-     13.2.  Example Issuance
-   14. Security Considerations
-   15. IANA Considerations
-     15.1.  JSON Web Token claims
-     15.2.  PASSporT Types
-   16. Normative References
+     10.1.  Structure of multiple Vesper Claim Presentation
+   11. Preventing Replay Attacks
+     11.1.  Mitigation Strategy - JWT ID (JTI) Claim
+     11.2.  Example Issuance
+   12. Security Considerations
+   13. IANA Considerations
+     13.1.  JSON Web Token claims
+     13.2.  PASSporT Types
+   14. Normative References
    Acknowledgments
    Authors' Addresses
 
@@ -269,7 +264,7 @@ Table of Contents
 
 4.1.  Introduction to Vesper Tokens and Trust Model
 
-   The use of vesper tokens in communications will allow for a trust
+   The use of Vesper Tokens in communications will allow for a trust
    model enabled by a three party trust system based on an agreed set of
    vetting policies with a set of privacy enabled features to allow for
    selective disclosure for communications that require authorized use
@@ -414,11 +409,9 @@ Table of Contents
 
 4.5.1.  AS Verification
 
-   When the Vesper Token is created, the AS verifies its signature.
-   This is a important step in preventing unauthorized or tampered
-   tokens from being used.  The Vesper Token contains SD-JWTs (with
-   claims) and associated NA Receipts, and its signature is signed by a
-   delegate certificate.
+   When the Vesper Token is created, the AS verifies its signature.  The
+   Vesper Token contains SD-JWTs (with claims) and associated NA
+   Receipts, and its signature is signed by a delegate certificate.
 
    *  Signature Verification: The AS ensures that the Vesper Token’s
       signature is valid and matches the certificate provided.
@@ -478,7 +471,7 @@ Table of Contents
    verifiable selectively disclosable tokens containing the vetted claim
    information.  A Claim Agent can be a trusted third party or a service
    provider that performs the vetting of persona-related information.
-   Claim Agent is a role catagory where their are defined a set of
+   Claim Agent is a role category where their are defined a set of
    specific claim agent types with associated claim attribute key values
    that are either required or optional by specification.
 
@@ -518,13 +511,20 @@ Table of Contents
    holds the verifiable token containing the vetted information.  The
    Vetting Entity can be a person or a business entity.
 
+   Notary Agent (NA): The entity that maintains the Claim Graph and
+   Transparency Log. The Notary Agent is responsible for ensuring the
+   integrity and transparency of the claims made by the Claim Agents.
+   The Notary Agent issues receipts for each claim event, which are used
+   to verify the authenticity of the claims.  The Notary Agent role is
+   likely performed by a neutral party in the ecosystem.
+
    Vesper PASSporT or Token: A verifiable token that follows the
    definition of PASSporT in [RFC8225] created by a Subject Entity
    containing the presentation of disclosable claims for a specific
    relying party destination.  The Vesper Token is represented as a JSON
    Web Token (JWT) PASSporT that contains “vesper” claims that are
    Selective Disclosure JWT (SD-JWT) + transparency receipts generated
-   by the Notary Agent (NA).
+   by the Notary Agent.
 
 6.  Vesper Achitecture
 
@@ -1536,109 +1536,7 @@ Table of Contents
    | destination_tn      | e.164 array | array of destination tns     |
    +---------------------+-------------+------------------------------+
 
-10.  Notary Agent Overview
-
-   The notarization process involves two main logical components the
-   time-stamped and signed formalization of a claim transaction between
-   a Claim Agent and a Subject Entity and the associated submission of
-   those transactions to a monitorable transparency service that
-   provides digital receipts that can be used to prove that the
-   transaction was notarized by an authorized notary agent.  The Notary
-   Agent role is likely performed by a neutral party in the ecosystem.
-   Because telephone number assignment is a key and required vesper
-   claim a notary role may make sense to be directly associated with
-   telephone number assignment administration.  The key interfaces
-   provided by a Notary Agent is the registration of Claim Agents and
-   Subject Entities with unique entity-ids and the corresponding claim
-   event submission and Signed Vesper Claim Timestamp (SVCT) responses,
-   APIs and transparency service log monitoring APIs.  These are
-   described in detail in the sections below.
-
-10.1.  Transparency Service
-
-   Description of Transparency Service
-
-10.1.1.  Signed Vesper Claim Timestamp
-
-   Signed Vesper Claim Timestamp (SVCT) is a signed timestamp that is
-   issued by a Transparency Service to confirm that the claim event info
-   has been successfully registered and appended to the log.  The SVCT
-   is used to verify the integrity of the claim event info and ensure
-   that it has not been tampered with.
-
-10.1.2.  JSON Reprsentation of SVCT
-
-   Here is JSON representation of SVCT:
-
-   {
-     “LogID”: “0x1234567890abcdef”,
-     “Timestamp”: 1683000000,
-     “Signature”: ...
-   }
-
-11.  Notary Agent Procedures
-
-   The notary process generally involves the following steps:
-
-   Setup and Registration of Claim Agents with NA
-
-   1.  Registration of the Claim Agent with a NA
-
-   Setup and Registration of SE with NA by the VCA
-
-   1.  Registration of the SE with a NA by a VCA.  Note: the VCA as
-       described above is the only Claim Agent type that can register a
-       SE with a NA.  The SE creates an authenticated account
-       relationship with the VCA, and a unique entity-id is created.
-
-   2.  The SE provides the VCA claim information and performs the
-       vetting and KYC checks according to their procedures.
-
-   RECOMMENDED but optional use of Key Binding (KB) as defined in
-   [I-D.ietf-oauth-selective-disclosure-jwt]:
-
-   1.  The entity generates a public/private key pair, or the VCA does
-       it on the entity's behalf.
-
-   2.  The public key is registered with the VCA.
-
-   VCA registers claim event to NA
-
-   1.  The VCA performs a hash over the claim object key values.
-
-   2.  The NA registers the claim event, including hash to an append-
-       only transparency log.
-
-   3.  The append-only log, upon verification of the claim event and
-       hash and queuing it into the log, issues a Signed Vesper Claim
-       Timestamp (SVCT).
-
-   VCA receives notary receipt (SCVT) and delivers claim + receipt to SE
-   to deposit in their wallet
-
-   1.  The SE wallet acts as a holder of Vetting Credentials and
-       provides a method for verifiers to request the vetted
-       information.
-
-   2.  The VCA issues an SD-JWT containing the vetting claim
-       information, the public key in a CNF claim (per SD-JWT RFC
-       draft), and the transparency receipt, including the hash of the
-       data.
-
-   Additional Claim Agent Procedures
-
-   1.  After the VCA has established the SE with its entity-id at the
-       NA, additional claims can be made for that SE by another claim
-       agent (e.g.  Right to Use claims, RCD claims, or consent claims)
-
-   2.  The Claim Agent performs a hash over the claim object key values
-       but can also submit public claims intended to be disclosed for
-       transparency monitoring.
-
-   3.  The NA registers the claim event, including either hashed or
-       public claims or both.
-
-12.  Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
+10.  Vesper PASSporT Token as a wrapper for Multiple Vesper Claims
      Presentation
 
    A Subject Entity (SE), acting as the Holder of multiple Vesper claims
@@ -1651,7 +1549,7 @@ Table of Contents
    associated Rich Call Data (RCD).  The SE can then present both the
    vetting and RTU Vesper claims to the AS when signing a call.
 
-12.1.  Structure of multiple Vesper Claim Presentation
+10.1.  Structure of multiple Vesper Claim Presentation
 
    When creating a multiple Vesper Claim presentation, the SE assembles
    a package that may contain:
@@ -1675,7 +1573,7 @@ Table of Contents
    *  <Disclosure 1-1>, <Disclosure 1-2>, etc., represent selectively
       disclosed claims from each token.
 
-13.  Preventing Replay Attacks
+11.  Preventing Replay Attacks
 
    A replay attack occurs when a malicious actor intercepts a valid
    token or message and reuses it to gain unauthorized access or perform
@@ -1684,7 +1582,7 @@ Table of Contents
    calls or access services.  To address the potential replay attack
    issue in the Vesper token ecosystem, JWT ID (JTI) claim is used.
 
-13.1.  Mitigation Strategy - JWT ID (JTI) Claim
+11.1.  Mitigation Strategy - JWT ID (JTI) Claim
 
    *  Description: The JTI claim is a unique identifier for each JWT.
       This identifier ensures that each token is distinct, even if it
@@ -1713,7 +1611,7 @@ Table of Contents
      ...
    }
 
-13.2.  Example Issuance
+11.2.  Example Issuance
 
    The Issuer is using the following input claim set:
 
@@ -1940,13 +1838,13 @@ Table of Contents
 
    Add Example
 
-14.  Security Considerations
+12.  Security Considerations
 
    TODO Security
 
-15.  IANA Considerations
+13.  IANA Considerations
 
-15.1.  JSON Web Token claims
+13.1.  JSON Web Token claims
 
    This specification requests that the IANA add two new claims to the
    JSON Web Token Claims registry as defined in [RFC7519].
@@ -1961,13 +1859,13 @@ Table of Contents
 
    Specification Document(s): [RFCThis]
 
-15.2.  PASSporT Types
+13.2.  PASSporT Types
 
    This specification requests that the IANA add a new entry to the
    Personal Assertion Token (PASSporT) Extensions registry for the type
    “vesper” which is specified in [RFCThis].
 
-16.  Normative References
+14.  Normative References
 
    [I-D.ietf-oauth-selective-disclosure-jwt]
               Fett, D., Yasuda, K., and B. Campbell, "Selective
