@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-12T01:34:20.833028+00:00",
+  "timestamp": "2024-09-15T01:43:25.270115+00:00",
   "repo": "appliedbits/draft-wendt-stir-vesper",
   "labels": [
     {
@@ -152,24 +152,107 @@
       "id": "PR_kwDOKswe3s563EvY",
       "title": "Updates for Vesper Architecture Overview.",
       "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/3",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "robjsliwa",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-09-09T14:23:35Z",
-      "updatedAt": "2024-09-09T20:53:23Z",
+      "updatedAt": "2024-09-12T13:15:40Z",
       "baseRepository": "appliedbits/draft-wendt-stir-vesper",
       "baseRefName": "main",
-      "baseRefOid": "ec4ab67e811ddcb0c31da1ae8bc812e53d958ec2",
+      "baseRefOid": "768ec6ddca3f61caf12ae0a29b79f2727b6002cf",
       "headRepository": "appliedbits/draft-wendt-stir-vesper",
       "headRefName": "vao_updates",
-      "headRefOid": "5bfe198abc84741364323943daae446d632734dd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "27beb6413987f33366f41476715b3d81c89adcbe",
+      "closedAt": "2024-09-12T13:15:31Z",
+      "mergedAt": "2024-09-12T13:15:31Z",
+      "mergedBy": "chriswendt",
+      "mergeCommit": {
+        "oid": "8e0beaeabde89689f4a2dcb2085cfa81ddc500f1"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOKswe3s6JG1xB",
+          "commit": {
+            "abbreviatedOid": "27beb64"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-12T13:13:38Z",
+          "updatedAt": "2024-09-12T13:13:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s6JG2GU",
+          "commit": {
+            "abbreviatedOid": "27beb64"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-12T13:14:10Z",
+          "updatedAt": "2024-09-12T13:14:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s6JG2Pi",
+          "commit": {
+            "abbreviatedOid": "27beb64"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-12T13:14:23Z",
+          "updatedAt": "2024-09-12T13:14:23Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKswe3s6JG2uG",
+          "commit": {
+            "abbreviatedOid": "27beb64"
+          },
+          "author": "chriswendt",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-12T13:15:04Z",
+          "updatedAt": "2024-09-12T13:15:04Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOKswe3s57asdr",
+      "title": "Minor edits, removed old flow for NA, added NA into Terminology section.",
+      "url": "https://github.com/appliedbits/draft-wendt-stir-vesper/pull/4",
+      "state": "MERGED",
+      "author": "robjsliwa",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-13T10:35:27Z",
+      "updatedAt": "2024-09-13T11:54:27Z",
+      "baseRepository": "appliedbits/draft-wendt-stir-vesper",
+      "baseRefName": "main",
+      "baseRefOid": "3a27cd78673e35d3ce7c8b03d04434f132488d41",
+      "headRepository": "appliedbits/draft-wendt-stir-vesper",
+      "headRefName": "review1",
+      "headRefOid": "6cadf1caa4b42d2b4d8955469a09275004b3a04a",
+      "closedAt": "2024-09-13T11:54:27Z",
+      "mergedAt": "2024-09-13T11:54:27Z",
+      "mergedBy": "chriswendt",
+      "mergeCommit": {
+        "oid": "45b3cccff011f9fabb16a7d64e6474ddafc8c6d4"
+      },
       "comments": [],
       "reviews": []
     }
