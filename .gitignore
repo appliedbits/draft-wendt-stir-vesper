@@ -22,4 +22,5 @@ package-lock.json
 report.xml
 !requirements.txt
 build.sh
-draft-wendt-stir-vesper-00.md
+draft-wendt-stir-vesper-00.*
+draft-wendt-stir-vesper-01.*
