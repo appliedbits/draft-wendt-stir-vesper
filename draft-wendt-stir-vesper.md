@@ -119,14 +119,14 @@ The Transparency Log is part of the NA's services and plays a crucial role in en
 Receipt Issuance:
 After each claim is recorded, the NA issues a Receipt to submitting Claim Agent, ultimately sent to the SE to pair with the claim token. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.
 
-Interaction with Claim Agents: 
+Interaction with Claim Agents:
 Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.
 
 ### Claim Agents and Claim Information Privacy
 
 An important feature of this system is its ability to protect the privacy of the SE. Claim Agents are not required to store any private data in the Claim Graph. Instead, they store only the hash of the data, which acts as a representation of the claim without exposing sensitive information.
 
-Public vs. Private Data: 
+Public vs. Private Data:
 If the SE has public data (e.g., a business name or logo that is inherently public or the SE has incentive to publicly declare that information with no privacy implications), it can be added to the Claim Graph for greater visibility, perhaps with more trust implied because of the public scrutiny over the uniqueness of that information. This public declaration allows other Claim Agents or other interested ecosystem actors to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.
 
 ## Transport and Presentation - Vesper PASSporT
@@ -146,10 +146,10 @@ The Vesper framework generally allows the relying party and verification service
 
 As the Vesper PASSporT is constructed and signed for a specific destination party, the AS will be provided with a set of 'vesper' claims which MAY be verified by the AS. This is optionally supported by Authentication Services that want to validate the Vesper Token for its verifiability or perhaps its conformance to policies. More generally, whether the AS chooses to verify the vesper claims, any issues with the verifiability of the Vesper PASSporT should be discovered by the relying party doing verification.
 
-Signature Verification: 
-The AS ensures that the Vesper Token's signature is valid based on the public key provided. 
+Signature Verification:
+The AS ensures that the Vesper Token's signature is valid based on the public key provided.
 
-Action on Failure: 
+Action on Failure:
 If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed and MAY notify caller of the validation failure via STIR error codes (i.e. 4xx) defined in {{RFC8224}}.
 
 The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate delegated by the authorized entity in the STIR ecosystem.
@@ -160,10 +160,10 @@ NOTE: The relationship between Vesper Wallet that creates Vesper Token and the A
 
 Once the Vesper Token reaches the Verification Service (VS), the token undergoes further checks to confirm its authenticity and integrity.
 
-Payload Verification: 
+Payload Verification:
 The first step for VS is to verify the Vesper Token's signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the VS will fail the verification and MAY fail the communication.
 
-SD-JWT Claim Verification: 
+SD-JWT Claim Verification:
 After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and the signature of the SD-JWT must be verified individually by the VS, using the Public Key Verification described below. If the Vesper Presentation (the wrapped SD-JWTs and Receipts) are invalid, the VS will stop processing the request, ensuring that the call will not proceed and MUST notify the caller via STIR error codes (i.e. 4xx) defined in {{RFC8224}}.
 
 Public Key Verification:
@@ -263,7 +263,7 @@ High-Level Flow:
 +--------------+                    +----------+
 |  Phone Call  |                    | Verifier |
 | (Vesper PASS)|                    | Service  |
-+--------------+                    +----------+ 
++--------------+                    +----------+
       |                                  |
       |- Vesper PASSporT in SIP Header ->|
       |                                  |
