@@ -8,22 +8,22 @@
 <meta content="Chris Wendt" name="author">
 <meta content="Rob Sliwa" name="author">
 <meta content="
-       This document extends the STIR architecture by defining a secure telephone identity token and PASSporT with a type of “vesper” and specifies the use of Selective Disclosure JWT (SD-JWT) for representing persona related claim information intended to be associated with verifiable information such as the assignment of a telephone number or the output of a Know Your Customer (KYC) or Know Your Business (KYB) type of vetting process or Rich Call Data (RCD) or claims of consent provided to the telephone number holder. It defines logical roles that form trusted relationships to establish overall eco-system trust.  These roles are in the context of a Subject Entity (SE) that is the end entity that is the holder and has the right to use a telephone number. An Issuing Agent (IA) establishes the Subject Entity to the perform the initial vetting and establishment of the persona to the eco-system. A Notary Agent (NA) is a neutral role that maintains a graph of relationships between all roles, claims, and identities with a corresponding transparency log that generates verifiable receipts to “notarize” the recording of these relationships and claims being established. Importantly, privacy is enabled in this Notary role because the submitters have the option of submitting hashes of claims to protect information, or may usefully want to publicly declare their association to a claim to allow the public monitoring to avoid duplicate, mistaken or negligent claims which can be identified before enabling any illegitimate usage in the eco-system. A Claim Agent (CA) is a party that produces claims in the form of SD-JWT + receipts from the NA. There is multiple specific claim agent types and the claims definitions of key value pairs they are required or optionally can include. These SD-JWT + receipt objects are then collected by the SE into a digital wallet that it can then use for selective disclosure presentation and incorporate into a “vesper” PASSporT with different “vesper” claim SD-JWT + receipt objects and signed by the delegate certificate with telephone number to tie the telephone number back to the SE. 
+       This document extends the STIR architecture by defining a Personal Assertion Token (PASSporT) with a type of &quot;vesper&quot; (VErifiable Sti PERsona) and specifies the use of PASSporTs as a JSON Web Tokens (JWT) and Selective Disclosure JWT (SD-JWT) for representing verifiable claims related to a persona (a person or business entity) associated with a Secure Telephone Identity (STI). This set of extensible claims can include verifiable information such as the assignment of a telephone number, the output of a Know Your Customer (KYC) or Know Your Business (KYB) type of vetting process, Rich Call Data (RCD) or claims of consent provided to the telephone number holder. The architecture, dependencies, and process flow of Vesper includes logical roles that represent certain responsibilities for establishing a secure telephone identity. These roles represent the basis for trusted relationships to information that is being claimed and who is validating and taking responsibility for the accuracy of that information. These roles begin with a Subject Entity (SE) that is the end entity that intended to be represented by the STI telephone number identifier. A Vetting Claim Agent (VCA) establishes the Subject Entity as a vetted entity after performing the initial vetting and existence as a entity that fulfills the criteria and policies of the ecosystem to be associated with an STI. A Notary Agent (NA) is a neutral role that maintains a graph of relationships among all roles, claims, and identities, but importantly, for protecting privacy, doesn't hold any claim information other than the recording of claim events to the STI telephone number. The NA records these claim event transactions with a corresponding transparency log that generates verifiable receipts to &quot;notarize&quot; the recording of these relationships and claims being established. Privacy is enabled in this Notary role because the submitters have the option of submitting hashes of claims to protect information, or may usefully want to publicly declare their association to a claim to allow the public monitoring to avoid duplicate, mistaken or negligent claims which can be identified before illegitimate usage in the eco-system can occur. Other Claim Agents are defined producing claims in the form of SD-JWT + receipts from the NA. There are multiple claim agent types with corresponding extensible claim definitions with key value pairs that can be required or optionally included. These SD-JWT + receipt claim objects are then collected by the SE into a digital wallet that it can then use for selective disclosure presentation and incorporate into a &quot;vesper&quot; PASSporT signed by the a delegate certificate associated with STI telephone number to validate the SE is indeed the authorized holder of the telephone number and vesper token at the time the presentation is required and ties the SE to the STIR eco-system a STIR certificates policy for use in communications. 
     " name="description">
-<meta content="xml2rfc 3.23.0" name="generator">
+<meta content="xml2rfc 3.23.2" name="generator">
 <meta content="telephone number" name="keyword">
 <meta content="vetting" name="keyword">
 <meta content="KYC" name="keyword">
 <meta content="draft-wendt-stir-vesper-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.23.0
-    Python 3.12.3
+  xml2rfc 3.23.2
+    Python 3.12.7
     ConfigArgParse 1.7
-    google-i18n-address 3.1.0
+    google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.4
     lxml 4.9.4
-    platformdirs 4.2.2
+    platformdirs 4.3.6
     pycountry 22.3.5
     PyYAML 6.0.1
     requests 2.32.3
@@ -1027,11 +1027,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">vesper</td>
-<td class="right">September 2024</td>
+<td class="right">October 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Wendt &amp; Sliwa</td>
-<td class="center">Expires 17 March 2025</td>
+<td class="center">Expires 24 April 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1044,12 +1044,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wendt-stir-vesper-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-09-13" class="published">13 September 2024</time>
+<time datetime="2024-10-21" class="published">21 October 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-03-17">17 March 2025</time></dd>
+<dd class="expires"><time datetime="2025-04-24">24 April 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1066,7 +1066,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">VESPER PASSporT and Identity Tokens - VErifiable STI Personas</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document extends the STIR architecture by defining a secure telephone identity token and PASSporT with a type of “vesper” and specifies the use of Selective Disclosure JWT (SD-JWT) for representing persona related claim information intended to be associated with verifiable information such as the assignment of a telephone number or the output of a Know Your Customer (KYC) or Know Your Business (KYB) type of vetting process or Rich Call Data (RCD) or claims of consent provided to the telephone number holder. It defines logical roles that form trusted relationships to establish overall eco-system trust.  These roles are in the context of a Subject Entity (SE) that is the end entity that is the holder and has the right to use a telephone number. An Issuing Agent (IA) establishes the Subject Entity to the perform the initial vetting and establishment of the persona to the eco-system. A Notary Agent (NA) is a neutral role that maintains a graph of relationships between all roles, claims, and identities with a corresponding transparency log that generates verifiable receipts to “notarize” the recording of these relationships and claims being established. Importantly, privacy is enabled in this Notary role because the submitters have the option of submitting hashes of claims to protect information, or may usefully want to publicly declare their association to a claim to allow the public monitoring to avoid duplicate, mistaken or negligent claims which can be identified before enabling any illegitimate usage in the eco-system. A Claim Agent (CA) is a party that produces claims in the form of SD-JWT + receipts from the NA. There is multiple specific claim agent types and the claims definitions of key value pairs they are required or optionally can include. These SD-JWT + receipt objects are then collected by the SE into a digital wallet that it can then use for selective disclosure presentation and incorporate into a “vesper” PASSporT with different “vesper” claim SD-JWT + receipt objects and signed by the delegate certificate with telephone number to tie the telephone number back to the SE.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document extends the STIR architecture by defining a Personal Assertion Token (PASSporT) with a type of "vesper" (VErifiable Sti PERsona) and specifies the use of PASSporTs as a JSON Web Tokens (JWT) and Selective Disclosure JWT (SD-JWT) for representing verifiable claims related to a persona (a person or business entity) associated with a Secure Telephone Identity (STI). This set of extensible claims can include verifiable information such as the assignment of a telephone number, the output of a Know Your Customer (KYC) or Know Your Business (KYB) type of vetting process, Rich Call Data (RCD) or claims of consent provided to the telephone number holder. The architecture, dependencies, and process flow of Vesper includes logical roles that represent certain responsibilities for establishing a secure telephone identity. These roles represent the basis for trusted relationships to information that is being claimed and who is validating and taking responsibility for the accuracy of that information. These roles begin with a Subject Entity (SE) that is the end entity that intended to be represented by the STI telephone number identifier. A Vetting Claim Agent (VCA) establishes the Subject Entity as a vetted entity after performing the initial vetting and existence as a entity that fulfills the criteria and policies of the ecosystem to be associated with an STI. A Notary Agent (NA) is a neutral role that maintains a graph of relationships among all roles, claims, and identities, but importantly, for protecting privacy, doesn't hold any claim information other than the recording of claim events to the STI telephone number. The NA records these claim event transactions with a corresponding transparency log that generates verifiable receipts to "notarize" the recording of these relationships and claims being established. Privacy is enabled in this Notary role because the submitters have the option of submitting hashes of claims to protect information, or may usefully want to publicly declare their association to a claim to allow the public monitoring to avoid duplicate, mistaken or negligent claims which can be identified before illegitimate usage in the eco-system can occur. Other Claim Agents are defined producing claims in the form of SD-JWT + receipts from the NA. There are multiple claim agent types with corresponding extensible claim definitions with key value pairs that can be required or optionally included. These SD-JWT + receipt claim objects are then collected by the SE into a digital wallet that it can then use for selective disclosure presentation and incorporate into a "vesper" PASSporT signed by the a delegate certificate associated with STI telephone number to validate the SE is indeed the authorized holder of the telephone number and vesper token at the time the presentation is required and ties the SE to the STIR eco-system a STIR certificates policy for use in communications.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1103,7 +1103,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 24 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1173,24 +1173,24 @@ svg :is([fill="white"], [fill^="#fff"]) {
                     <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-transparency-log" class="internal xref">Transparency Log</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.3">
-                    <p id="section-toc.1-1.4.2.3.2.3.1"><a href="#section-4.3.3" class="auto internal xref">4.3.3</a>.  <a href="#name-claim-agents-and-privacy" class="internal xref">Claim Agents and Privacy</a></p>
+                    <p id="section-toc.1-1.4.2.3.2.3.1"><a href="#section-4.3.3" class="auto internal xref">4.3.3</a>.  <a href="#name-claim-agents-and-claim-info" class="internal xref">Claim Agents and Claim Information Privacy</a></p>
 </li>
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-transport-vesper-passport" class="internal xref">Transport - Vesper PASSporT</a></p>
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-transport-and-presentation-" class="internal xref">Transport and Presentation - Vesper PASSporT</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
-                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-verification-and-proof-of-a" class="internal xref">Verification and Proof of Authenticity</a></p>
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-vesper-passport-and-vesper-" class="internal xref">Vesper PASSporT and Vesper Claim Verification and Proof of Authenticity</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5.2.1">
                     <p id="section-toc.1-1.4.2.5.2.1.1"><a href="#section-4.5.1" class="auto internal xref">4.5.1</a>.  <a href="#name-as-verification" class="internal xref">AS Verification</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5.2.2">
-                    <p id="section-toc.1-1.4.2.5.2.2.1"><a href="#section-4.5.2" class="auto internal xref">4.5.2</a>.  <a href="#name-verification" class="internal xref">Verification</a></p>
+                    <p id="section-toc.1-1.4.2.5.2.2.1"><a href="#section-4.5.2" class="auto internal xref">4.5.2</a>.  <a href="#name-vs-verification" class="internal xref">VS Verification</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5.2.3">
-                    <p id="section-toc.1-1.4.2.5.2.3.1"><a href="#section-4.5.3" class="auto internal xref">4.5.3</a>.  <a href="#name-final-trust-and-intelligenc" class="internal xref">Final Trust and Intelligence</a></p>
+                    <p id="section-toc.1-1.4.2.5.2.3.1"><a href="#section-4.5.3" class="auto internal xref">4.5.3</a>.  <a href="#name-verification-and-relying-pa" class="internal xref">Verification and Relying Party Actions</a></p>
 </li>
                 </ul>
 </li>
@@ -1221,7 +1221,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                     <p id="section-toc.1-1.6.2.2.2.4.1"><a href="#section-6.2.4" class="auto internal xref">6.2.4</a>.  <a href="#name-vetting-claim-agent-adds-ky" class="internal xref">Vetting Claim Agent Adds KYC Claims</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.5">
-                    <p id="section-toc.1-1.6.2.2.2.5.1"><a href="#section-6.2.5" class="auto internal xref">6.2.5</a>.  <a href="#name-claim-agent-adds-telephone-" class="internal xref">Claim Agent Adds Telephone Number (TN) Assignment</a></p>
+                    <p id="section-toc.1-1.6.2.2.2.5.1"><a href="#section-6.2.5" class="auto internal xref">6.2.5</a>.  <a href="#name-rtu-claim-agent-adds-teleph" class="internal xref">RTU Claim Agent Adds Telephone Number (TN) Assignment</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.6">
                     <p id="section-toc.1-1.6.2.2.2.6.1"><a href="#section-6.2.6" class="auto internal xref">6.2.6</a>.  <a href="#name-claim-agent-adds-rich-call-" class="internal xref">Claim Agent Adds Rich Call Data (RCD)</a></p>
@@ -1280,7 +1280,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-the-vesper-passport" class="internal xref">The “vesper” PASSporT</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-the-vesper-passport" class="internal xref">The "vesper" PASSporT</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
                 <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-compact-form-and-other-repr" class="internal xref">Compact Form and Other Representations of Vesper Information</a></p>
@@ -1308,16 +1308,16 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-claim-agent-types-and-claim" class="internal xref">Claim Agent Types and Claim Values</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.1">
-                    <p id="section-toc.1-1.9.2.1.2.1.1"><a href="#section-9.1.1" class="auto internal xref">9.1.1</a>.  <a href="#name-vetting-claim-agent-vca" class="internal xref">Vetting Claim Agent - “vca”</a></p>
+                    <p id="section-toc.1-1.9.2.1.2.1.1"><a href="#section-9.1.1" class="auto internal xref">9.1.1</a>.  <a href="#name-vetting-claim-agent-vca" class="internal xref">Vetting Claim Agent - "vca"</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.2">
-                    <p id="section-toc.1-1.9.2.1.2.2.1"><a href="#section-9.1.2" class="auto internal xref">9.1.2</a>.  <a href="#name-right-to-use-claim-agent-rt" class="internal xref">Right to Use Claim Agent - “rtuca”</a></p>
+                    <p id="section-toc.1-1.9.2.1.2.2.1"><a href="#section-9.1.2" class="auto internal xref">9.1.2</a>.  <a href="#name-right-to-use-claim-agent-rt" class="internal xref">Right to Use Claim Agent - "rtuca"</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.3">
-                    <p id="section-toc.1-1.9.2.1.2.3.1"><a href="#section-9.1.3" class="auto internal xref">9.1.3</a>.  <a href="#name-rich-call-data-claim-agent-" class="internal xref">Rich Call Data Claim Agent - “rcdca”</a></p>
+                    <p id="section-toc.1-1.9.2.1.2.3.1"><a href="#section-9.1.3" class="auto internal xref">9.1.3</a>.  <a href="#name-rich-call-data-claim-agent-" class="internal xref">Rich Call Data Claim Agent - "rcdca"</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.4">
-                    <p id="section-toc.1-1.9.2.1.2.4.1"><a href="#section-9.1.4" class="auto internal xref">9.1.4</a>.  <a href="#name-consent-claim-agent-cca" class="internal xref">Consent Claim Agent - “cca”</a></p>
+                    <p id="section-toc.1-1.9.2.1.2.4.1"><a href="#section-9.1.4" class="auto internal xref">9.1.4</a>.  <a href="#name-consent-claim-agent-cca" class="internal xref">Consent Claim Agent - "cca"</a></p>
 </li>
                 </ul>
 </li>
@@ -1374,9 +1374,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in <span>[<a href="#RFC8226" class="cite xref">RFC8226</a>]</span>, PASSporTs in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span>, and the SIP Identity header field <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span> describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trust of the signer alone to at the time of the communications without has proven to require time and people consuming work to perform after-the-fact investigation and enforcement activities. Other industries, like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB), otherwise referred to as the application of vetting practices of an entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona, as a person or business entity, with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties for intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This document describes the establishment of a "vesper" (VErifiable Sti PERsona) PASSporT type with corresponding “vesper” claims which are signed claims using a three party trust model represented by SD-JWTs and enabled with transparency logs and corresponding receipts that enable either a privacy protecting hash disclosure or a public disclosure that allows for verifiable eco-system trust that those that validate claim information are legitimate actors in the ecosystem. Additionally, the vesper token and claim architecture provides mechanisms for providing selective disclosure of any personally identifying information to be disclosed to those that the persona chooses directly or in limited cases, for example, based on enforcement actions, required for legitimately authorized legal or regulatory activity.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">In the current state of digital identities, the unique identifier used to identify the persona behind the identifier is obviously a critical part of using an identifier as part of a digital protocol, but just as important is the ability to associate a real-world persona to that identifier as the responsible party behind that identifier. The telephone number as an identifier and as part of a set of traditional communications services offered around the world has been facing a challenge of illegitimate fraud based on the lack of a formal framework for the explicit association of a set of communications to a directly responsible party. The use of "spoofing" of telephone numbers, a practice of the use of telephone numbers by not directly authorized parties, while having very legitimate use-cases, has been exploited by actors of fraudulent intent to either impersonate the legitimate party, or simply obfuscate the actual party behind the call. Fraud and illegitimate activity has proliferated based on the loose connection of telephone numbers to responsible parties.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-1">The Secure Telephone Identity (STI) architecture fundamentally defined by STI certificates in <span>[<a href="#RFC8226" class="cite xref">RFC8226</a>]</span>, PASSporTs in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span>, and the SIP Identity header field <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span> describe a set of constructs and protocols for the use of tokens and digital signatures to protect the integrity and provide non-repudiation of information as part of a communications session most notably the associated telephone numbers. This document extends that architecture to address the association of a telephone number to a persona (e.g. a person or business entity) given responsibility for the right to use that telephone number. Recently, the illegitimate use of telephone numbers by unauthorized parties and the associated fraudulent activity associated with those communications has generally eroded trust in communications systems. Further, basic reliance on the trustworthiness of the signer alone at the time of the communications has proven to require people to perform time-consuming work in the form of after-the-fact investigation and enforcement activities, but to date has proven mostly ineffective because the true initiator of the communications is generally not directly associated to that communications. Other industries like the financial industry, have adopted well-known successful practices of Know Your Customer (KYC) or Know Your Business (KYB) that apply different vetting practices of an end entity. This document focuses on a set of roles and the protocol interactions between those roles that can properly establish mechanisms for trusted transactions, an explicit set of processes and verifiable actions that should be followed to establish the representation of claims about the persona that are vetted before any communications can be initiated. These claim information establishment transactions are recorded or notarized with authorized or responsible parties while also importantly enabling privacy controls around the disclosure of the persona information. Transparency logging of relationships and transaction events for claim information is also required to further establish trust with optional public disclosure to guarantee uniqueness when desired. The explicit connection between a persona with a telephone number and the responsibilities associated with its use is a critical step towards building the use of telephone numbers and ability to enforce usage policies that allow privacy but discourage taking advantage of those properties with the intent to impersonate for illegitimate reasons. Ultimately, the establishment of secure telephone identity with reasonable policies for establishing those identities will result in greater trusted relationships between parties involved in a set of communications.<a href="#section-1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1395,7 +1393,9 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-overview">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-overview" class="section-name selfRef">Overview</a>
       </h2>
-<p id="section-3-1">The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Vetted Entities (VE) to present that they are who they claim to be.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">This document describes the establishment of a "vesper" (VErifiable Sti PERsona) PASSporT type with corresponding "vesper" claims which are signed claims using a three party trust model represented by SD-JWTs <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span> and enabled with transparency logs and corresponding receipts that enable either a privacy protecting hash disclosure or a public disclosure that allows for verifiable trust to ensure that those entities that validate claim information are legitimate actors in the ecosystem. Additionally, the vesper token in conjunction with the claims architecture provides mechanisms that enable a persona to selectively disclose any personally identifying information to other parties, while at the same time making this information available in special limited cases, for example, based on enforcement actions, required for legitimately authorized legal or regulatory activity.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">In the current state of digital identities, the unique identifier used to identify a persona is obviously a critical component of digital protocols that need to identify the persona. However, just as important, is the ability to verify the existence of a real-world persona to that identifier as the responsible party behind that identifier. The telephone number as an identifier and as part of a set of traditional communications services offered around the world has been facing a challenge of illegitimate fraud based on the lack of a formal framework for the explicit association of a set of communications to a directly responsible party. The use of "spoofing" of telephone numbers, a practice of the use of telephone numbers by not directly authorized parties, while having very legitimate use-cases, has been exploited by actors of fraudulent intent to either impersonate the legitimate party, or simply obfuscate the actual party behind the call. Fraud and illegitimate activity has proliferated based on the loose connection of telephone numbers to responsible parties.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">The vetting process for entities involves verifying their identity and legitimacy, typically through KYC and KYB vetting procedures. This document proposes a standardized method for representing the results of these vetting procedures using Selective Disclosure JWT (SD-JWT). This document does not address how the KYC/KYB should be performed or policies around what documents or processes should be used. Rather the goal of this document is to create a standardized identifier for the Subject Entities (SE) to present that they are who they claim to be and associated verified claims.<a href="#section-3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="vesper-architectural-overview">
@@ -1408,7 +1408,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-introduction-to-vesper-toke">
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-introduction-to-vesper-toke" class="section-name selfRef">Introduction to Vesper Tokens and Trust Model</a>
         </h3>
-<p id="section-4.1-1">The use of Vesper Tokens in communications will allow for a trust model enabled by a three party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications that require authorized use of a telephone number with the ability to support use-cases that require anonymity all the way up to full disclosure of vetted persona information if that is desired. The establishment of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims made by authoritative or identified trusted actors in the eco-system.  This document defines these roles as Claim Agents that have specific types with associated standard mandatory and optional key values.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-1">The use of Vesper Tokens in communications will allow for a trust model enabled by a three-party trust system based on an agreed set of vetting policies with a set of privacy enabled features to allow for selective disclosure for communications. This trust framework requires establishment of policies for participation of end entities and those that vet and validate information about those end entities.  This information includes validated information about the entities themselves, the authorized right to use of a telephone number with the ability to support use-cases that validate all claims about the end entity or might only require anonymity and simply only validate the telephone number but the entity behind that telephone number exists and is real. The representation of roles that facilitate the trust of the association of a telephone number and other entity information is in the form of claims.  This document defines the role of those that validate and create claims against an entity are called Claim Agents that create specific claim types that have specified associated standard mandatory and optional key values.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <div id="key-features-of-vesper-tokens">
 <section id="section-4.1.1">
           <h4 id="name-key-features-of-vesper-toke">
@@ -1416,13 +1416,13 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           </h4>
 <ul class="normal">
 <li class="normal" id="section-4.1.1-1.1">
-              <p id="section-4.1.1-1.1.1">Selective Disclosure: Entities can choose which information to disclose to different parties.<a href="#section-4.1.1-1.1.1" class="pilcrow">¶</a></p>
+              <p id="section-4.1.1-1.1.1">Selective Disclosure: In order to protect privacy or in the mode of exposing only the required level of detail of information in a zero knowledge proof type of disclosure, entities can choose to convey a transaction specific presentation of information to different relying parties.<a href="#section-4.1.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.1.1-1.2">
-              <p id="section-4.1.1-1.2.1">Authorized Use of Telephone Numbers: Vesper tokens ensure that only authorized parties can use telephone numbers.<a href="#section-4.1.1-1.2.1" class="pilcrow">¶</a></p>
+              <p id="section-4.1.1-1.2.1">Right to Use (RTU) of Telephone Numbers: Vesper tokens can ensure that only those entities that are assigned telephone numbers can use or delegate the use of those telephone numbers with the control of an explicit token.<a href="#section-4.1.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.1.1-1.3">
-              <p id="section-4.1.1-1.3.1">Flexible Use Cases: Vesper tokens can be used for KYC/KYB vetting, Rich Call Data (RCD), and consent claims.  New use-cases can be defined in the future.<a href="#section-4.1.1-1.3.1" class="pilcrow">¶</a></p>
+              <p id="section-4.1.1-1.3.1">Flexible Use Cases: Vesper tokens can be used for KYC/KYB vetting, Rich Call Data (RCD), and consent claims.  New use-cases can be and are anticipated to be defined in the future.<a href="#section-4.1.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1434,26 +1434,28 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-roles-and-responsibilities-">
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-roles-and-responsibilities-" class="section-name selfRef">Roles and Responsibilities in the Vesper Ecosystem</a>
         </h3>
-<p id="section-4.2-1">The trust framework defines several roles that facilitate claims about telephone numbers and other entity information. These roles, known as Claim Agents, are responsible for making authoritative claims about the subject entity (SE).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-1">The trust framework defines several roles that facilitate claims about telephone numbers and other entity information. The first two primary roles are defined as Claim Agents and Subject Entities (SE).  The Claim Agents are responsible for making either authoritative or validated claims about a Subject Entity (SE). The Claim Agent in turn collects these validated claims to present to other entities that they want to trust that information.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <div id="claim-agent-roles">
 <section id="section-4.2.1">
           <h4 id="name-claim-agent-roles">
 <a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-claim-agent-roles" class="section-name selfRef">Claim Agent Roles</a>
           </h4>
+<p id="section-4.2.1-1">The following are the claim agent roles defined in this document.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-1.1">
-              <p id="section-4.2.1-1.1.1">Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes the SE in the ecosystem.<a href="#section-4.2.1-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.1-2.1">
+              <p id="section-4.2.1-2.1.1">Vetting Claim Agent (VCA): Handles KYC/KYB vetting and establishes the SE as an identifiable entity in the ecosystem.<a href="#section-4.2.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-1.2">
-              <p id="section-4.2.1-1.2.1">Right To Use Claim Agent (RTUCA): Handles the assignment of telephone numbers to the SE.<a href="#section-4.2.1-1.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-2.2">
+              <p id="section-4.2.1-2.2.1">Right To Use Claim Agent (RTUCA): Handles the vetting of telephone numbers assigned to the SE.<a href="#section-4.2.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-1.3">
-              <p id="section-4.2.1-1.3.1">Rich Call Data Claim Agent (RCDCA): Provides vetting and validation of Rich Call Data claims.<a href="#section-4.2.1-1.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-2.3">
+              <p id="section-4.2.1-2.3.1">Rich Call Data Claim Agent (RCDCA): Provides vetting and validation of Rich Call Data claims for the SE.<a href="#section-4.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-1.4">
-              <p id="section-4.2.1-1.4.1">Consent Claim Agent (CCA): Handles consent claims for allowing SE's to call or message specific telephone numbers.<a href="#section-4.2.1-1.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-2.4">
+              <p id="section-4.2.1-2.4.1">Consent Claim Agent (CCA): Handles consent claims for allowing SE's to call or message specific telephone numbers.<a href="#section-4.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
+<p id="section-4.2.1-3">Further details about these roles and the specific claims and key value attributes of the claims validated by the Claim Agents are defined later in the document. Future Claim Agent roles are anticipated to be defined by future documents.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="claim-agent-responsibilities">
@@ -1461,7 +1463,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           <h4 id="name-claim-agent-responsibilitie">
 <a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-claim-agent-responsibilitie" class="section-name selfRef">Claim Agent Responsibilities</a>
           </h4>
-<p id="section-4.2.2-1">Claim Agents make claims about the Subject Entity. These agents are registered with a Notary Agent (NA) who maintains a Claim Graph for the Subject Entities and issues transparency receipts for each claim event. Claim Agents issue SD-JWT tokens with the claims and the SE holds these SD-JWT tokens (verifiable claims) in Vesper Wallet (VW).<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-1">Claim Agents validate and register claims about Subject Entities. Claim Agents are registered and uniquely identified in the Vesper Framework via the Notary Agent (NA). The NA maintains a common append-only Claim Graph for claim events each Claim Agent makes regarding Subject Entities and issues transparency receipts for the recording and notarizing each claim event. The details of this are described later in the document. Claim Agents ultimately issue SD-JWT tokens containing the validated claim key values to the Subject Entities (SE) vetted by the Claim Agent. The Claim Agent asserts the validated claims in a signed SD-JWT which, combined with a transparency receipt from the NA, are delivered to the SE which holds these SD-JWT tokens + receipts (vesper claims) in a Vesper Wallet (VW). The Vesper Wallet can then be used for specific selective disclosure of information presented to relying party.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1471,21 +1473,14 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-notary-agent-claim-graph-an">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-notary-agent-claim-graph-an" class="section-name selfRef">Notary Agent - Claim Graph and Transparency Log</a>
         </h3>
-<p id="section-4.3-1">In the Vesper ecosystem, Claim Agents issue claims about the Subject Entity.  To ensure trust and accountability between Claim Agents and Subject Entities, all interactions are notarized to the participants responsible by the Notary Agent, which internally operates two key services: the Claim Graph and the Transparency Log.  Importantly, these notarizations can be privacy protected using hashes or can be used for public transparency to be monitored for mis-claims made by other Subject Entities and handled through a resolution process that is eco-system specific (and not defined in this document).<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-1">In the Vesper ecosystem, Claim Agents issue claims about the Subject Entity. To ensure trust and accountability, all interactions between Claim Agents and Subject Entities are registered and notarized by the Notary Agent. The NE internally operates two key dependent services: the Claim Graph and the Transparency Log. Importantly, these notarizations can be privacy protected by storing hashes of the claim JSON objects or can be used for public transparency of the claim object contents so they can be monitored for mis-claims made by other non-authorized Subject Entities and handled through a resolution process that is eco-system specific. This resolution process is not in-scope for this document, but is likely coordinated via the Notary Agent through establishment of contacts and communications to the Claim Agents.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <div id="claim-graph">
 <section id="section-4.3.1">
           <h4 id="name-claim-graph">
 <a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-claim-graph" class="section-name selfRef">Claim Graph</a>
           </h4>
-<p id="section-4.3.1-1">The Claim Graph is responsible for building and maintaining a graph of claims related to SEs. Each claim issued by a Claim Agent is added to this graph as a node, with relationships represented as edges between entities.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.3.1-2.1">
-              <p id="section-4.3.1-2.1.1">Snapshot Hashing: Every time a new claim is added or updated in the Claim Graph, the service creates a hash of the current snapshot of the graph. This hash serves as a unique cryptographic representation of the claim state at that moment in time.<a href="#section-4.3.1-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.3.1-2.2">
-              <p id="section-4.3.1-2.2.1">Transparency: The hashed snapshot is then recorded in the Transparency Log, ensuring that the claims history is transparent, immutable, and auditable. By using cryptographic hashing, the Claim Graph remains secure, and any changes to the claims can be traced and verified.<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+<p id="section-4.3.1-1">The Claim Graph is an append-only registry of the recording of claim validation events made by a Claim Agent responsible vetting the claims related to an SE. Each claim validation event issued by a Claim Agent is added to this graph as a node, with relationships represented as edges between entities.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1-2">Every time a new claim is added or updated in the Claim Graph, the service creates a graph snapshot hash of the graph, thereby uniquely representing a current snapshot of the graph. This hash serves as a unique cryptographic representation of the claim graph state at that moment in time. The hashed snapshot is then recorded in the Transparency Log, ensuring that the claims history is transparent, immutable, and auditable. By using cryptographic hashing, the Claim Graph remains secure, and any changes to the claims can be traced and verified.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="transparency-log">
@@ -1493,108 +1488,79 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           <h4 id="name-transparency-log">
 <a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-transparency-log" class="section-name selfRef">Transparency Log</a>
           </h4>
-<p id="section-4.3.2-1">The Transparency Log is part of the NA’s services and plays a crucial role in ensuring that all claims made by Claim Agents are trustworthy. It allows claims to be verifiable across different agents using cryptographic methods. Once a claim is hashed by the Claim Graph, it is added to the log, making it accessible for verification.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.3.2-2.1">
-              <p id="section-4.3.2-2.1.1">Receipt Issuance: After each claim is recorded, the NA issues a Receipt to the SE. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.<a href="#section-4.3.2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.3.2-2.2">
-              <p id="section-4.3.2-2.2.1">Interaction with Claim Agents: Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.<a href="#section-4.3.2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+<p id="section-4.3.2-1">The Transparency Log is part of the NA's services and plays a crucial role in ensuring that all claims made by Claim Agents are trustworthy. It allows claims to be verifiable across different agents using cryptographic methods. Once a claim is hashed by the Claim Graph, it is added to the log, making it accessible for verification.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-2">Receipt Issuance:
+After each claim is recorded, the NA issues a Receipt to submitting Claim Agent, ultimately sent to the SE to pair with the claim token. This receipt includes proof that the claim has been added to the Transparency Log. The SE can then present this receipt alongside claims in SD-JWT as proof that the claims have been transparently logged.<a href="#section-4.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-3">Interaction with Claim Agents:
+Claim Agents do not directly modify the Claim Graph. Instead, they interact with NA via its APIs, which serve as a wrapper around both the Claim Graph and Transparency Log. This ensures that claims are properly registered, hashed, and logged without direct manipulation of the underlying data structures.<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="claim-agents-and-privacy">
+<div id="claim-agents-and-claim-information-privacy">
 <section id="section-4.3.3">
-          <h4 id="name-claim-agents-and-privacy">
-<a href="#section-4.3.3" class="section-number selfRef">4.3.3. </a><a href="#name-claim-agents-and-privacy" class="section-name selfRef">Claim Agents and Privacy</a>
+          <h4 id="name-claim-agents-and-claim-info">
+<a href="#section-4.3.3" class="section-number selfRef">4.3.3. </a><a href="#name-claim-agents-and-claim-info" class="section-name selfRef">Claim Agents and Claim Information Privacy</a>
           </h4>
 <p id="section-4.3.3-1">An important feature of this system is its ability to protect the privacy of the SE. Claim Agents are not required to store any private data in the Claim Graph. Instead, they store only the hash of the data, which acts as a representation of the claim without exposing sensitive information.<a href="#section-4.3.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.3.3-2.1">
-              <p id="section-4.3.3-2.1.1">Public vs. Private Data: If the SE has public data (e.g., a business name or logo), it can be added to the Claim Graph for greater visibility. This allows other Claim Agents to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.<a href="#section-4.3.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+<p id="section-4.3.3-2">Public vs. Private Data:
+If the SE has public data (e.g., a business name or logo that is inherently public or the SE has incentive to publicly declare that information with no privacy implications), it can be added to the Claim Graph for greater visibility, perhaps with more trust implied because of the public scrutiny over the uniqueness of that information. This public declaration allows other Claim Agents or other interested ecosystem actors to detect fraud or suspicious activity. However, private data should always remain hashed and protected unless specifically required for disclosure by the SE.<a href="#section-4.3.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="transport-vesper-passport">
+<div id="transport-and-presentation-vesper-passport">
 <section id="section-4.4">
-        <h3 id="name-transport-vesper-passport">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-transport-vesper-passport" class="section-name selfRef">Transport - Vesper PASSporT</a>
+        <h3 id="name-transport-and-presentation-">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-transport-and-presentation-" class="section-name selfRef">Transport and Presentation - Vesper PASSporT</a>
         </h3>
-<p id="section-4.4-1">The SE can use claims stored in their Vesper Wallet to generate a Vesper PASSporT, which includes SD-JWTs and associated NA Receipts. This Vesper PASSporT is signed by a delegate certificate and attached to communications, such as in the case of STIR.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<p id="section-4.4-2">Vesper PASSporT Flow:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.4-3">
-<li id="section-4.4-3.1">
-            <p id="section-4.4-3.1.1">Using Vesper Wallet, SE creates a Vesper PASSporT containing claims and SD-JWTs.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-4.4-3.2">
-            <p id="section-4.4-3.2.1">Vesper PASSporT is signed by a delegate certificate.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-4.4-3.3">
-            <p id="section-4.4-3.3.1">The signed PASSporT is attached to a SIP identity header for verification by the destination party.<a href="#section-4.4-3.3.1" class="pilcrow">¶</a></p>
-</li>
-        </ol>
+<p id="section-4.4-1">The SE can use claims stored in their Vesper Wallet to generate a Vesper PASSporT, which includes SD-JWTs and associated NA Transparency Receipts. This Vesper PASSporT is signed by a delegate certificate and attached to communications, such as in the case of STIR.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">Vesper PASSporT Flow:
+1. Using Vesper Wallet, SE determines through selective disclosure the presentation required for a particular set of communications (e.g. a call or message to particular destination verifier) which creates a 'vesper' PASSporT containing 'vesper' claims including corresponding SD-JWT + receipts of claims the SE desires to be presented.
+2. Vesper PASSporT is signed by a delegate certificate associated with the telephone number the SE has the right to use, representing its legitimate participation in the STIR ecosystem set of communications delegated by the TNSP or RespOrg that assigned the telephone number resource.
+3. The signed PASSporT is attached to a SIP identity header for verification by the destination party.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="verification-and-proof-of-authenticity">
+<div id="vesper-passport-and-vesper-claim-verification-and-proof-of-authenticity">
 <section id="section-4.5">
-        <h3 id="name-verification-and-proof-of-a">
-<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-verification-and-proof-of-a" class="section-name selfRef">Verification and Proof of Authenticity</a>
+        <h3 id="name-vesper-passport-and-vesper-">
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-vesper-passport-and-vesper-" class="section-name selfRef">Vesper PASSporT and Vesper Claim Verification and Proof of Authenticity</a>
         </h3>
-<p id="section-4.5-1">The Authentication Service (AS) and the Verification Service (VS) are responsible for validating the Vesper Token and its claims.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-1">The Vesper framework generally allows the relying party and verification service to validate both the PASSporT specific communication association (i.e. the "orig", "dest", and "iat" PASSporT claims specific to that communications) as well as the claims and the identity of who issued each of the 'vesper' claims with the appropriate amount of disclosure or presentation required for the verifier.  This framework ties both trust of the claims to those Claim Agents that validate claims. Via STIR and the use of STIR certificates and PASSporTs the Vesper PASSporT ties the valid use of a STIR certificates within an eco-system governed by STIR certificate policies to a certificate with a TNAuthList containing the relevant telephone number associated with the STI and use of certificate delegation to the end entity associated with that telephone number.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
 <div id="as-verification">
 <section id="section-4.5.1">
           <h4 id="name-as-verification">
 <a href="#section-4.5.1" class="section-number selfRef">4.5.1. </a><a href="#name-as-verification" class="section-name selfRef">AS Verification</a>
           </h4>
-<p id="section-4.5.1-1">When the Vesper Token is created, the AS verifies its signature. The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate.<a href="#section-4.5.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.5.1-2.1">
-              <p id="section-4.5.1-2.1.1">Signature Verification: The AS ensures that the Vesper Token’s signature is valid and matches the certificate provided.<a href="#section-4.5.1-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.5.1-2.2">
-              <p id="section-4.5.1-2.2.1">Action on Failure: If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed under fraudulent conditions.<a href="#section-4.5.1-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-<p id="section-4.5.1-3">NOTE: The relationship between Vesper Wallet that creates Vesper Token and the AS in practice will be likely a trusted relationship and therefore AS may chose to trust the Vesper Token without further verification.<a href="#section-4.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.5.1-1">As the Vesper PASSporT is constructed and signed for a specific destination party, the AS will be provided with a set of 'vesper' claims which <span class="bcp14">MAY</span> be verified by the AS. This is optionally supported by Authentication Services that want to validate the Vesper Token for its verifiability or perhaps its conformance to policies. More generally, whether the AS chooses to verify the vesper claims, any issues with the verifiability of the Vesper PASSporT should be discovered by the relying party doing verification.<a href="#section-4.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.5.1-2">Signature Verification:
+The AS ensures that the Vesper Token's signature is valid based on the public key provided.<a href="#section-4.5.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.5.1-3">Action on Failure:
+If the Vesper Presentation (the wrapped SD-JWTs and Receipts) is invalid, the AS will stop processing the request, ensuring that the call will not proceed and <span class="bcp14">MAY</span> notify caller of the validation failure via STIR error codes (i.e. 4xx) defined in <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span>.<a href="#section-4.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.5.1-4">The Vesper Token contains SD-JWTs (with claims) and associated NA Receipts, and its signature is signed by a delegate certificate delegated by the authorized entity in the STIR ecosystem.<a href="#section-4.5.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.5.1-5">NOTE: The relationship between Vesper Wallet that creates Vesper Token and the AS in practice will be likely a trusted relationship and therefore AS may chose to trust the Vesper Token without further verification.<a href="#section-4.5.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="verification">
+<div id="vs-verification">
 <section id="section-4.5.2">
-          <h4 id="name-verification">
-<a href="#section-4.5.2" class="section-number selfRef">4.5.2. </a><a href="#name-verification" class="section-name selfRef">Verification</a>
+          <h4 id="name-vs-verification">
+<a href="#section-4.5.2" class="section-number selfRef">4.5.2. </a><a href="#name-vs-verification" class="section-name selfRef">VS Verification</a>
           </h4>
 <p id="section-4.5.2-1">Once the Vesper Token reaches the Verification Service (VS), the token undergoes further checks to confirm its authenticity and integrity.<a href="#section-4.5.2-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.5.2-2.1">
-              <p id="section-4.5.2-2.1.1">Payload Verification: The first step for VS is to verify the Vesper Token’s signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the VS will reject the communication.<a href="#section-4.5.2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.5.2-2.2">
-              <p id="section-4.5.2-2.2.1">SD-JWT Claim Verification: After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and must be verified individually.<a href="#section-4.5.2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.5.2-2.3">
-              <p id="section-4.5.2-2.3.1">Public Key Verification: The VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT’s signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.<a href="#section-4.5.2-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+<p id="section-4.5.2-2">Payload Verification:
+The first step for VS is to verify the Vesper Token's signature. This ensures that the token has not been tampered with during transit. Any modification to the payload will invalidate the signature, and the VS will fail the verification and <span class="bcp14">MAY</span> fail the communication.<a href="#section-4.5.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.5.2-3">SD-JWT Claim Verification:
+After validating the Vesper Token, the VS looks up each of the SD-JWTs associated with the claim types included in the Vesper Token. Each SD-JWT contains claims made by the Claim Agents and the signature of the SD-JWT must be verified individually by the VS, using the Public Key Verification described below. If the Vesper Presentation (the wrapped SD-JWTs and Receipts) are invalid, the VS will stop processing the request, ensuring that the call will not proceed and <span class="bcp14">MUST</span> notify the caller via STIR error codes (i.e. 4xx) defined in <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span>.<a href="#section-4.5.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.5.2-4">Public Key Verification:
+The VS uses the public key provided as a JSON Web Key (JWK) to verify the signatures of the SD-JWTs. Each SD-JWT's signature ensures that the claim data has not been altered and that the entity issuing the claim is legitimate.<a href="#section-4.5.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="final-trust-and-intelligence">
+<div id="verification-and-relying-party-actions">
 <section id="section-4.5.3">
-          <h4 id="name-final-trust-and-intelligenc">
-<a href="#section-4.5.3" class="section-number selfRef">4.5.3. </a><a href="#name-final-trust-and-intelligenc" class="section-name selfRef">Final Trust and Intelligence</a>
+          <h4 id="name-verification-and-relying-pa">
+<a href="#section-4.5.3" class="section-number selfRef">4.5.3. </a><a href="#name-verification-and-relying-pa" class="section-name selfRef">Verification and Relying Party Actions</a>
           </h4>
-<p id="section-4.5.3-1">Once the VS completes these verifications, it can trust the caller’s identity and the claims made in the Vesper Token.<a href="#section-4.5.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.5.3-2.1">
-              <p id="section-4.5.3-2.1.1">Caller Trust: The successful validation of the Vesper Token and its claims allows the VS to trust that the caller is who they claim to be.<a href="#section-4.5.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4.5.3-2.2">
-              <p id="section-4.5.3-2.2.1">Call Intelligence: In addition to verifying identity, the VS can use the claims enclosed within the Vesper Token for further insights. These claims may include additional information about the caller, such as their vetted identity or other metadata (e.g., business name, consent), which can be used to enhance call routing and decision-making.<a href="#section-4.5.3-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+<p id="section-4.5.3-1">Once the VS of the relying party completes verification procedures, it can reliably depend on the fact that the vesper presentation of the token or PASSporT has been signed with non-repudation by the subject entity and that the subject entity has used the services of the claim agents that have issued and signed each of the 'vesper' claims contained in the parent Vesper token.  In addition, with the NA transparency receipts the relying party can also trust that a claim was made by authorized participants in the eco-system.  The public declaration of claim information can also be verified for cases where that may be an important criteria for the trustability of that information (e.g. the corporate logo or name of a business entity).<a href="#section-4.5.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.5.3-2">Traceability:
+The successful validation of the Vesper Token and its claims allows the VS to trust that the caller is who they claim to be. Because the identity of the responsible claim agents that validated the information about the SE, and the identity of SE itself are transparent, if there is any question about the validity of information comes into question, the relying party or other ecosystem or law enforcement entity has a direct path for investigating and questioning the claim agents and the subject entity themselves. This direct accountability and clear lines of responsibility is a critical part of maintaining the trust in the ecosystem which the Vesper framework is very much intended to represent. A robust set of policies about the characteristics and definitions of the content of the claims is beyond the scope of this document, but should also be part of a specific governance or jurisdictional implementation of the Vesper framework.<a href="#section-4.5.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1606,14 +1572,14 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-terminology">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
       </h2>
-<p id="section-5-1">Claim Agent: An entity that is either authorized or trusted in the eco-system to make claims of persona-related information and issues verifiable selectively disclosable tokens containing the vetted claim information. A Claim Agent can be a trusted third party or a service provider that performs the vetting of persona-related information. Claim Agent is a role category where their are defined a set of specific claim agent types with associated claim attribute key values that are either required or optional by specification.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">Vetting Claim Agent (VCA): The Claim Agent entity that initiates and establishes a Subject Entity into the eco-system. Its role is to vet a set of claims that are related to the persona like physical address, business identifiers, contact information and other identifying information. Generally, this information is not disclosed as part of a typical communications transaction, although nothing prevents it.  However, it’s an important set of information to establish the existence and legal standing of a persona. This information is also relevant to a potential legal or policy enforcement action if that becomes required based on alleged illegal or policy violations, something the VCA would be the responsible party to facilitate.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3">Right to Use Claim Agent (RTUCA): The Claim Agent entity that generally represents an authorized provider of telephone numbers for direct assignment.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-1">Claim Agent: An entity that is either authorized by or trusted within the eco-system to make claims of persona-related information and to issue verifiable selectively disclosable tokens containing the vetted claim information. A Claim Agent can be a trusted third party or a service provider that performs the vetting of persona-related information. Claim Agent is a role category where there are a defined a set of specific claim agent types with associated claim attribute key values that are either required or optional by specification.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">Vetting Claim Agent (VCA): The Claim Agent entity that initiates and establishes a Subject Entity into the eco-system. Its role is to vet a set of claims that identify the persona as an entity in the real world; claims that identify physical address, business identifiers, contact information and other real-world identifying information. Generally, this information is not disclosed as part of a typical communications transaction, although nothing prevents it from being disclosed if the SE so wishes. However, it's an important set of information to establish the existence and legal standing of a persona. This information is also relevant to a potential legal or policy enforcement action that may be required based on alleged legal or policy violations (which is something the VCA would be a responsible party to facilitate).<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">Right to Use Claim Agent (RTUCA): The Claim Agent entity that generally represents an authorized provider of telephone numbers for direct assignment to an SE.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <p id="section-5-4">Rich Call Data Claim Agent (RCDCA): The Claim Agent entity that is responsible for vetting the Rich Call Data claims and validating they represent the Subject Entity and conform to any relevant content policies for any relying eco-systems a Vesper PASSporT token may be used.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">Consent Claim Agent (CCA): The Claim Agent entity that is responsible for handling and vetting consent claims made representing different called party destination numbers toward a calling party originating telephone number.  These could include consent to call/message for specific telephone numbers or consent to calls of various types that correspond to <span>[<a href="#I-D.ietf-sipcore-callinfo-spam" class="cite xref">I-D.ietf-sipcore-callinfo-spam</a>]</span> types of callers, or consent to call with robocalling, AI-enabled, or chatbot types of automated calling or messaging.<a href="#section-5-5" class="pilcrow">¶</a></p>
-<p id="section-5-6">Subject Entity (SE): An entity that is vetted by a Vetting Agent and holds the verifiable token containing the vetted information. The Vetting Entity can be a person or a business entity.<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-5">Consent Claim Agent (CCA): The Claim Agent entity that is responsible for handling and vetting consent claims associated with different called party destination numbers for calls initiated by the calling party's originating telephone number. These could include consent to call/message for specific telephone numbers or consent to calls of various types of callers as defined in <span>[<a href="#I-D.ietf-sipcore-callinfo-spam" class="cite xref">I-D.ietf-sipcore-callinfo-spam</a>]</span>, or consent to call with robocalling, AI-enabled, or chatbot types of automated calling or messaging.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">Subject Entity (SE): An entity that is vetted by a Claims Agent and holds the verifiable token containing the vetted information. The Claims Agent can be a person or a business entity.<a href="#section-5-6" class="pilcrow">¶</a></p>
 <p id="section-5-7">Notary Agent (NA): The entity that maintains the Claim Graph and Transparency Log. The Notary Agent is responsible for ensuring the integrity and transparency of the claims made by the Claim Agents. The Notary Agent issues receipts for each claim event, which are used to verify the authenticity of the claims. The Notary Agent role is likely performed by a neutral party in the ecosystem.<a href="#section-5-7" class="pilcrow">¶</a></p>
-<p id="section-5-8">Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span> created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains “vesper” claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent.<a href="#section-5-8" class="pilcrow">¶</a></p>
+<p id="section-5-8">Vesper PASSporT or Token: A verifiable token that follows the definition of PASSporT in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span> created by a Subject Entity containing the presentation of disclosable claims for a specific relying party destination. The Vesper Token is represented as a JSON Web Token (JWT) PASSporT that contains "vesper" claims that are Selective Disclosure JWT (SD-JWT) + transparency receipts generated by the Notary Agent.<a href="#section-5-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="vesper-achitecture">
@@ -1623,17 +1589,9 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       </h2>
 <p id="section-6-1">The Vesper architecture is designed around the concept of creating a secure Persona for each Subject Entity (SE) within an eco-system. This Persona is characterized by its verifiability, privacy-preserving nature, tamper resistance, and auditability. It enables SEs to interact with other entities confidently, knowing that their claims and credentials are cryptographically secured and independently verifiable. The architecture ensures that sensitive information is protected while still allowing for seamless, trust-based exchanges between parties.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <p id="section-6-2">The Vesper architecture employs the following key entities to manage and maintain these secure Personas:<a href="#section-6-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6-3.1">
-          <p id="section-6-3.1.1">Subject Entities (SEs): The organizations whose claims are being issued and verified within the system.<a href="#section-6-3.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-6-3.2">
-          <p id="section-6-3.2.1">Claim Agents (CAs): Entities that facilitate the exchange of claims between SEs and verify the validity of these claims.<a href="#section-6-3.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-6-3.3">
-          <p id="section-6-3.3.1">Notary Agent (NA): A central authority that ensures the integrity, transparency, and auditability of interactions by maintaining a verifiable log of claims and transactions, ensuring tamper-proof records.<a href="#section-6-3.3.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
+<p id="section-6-3">Subject Entities (SEs): The organizations whose claims are being issued and verified within the system.
+Claim Agents: Entities that facilitate the exchange of claims between SEs and verify the validity of these claims.
+Notary Agent (NA): A central authority that ensures the integrity, transparency, and auditability of interactions by maintaining a verifiable log of claims and transactions, ensuring tamper-proof records.<a href="#section-6-3" class="pilcrow">¶</a></p>
 <div id="high-level-flow">
 <section id="section-6.1">
         <h3 id="name-high-level-flow">
@@ -1647,7 +1605,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-6.1-4.1.1">VCA Provisions SE:<a href="#section-6.1-4.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1-4.1.2.1">
-                <p id="section-6.1-4.1.2.1.1">The SE is first vetted by the VCA, which performs KYC checks.<a href="#section-6.1-4.1.2.1.1" class="pilcrow">¶</a></p>
+                <p id="section-6.1-4.1.2.1.1">The SE as a business or person entity is first vetted by the VCA, which performs KYC types of checks.<a href="#section-6.1-4.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-4.1.2.2">
                 <p id="section-6.1-4.1.2.2.1">Once the SE is validated, the event is captured in the Notary Agent (NA) via the Claim Graph (CG) and Transparency Service (TS).<a href="#section-6.1-4.1.2.2.1" class="pilcrow">¶</a></p>
@@ -1678,7 +1636,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
                 <p id="section-6.1-4.3.2.1.1">The SE contacts the Rich Call Data Claim Agent to enrich the telephone call data.<a href="#section-6.1-4.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-4.3.2.2">
-                <p id="section-6.1-4.3.2.2.1">The RCD Claim Agent verifies the SE’s claims and adds Rich Call Data to the CG.<a href="#section-6.1-4.3.2.2.1" class="pilcrow">¶</a></p>
+                <p id="section-6.1-4.3.2.2.1">The RCD Claim Agent verifies the SE's claims and adds Rich Call Data to the CG.<a href="#section-6.1-4.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-4.3.2.3">
                 <p id="section-6.1-4.3.2.3.1">An SD-JWT containing the new claims and a Transparency Receipt is returned to the SE, which is stored in the VW.<a href="#section-6.1-4.3.2.3.1" class="pilcrow">¶</a></p>
@@ -1703,7 +1661,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
                 <p id="section-6.1-4.5.2.1.1">The VS receives the Vesper PASSporT and verifies the token and included SD-JWTs.<a href="#section-6.1-4.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-4.5.2.2">
-                <p id="section-6.1-4.5.2.2.1">Based on the validated claims, the VS makes decisions regarding the call’s authenticity and proceeds accordingly.<a href="#section-6.1-4.5.2.2.1" class="pilcrow">¶</a></p>
+                <p id="section-6.1-4.5.2.2.1">Based on the validated claims, the VS makes decisions regarding the call's authenticity and proceeds accordingly.<a href="#section-6.1-4.5.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
@@ -1721,10 +1679,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       |----- Provides KYC values -------&gt;|                   |
       |                                  |                   |
       |&lt;----- KYC Validation complete ---|                   |
-      |                                  |                   |
-      |                                  |                   |
-      |------- KYC notarization ----------------------------&gt;|
-      |                                  |                   |
+      |                                  |- Claim Notary ---&gt;|
+      |                                  |&lt;- Notary Receipt -|
       |&lt;-- Receives KYC SD-JWT+Receipt --|                   |
       |                                  |                   |
 +--------------+                    +----------+       +-----------+
@@ -1736,18 +1692,18 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       |                                  |                   |
       |&lt;--- Receives TN SD-JWT+Receipt --|                   |
       |                                  |                   |
-      |-- Requests RCD Claims ----------&gt;|                   |
-      |                                  |                   |
+      |-- Requests RCD Claims ----------&gt;|- Claim Notary ---&gt;|
+      |                                  |&lt;- Notary Receipt -|
       |&lt;-- Receives RCD SD-JWT+Receipt --|                   |
       |                                  |                   |
-+--------------+                    +----------+       +-----------+
-|  Phone Call  |                    | Verifier |       |  Verifier |
-| (Vesper PASS)|                    | Service  |       |  Service  |
-+--------------+                    +----------+       +-----------+
-      |                                  |                   |
-      |- Vesper PASSporT in SIP Header -&gt;|                   |
-      |                                  |                   |
-      |                                  |&lt;---- Verified --- |
++--------------+                    +----------+
+|  Phone Call  |                    | Verifier |
+| (Vesper PASS)|                    | Service  |
++--------------+                    +----------+
+      |                                  |
+      |- Vesper PASSporT in SIP Header -&gt;|
+      |                                  |
+      |&lt;----------- Verified ------------|
 </pre><a href="#section-6.1-5" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1757,14 +1713,14 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
         <h3 id="name-notary-agent-flows">
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-notary-agent-flows" class="section-name selfRef">Notary Agent Flows</a>
         </h3>
-<p id="section-6.2-1">The Notary Agent (NA) is responsible for maintaining the integrity and transparency of Subject Entity (SE) claims through the Claim Graph (CG) and Transparency Log. This section provides an in-depth look at how the NA processes claims, records changes to the Claim Graph, and ensures verifiable, immutable records in the Transparency Log. It also explores how Claim Agents (CAs) interact with the NA, and how trust is established across the Vesper framework.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-1">The Notary Agent (NA) is responsible for maintaining the integrity and transparency of Subject Entity (SE) claims through the Claim Graph (CG) and Transparency Log. This section provides an in-depth look at how the NA processes claims, records changes to the Claim Graph, and ensures verifiable, immutable records in the Transparency Log. It also explores how Claim Agents interact with the NA, and how trust is established across the Vesper framework.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <div id="claim-graph-1">
 <section id="section-6.2.1">
           <h4 id="name-claim-graph-2">
 <a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-claim-graph-2" class="section-name selfRef">Claim Graph</a>
           </h4>
 <p id="section-6.2.1-1">The CG is a dynamic structure that represents the identity of an SE and tracks all claims related to that identity. Each SE is represented as a node (or IdentityRoot), and additional claims are linked to this root through edges. These claims can represent actions such as KYC validation, telephone number assignments, and rich call data.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.2.1-2">Note: While the Claim Graph is conceptually a graph, its internal representation can be stored as JSON objects in a document database or tables in SQL database for performance optimization.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-2">Note: While the Claim Graph is conceptually a graph, its internal representation can be stored simply as, for example, JSON objects in a document database or tables in SQL database for performance optimization.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="merkle-tree-and-transparency-log">
@@ -1772,7 +1728,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           <h4 id="name-merkle-tree-and-transparenc">
 <a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-merkle-tree-and-transparenc" class="section-name selfRef">Merkle Tree and Transparency Log</a>
           </h4>
-<p id="section-6.2.2-1">The Transparency Log is implemented as a Merkle Tree to provide an immutable and cryptographically secure log of claim changes. Each change to the SE’s identity or associated claims results in a new “leaf” being added to the Merkle Tree. This tree structure enables the creation of Notary Receipts, which are verifiable cryptographic proofs that a particular claim was recorded at a specific time.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-1">The Transparency Log is implemented as a Merkle Tree to provide an immutable and cryptographically secure log of claim changes. Each change to the SE's identity or associated claims results in a new "leaf" being added to the Merkle Tree. This tree structure enables the creation of Notary Receipts, which are verifiable cryptographic proofs that a particular claim was recorded at a specific time.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="vetting-claim-agent-vca-provisions-new-subject-entity">
@@ -1780,7 +1736,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           <h4 id="name-vetting-claim-agent-vca-pro">
 <a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-vetting-claim-agent-vca-pro" class="section-name selfRef">Vetting Claim Agent (VCA) Provisions New Subject Entity</a>
           </h4>
-<p id="section-6.2.3-1">The process begins when the Vetting Claim Agent provisions a new SE. The VCA performs KYC checks on the SE and records the SE’s identity in the Claim Graph. The NA creates a new IdentityRoot node for the SE, representing their entity in the system.<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.3-1">The process begins when the Vetting Claim Agent provisions a new SE. The VCA performs KYC checks on the SE and records the SE's identity in the Claim Graph. The NA creates a new IdentityRoot node for the SE, representing their entity in the system.<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.3-2">Claim Graph Structure (Entity Creation):<a href="#section-6.2.3-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.3-3">
 <pre>
@@ -1830,15 +1786,15 @@ Leaves:
    d0    d1 (KYC claims added)
 </pre><a href="#section-6.2.4-3" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2.4-4">The KYC claims are stored in the Transparency Log, and the SE receives an updated SD-JWT with the KYC claims, along with a Notary Receipt that proves the claims have been recorded immutably. This SD-JWT is presented as proof of identity and KYC verification in subsequent interactions with Claim Agents. The x-vesper-kyc header is used to present this SD-JWT to future Claim Agents.<a href="#section-6.2.4-4" class="pilcrow">¶</a></p>
+<p id="section-6.2.4-4">The KYC claims are stored in the Transparency Log, and the SE receives an updated KYC SD-JWT with the KYC claims, along with a Notary Receipt that proves the claims have been recorded immutably. This SD-JWT is stored in the Vesper Wallet, and is presented as proof of identity and KYC verification in subsequent interactions with Claim Agents. The x-vesper-kyc header is used to present this SD-JWT to future Claim Agents.<a href="#section-6.2.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="claim-agent-adds-telephone-number-tn-assignment">
+<div id="rtu-claim-agent-adds-telephone-number-tn-assignment">
 <section id="section-6.2.5">
-          <h4 id="name-claim-agent-adds-telephone-">
-<a href="#section-6.2.5" class="section-number selfRef">6.2.5. </a><a href="#name-claim-agent-adds-telephone-" class="section-name selfRef">Claim Agent Adds Telephone Number (TN) Assignment</a>
+          <h4 id="name-rtu-claim-agent-adds-teleph">
+<a href="#section-6.2.5" class="section-number selfRef">6.2.5. </a><a href="#name-rtu-claim-agent-adds-teleph" class="section-name selfRef">RTU Claim Agent Adds Telephone Number (TN) Assignment</a>
           </h4>
-<p id="section-6.2.5-1">The SE contacts the Right To Use Claim Agent (RTUCA) to request the assignment of one or more telephone numbers (TNs). The RTUCA verifies the SE’s identity using the KYC SD-JWT in the x-vesper-kyc header to retrieve the SE’s entity_id. After validation, the RTUCA assigns a telephone number to the SE and updates the Claim Graph.<a href="#section-6.2.5-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.5-1">The SE contacts the Right To Use Claim Agent (RTUCA) to request the assignment of one or more telephone numbers (TNs). The RTUCA verifies the SE's identity using the KYC SD-JWT in the x-vesper-kyc header to retrieve the SE's entity_id. After SD-JWT validation, the RTUCA verifies the SE's right to use the telephone number, assigns the telephone number to the SE and updates the Claim Graph.<a href="#section-6.2.5-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.5-2">Claim Graph Structure (Adding TN Assignment):<a href="#section-6.2.5-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.5-3">
 <pre>
@@ -1866,7 +1822,7 @@ Leaves:
    d0    d1    d2 (TN assignment added)
 </pre><a href="#section-6.2.5-3" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2.5-4">The TN assignment event is logged in the Transparency Log, and the SE receives an SD-JWT containing the telephone number Right to Use claims and a new Notary Receipt. This SD-JWT is also stored in the SE’s Vesper Wallet for future use.<a href="#section-6.2.5-4" class="pilcrow">¶</a></p>
+<p id="section-6.2.5-4">The TN assignment event is logged in the Transparency Log, and the SE receives an SD-JWT containing the telephone number Right to Use claims and a new Notary Receipt. This SD-JWT is also stored in the SE's Vesper Wallet for future use.<a href="#section-6.2.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="claim-agent-adds-rich-call-data-rcd">
@@ -1874,7 +1830,7 @@ Leaves:
           <h4 id="name-claim-agent-adds-rich-call-">
 <a href="#section-6.2.6" class="section-number selfRef">6.2.6. </a><a href="#name-claim-agent-adds-rich-call-" class="section-name selfRef">Claim Agent Adds Rich Call Data (RCD)</a>
           </h4>
-<p id="section-6.2.6-1">Next, the SE contacts the Rich Call Data (RCD) Claim Agent to enrich the SE’s telephone call data. The RCD Claim Agent verifies the SE’s identity using the KYC SD-JWT and adds the RCD claims to the Claim Graph.<a href="#section-6.2.6-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.6-1">Next, the SE contacts the Rich Call Data (RCD) Claim Agent to enrich the SE's telephone call data. The RCD Claim Agent verifies the SE's identity using the KYC SD-JWT and adds the RCD claims to the Claim Graph.<a href="#section-6.2.6-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.6-2">Claim Graph Structure (Adding RCD Data):<a href="#section-6.2.6-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.6-3">
 <pre>
@@ -1924,7 +1880,7 @@ Leaves:
               <p id="section-6.2.7-2.2.1">The Claim Agent verifies the SD-JWT signature and checks the Transparency Receipt to confirm that the KYC event was logged and notarized by the NA.<a href="#section-6.2.7-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-6.2.7-2.3">
-              <p id="section-6.2.7-2.3.1">Once verified, the Claim Agent can trust the SE’s identity and entity_id, allowing further claims (such as TN assignment or RCD claims) to be added securely.<a href="#section-6.2.7-2.3.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.7-2.3.1">Once verified, the Claim Agent can trust the SE's identity and entity_id, allowing further claims (such as TN assignment or RCD claims) to be added securely.<a href="#section-6.2.7-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -2013,7 +1969,7 @@ POST /na/entity/{entity_id}/kyc<a href="#section-6.3.2-2" class="pilcrow">¶</a>
 }
 </pre><a href="#section-6.3.2-6" class="pilcrow">¶</a>
 </div>
-<p id="section-6.3.2-7">kyc_data: The KYC claims (hashed for privacy) being added to the SE’s Claim Graph.<br>
+<p id="section-6.3.2-7">kyc_data: The KYC claims (hashed for privacy) being added to the SE's Claim Graph.<br>
 claim_agent: Information about the VCA making the request, including a signature over the data.<br>
 notary_receipt: The Notary Receipt showing that the KYC claims were recorded.<br>
 sd_jwt: An SD-JWT containing the KYC claims and the entity_id.<br><a href="#section-6.3.2-7" class="pilcrow">¶</a></p>
@@ -2063,7 +2019,7 @@ sd_jwt: An updated SD-JWT containing the assigned TN claims and the entity_id.<b
           <h4 id="name-add-rich-call-data-rcd-clai">
 <a href="#section-6.3.4" class="section-number selfRef">6.3.4. </a><a href="#name-add-rich-call-data-rcd-clai" class="section-name selfRef">Add Rich Call Data (RCD) Claims API</a>
           </h4>
-<p id="section-6.3.4-1">The Rich Call Data (RCD) Claim Agent uses this API to add RCD claims to the SE’s Claim Graph. The RCD data is linked to the SE’s telephone numbers, and the event is logged in the Transparency Log.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.4-1">The Rich Call Data (RCD) Claim Agent uses this API to add RCD claims to the SE's Claim Graph. The RCD data is linked to the SE's telephone numbers, and the event is logged in the Transparency Log.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
 <p id="section-6.3.4-2">Endpoint:
 POST /na/entity/{entity_id}/rcd<a href="#section-6.3.4-2" class="pilcrow">¶</a></p>
 <p id="section-6.3.4-3">Request:<a href="#section-6.3.4-3" class="pilcrow">¶</a></p>
@@ -2095,7 +2051,7 @@ POST /na/entity/{entity_id}/rcd<a href="#section-6.3.4-2" class="pilcrow">¶</a>
 }
 </pre><a href="#section-6.3.4-6" class="pilcrow">¶</a>
 </div>
-<p id="section-6.3.4-7">rcd_data: The RCD claims being added to the SE’s identity.<br>
+<p id="section-6.3.4-7">rcd_data: The RCD claims being added to the SE's identity.<br>
 claim_agent: Information about the RCD Claim Agent making the request.<br>
 notary_receipt: The updated Notary Receipt showing that the RCD claims were recorded.<br>
 sd_jwt: An updated SD-JWT containing the RCD claims and the entity_id.<br><a href="#section-6.3.4-7" class="pilcrow">¶</a></p>
@@ -2195,7 +2151,7 @@ history: A list of all events associated with the SE, including timestamps and N
               <p id="section-6.4.1-2.1.1">Requesting Delegate Certificate: The public key is sent to a Certificate Authority (CA) to obtain a Delegate Certificate, which authorizes the SE to use specific telephone numbers (TNs).<a href="#section-6.4.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.4.1-2.2">
-              <p id="section-6.4.1-2.2.1">Signing Vesper PASSporTs: The private key is used to sign Vesper PASSporTs, which are cryptographically bound to the SE’s claims.<a href="#section-6.4.1-2.2.1" class="pilcrow">¶</a></p>
+              <p id="section-6.4.1-2.2.1">Signing Vesper PASSporTs: The private key is used to sign Vesper PASSporTs, which are cryptographically bound to the SE's claims.<a href="#section-6.4.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.4.1-3">Key Pair Generation Flow:<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
@@ -2255,7 +2211,7 @@ history: A list of all events associated with the SE, including timestamps and N
 <p id="section-6.4.3-1">When the SE needs to present claims (e.g., during a phone call), the Vesper Wallet constructs a Vesper Token, which serves as a presentation of the claims to the Verification Service (VS). The Vesper Token contains:<a href="#section-6.4.3-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.4.3-2">
 <li id="section-6.4.3-2.1">
-              <p id="section-6.4.3-2.1.1">Claim Type: Identifies the type of claim (e.g., KYC, TN, RCD).<a href="#section-6.4.3-2.1.1" class="pilcrow">¶</a></p>
+              <p id="section-6.4.3-2.1.1">Claim Type: Identifies the type of claim (e.g., KYC, TN, RCD, CC).<a href="#section-6.4.3-2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-6.4.3-2.2">
               <p id="section-6.4.3-2.2.1">SD-JWT: The SD-JWT for the claim, containing selectively disclosable claims.<a href="#section-6.4.3-2.2.1" class="pilcrow">¶</a></p>
@@ -2271,17 +2227,17 @@ history: A list of all events associated with the SE, including timestamps and N
   ...
   "claims": [
     {
-      "type": "vca",
+      "type": "kyc",
       "sd_jwt": "eyJhbGciOi...",
       "receipt": "NotaryReceipt1234"
     },
     {
-      "type": "tnca",
+      "type": "tn",
       "sd_jwt": "eyJhbGci...",
       "receipt": "NotaryReceipt5678"
     },
     {
-      "type": "rcdca",
+      "type": "rcd",
       "sd_jwt: "eyJhbGci...",
       "receipt": "NotaryReceipt8901"
     }
@@ -2290,7 +2246,8 @@ history: A list of all events associated with the SE, including timestamps and N
 }
 </pre><a href="#section-6.4.3-4" class="pilcrow">¶</a>
 </div>
-<p id="section-6.4.3-5">Once the Vesper Token is built, it is included in a Vesper PASSporT. The Vesper PASSporT is a specialized form of PASSporT that encapsulates multiple Vesper Tokens and is signed by the SE’s private key (the same private key associated with the Delegate Certificate).<a href="#section-6.4.3-5" class="pilcrow">¶</a></p>
+<p id="section-6.4.3-5">The "kyc" and "tn" claim types are mandatory, while the "rcd" and "cc" claim types are optional.<a href="#section-6.4.3-5" class="pilcrow">¶</a></p>
+<p id="section-6.4.3-6">Once the Vesper Token is built, it is included in a Vesper PASSporT. The Vesper PASSporT is a specialized form of PASSporT that encapsulates multiple Vesper Tokens and is signed by the SE's private key (the same private key associated with the Delegate Certificate).<a href="#section-6.4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="signing-the-vesper-passport">
@@ -2298,7 +2255,7 @@ history: A list of all events associated with the SE, including timestamps and N
           <h4 id="name-signing-the-vesper-passport">
 <a href="#section-6.4.4" class="section-number selfRef">6.4.4. </a><a href="#name-signing-the-vesper-passport" class="section-name selfRef">Signing the Vesper PASSporT</a>
           </h4>
-<p id="section-6.4.4-1">The Vesper PASSporT is signed using the SE’s private key, which is associated with the Delegate Certificate. This signature binds the claims and their associated receipts to the SE and ensures that the Vesper PASSporT can be trusted by the Verification Service (VS).<a href="#section-6.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.4-1">The Vesper PASSporT is signed using the SE's private key, which is associated with the Delegate Certificate. This signature binds the claims and their associated receipts to the SE and ensures that the Vesper PASSporT can be trusted by the Verification Service (VS).<a href="#section-6.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.4-2">Signing the Vesper PASSporT:<a href="#section-6.4.4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.4.4-3">
 <pre>
@@ -2396,7 +2353,7 @@ history: A list of all events associated with the SE, including timestamps and N
 <div id="the-vesper-passport">
 <section id="section-7">
       <h2 id="name-the-vesper-passport">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-the-vesper-passport" class="section-name selfRef">The “vesper” PASSporT</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-the-vesper-passport" class="section-name selfRef">The "vesper" PASSporT</a>
       </h2>
 <p id="section-7-1">A Vesper PASSporT introduces a mechanism for the verification of provable claims based on third party validation and vetting of authorized or provable information that the verifier can have greater trust because through the vesper PASSporT and associated claims there is a signed explicit relationship with two important concepts in the vesper framework:<a href="#section-7-1" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -2407,14 +2364,14 @@ history: A list of all events associated with the SE, including timestamps and N
           <p id="section-7-2.2.1">the transparency receipt created by the Notary Agent representing the time and claim assertion event recorded<a href="#section-7-2.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-7-3">The Vesper PASSporT is a PASSporT as defined in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span> which is a JSON Web Token <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> and upon creation should include the standard PASSporT claims including the “orig” and “dest” and “iat” claims required for replay attack protection. It <span class="bcp14">MUST</span> include a PASSporT type, “ppt”, with the value of the string “vesper” in the protected header of the PASSporT.
-A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying party verification service might understand, but the intention of the Vesper framework is that a Vesper PASSporT contain one or more “vesper” claim objects, defined in the “Vesper Claims” section.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-3">The Vesper PASSporT is a PASSporT as defined in <span>[<a href="#RFC8225" class="cite xref">RFC8225</a>]</span> which is a JSON Web Token <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> and upon creation should include the standard PASSporT claims including the "orig" and "dest" and "iat" claims required for replay attack protection. It <span class="bcp14">MUST</span> include a PASSporT type, "ppt", with the value of the string "vesper" in the protected header of the PASSporT.
+A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying party verification service might understand, but the intention of the Vesper framework is that a Vesper PASSporT contain one or more "vesper" claim objects, defined in the "Vesper Claims" section.<a href="#section-7-3" class="pilcrow">¶</a></p>
 <div id="compact-form-and-other-representations-of-vesper-information">
 <section id="section-7.1">
         <h3 id="name-compact-form-and-other-repr">
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-compact-form-and-other-repr" class="section-name selfRef">Compact Form and Other Representations of Vesper Information</a>
         </h3>
-<p id="section-7.1-1">The use of the compact form of PASSporT is not specified for a “vesper” PASSporT primarily because generally or specifically when using the <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span> defined identity header field as the transport of a “vesper” PASSporT there <span class="bcp14">MUST NOT</span> be any corresponding vesper information or claims provided that are unprotected or not signed to validate it's issuer in SIP <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> or SIP header fields, nor should there be due to the trusted intent of "vesper" claims or "vesper" PASSporTs. "Vesper" claims and PASSporTs are intended to only be used with the identity header field defined in <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span>. Other uses may be considered but <span class="bcp14">MUST</span> consider the use of digital signatures to tie responsible parties and issuers to vesper related information.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1-1">The use of the compact form of PASSporT is not specified for a "vesper" PASSporT primarily because generally or specifically when using the <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span> defined identity header field as the transport of a "vesper" PASSporT there <span class="bcp14">MUST NOT</span> be any corresponding vesper information or claims provided that are unprotected or not signed to validate it's issuer in SIP <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> or SIP header fields, nor should there be due to the trusted intent of "vesper" claims or "vesper" PASSporTs. "Vesper" claims and PASSporTs are intended to only be used with the identity header field defined in <span>[<a href="#RFC8224" class="cite xref">RFC8224</a>]</span>. Other uses may be considered but <span class="bcp14">MUST</span> consider the use of digital signatures to tie responsible parties and issuers to vesper related information.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2424,16 +2381,16 @@ A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying pa
       <h2 id="name-vesper-claims">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-vesper-claims" class="section-name selfRef">Vesper Claims</a>
       </h2>
-<p id="section-8-1">A Vesper Claim is defined as a JWT claim <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> JSON object with a claim key that is the string “vesper” and with a claim value that is a JSON object containing the following key values:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">A Vesper Claim is defined as a JWT claim <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> JSON object with a claim key that is the string "vesper" and with a claim value that is a JSON object containing the following key values:<a href="#section-8-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8-2.1">
-          <p id="section-8-2.1.1">a “type” key with the claim value as the string that defines the claim agent type defined in the “Claim Agent” section of this document or future claim agent types defined and registered in claim agent IANA registry<a href="#section-8-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-8-2.1.1">a "type" key with the claim value as the string that defines the claim agent type defined in the "Claim Agent" section of this document or future claim agent types defined and registered in claim agent IANA registry<a href="#section-8-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-8-2.2">
-          <p id="section-8-2.2.1">a “claim-token” key with a claim value of the SD-JWT <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span> which represents the actual signed claims from the Claim Agent and defined in the section “Vesper Claim SD-JWT”<a href="#section-8-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-8-2.2.1">a "claim-token" key with a claim value of the SD-JWT <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span> which represents the actual signed claims from the Claim Agent and defined in the section "Vesper Claim SD-JWT"<a href="#section-8-2.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-8-2.3">
-          <p id="section-8-2.3.1">a “receipt” key with the claim value of the Signed Vesper Timestamp the Claim Agent received from the Notary Agent defined in the “Signed Vesper Timestamp” section of the document.<a href="#section-8-2.3.1" class="pilcrow">¶</a></p>
+          <p id="section-8-2.3.1">a "receipt" key with the claim value of the Signed Vesper Timestamp the Claim Agent received from the Notary Agent defined in the "Signed Vesper Timestamp" section of the document.<a href="#section-8-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <div id="vesper-claim-sd-jwt-selective-disclosure-json-web-tokens">
@@ -2441,7 +2398,7 @@ A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying pa
         <h3 id="name-vesper-claim-sd-jwt-selecti">
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-vesper-claim-sd-jwt-selecti" class="section-name selfRef">Vesper Claim SD-JWT (Selective Disclosure JSON Web Tokens)</a>
         </h3>
-<p id="section-8.1-1">This section defines the vesper claims object as a SD-JWT, defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>. The claim and issuance process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and more generally the three-party model (i.e. Issuer, Holder, Verifier) defined in SD-JWT.  The Issuer in the context of the vesper token is the Claim Agent, the Holder corresponds to the Subject Entity, and the Verifier is the the receiver of the Vesper Claim, which in the context of this document would be contained in a Vesper Claim object that is signed inside of a Vesper PASSporT.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-1">This section defines the vesper "claims" object "claim-token" key as a SD-JWT, defined in <span>[<a href="#I-D.ietf-oauth-selective-disclosure-jwt" class="cite xref">I-D.ietf-oauth-selective-disclosure-jwt</a>]</span>. The claim and issuance process and disclosure of information closely follows the SD-JWT Issuance and Presentation Flow, Disclosure and Verification, and more generally the three-party model (i.e. Issuer, Holder, Verifier) defined in SD-JWT.  The Issuer in the context of the vesper token is the Claim Agent, the Holder corresponds to the Subject Entity, and the Verifier is the receiver of the Vesper Claim, which in the context of this document would be contained in a Vesper Claim object that is signed inside of a Vesper PASSporT.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sd-jwt-and-disclosures">
@@ -2467,7 +2424,7 @@ A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying pa
             <p id="section-8.3-2.2.1">zero or more Disclosures.<a href="#section-8.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-8.3-3">The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde (‘~’) character as follows:<a href="#section-8.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.3-3">The serialized format for the SD-JWT is the concatenation of each part delineated with a single tilde ('~') character as follows:<a href="#section-8.3-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.3-4">
 <pre>
 &lt;Issuer-signed JWT&gt;~&lt;Disclosure 1&gt;~&lt;Disclosure 2&gt;~...~&lt;Disclosure N&gt;~
@@ -2478,7 +2435,7 @@ A Vesper PASSporT, as can any PASSporT, can contain any claims that a relying pa
 The payload <span class="bcp14">MAY</span> contain one or more digests of Disclosures to enable selective disclosure of the respective claims, created and formatted as described in Section 5.2.
 The payload <span class="bcp14">MAY</span> contain one or more decoy digests to obscure the actual number of claims in the SD-JWT, created and formatted as described in Section 5.2.5.
 The payload <span class="bcp14">MAY</span> contain one or more non-selectively disclosable claims.
-The payload <span class="bcp14">MAY</span> contain the Holder’s public key(s) or reference(s) thereto, as explained in Section 5.1.2.
+The payload <span class="bcp14">MAY</span> contain the Holder's public key(s) or reference(s) thereto, as explained in Section 5.1.2.
 The payload <span class="bcp14">MAY</span> contain further claims such as iss, iat, etc. as defined or required by the application using SD-JWTs.<a href="#section-8.3-6" class="pilcrow">¶</a></p>
 <p id="section-8.3-7">In order to represent the vetted claim information about a VE. The SD-JWT <span class="bcp14">MUST</span> include the following claims:<a href="#section-8.3-7" class="pilcrow">¶</a></p>
 <p id="section-8.3-8">iss: Issuer, the Claim Agent.
@@ -2497,7 +2454,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
       <h2 id="name-claim-agents">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-claim-agents" class="section-name selfRef">Claim Agents</a>
       </h2>
-<p id="section-9-1">Claim Agents are entities that act as issuers in the three party trust model, but generally validate information provided by a Subject Entity via either checking an authorized source or via a vetting procedure.  The details of either of these processes are very likely application or jurisdiction specific and should follow an eco-system specific set of policies and therefore are out-of-scope of this document.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">Claim Agents are entities that act as issuers in the SD-JWT three party trust model, but generally validate information provided by a Subject Entity via either checking an authorized source or via a vetting procedure.  The details of either of these processes are very likely application or jurisdiction specific and should follow an eco-system specific set of policies and therefore are out-of-scope of this document.<a href="#section-9-1" class="pilcrow">¶</a></p>
 <p id="section-9-2">There are different types of claims that can be validated on behalf of a subject entity, but specific to telephone number identities and the entities that are assigned the right to use telephone numbers and more generally the subject and focus of this document there are two required claim types defined in this document and two optional supplemental claim types defined in this document.  It is anticipated that future specifications may define new claim types with additional relevant information that requires trust and validation and therefore an IANA registry for Vesper Claim Agent types is setup to register unique type indicators.<a href="#section-9-2" class="pilcrow">¶</a></p>
 <div id="claim-agent-types-and-claim-values">
 <section id="section-9.1">
@@ -2508,7 +2465,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
 <div id="vetting-claim-agent-vca">
 <section id="section-9.1.1">
           <h4 id="name-vetting-claim-agent-vca">
-<a href="#section-9.1.1" class="section-number selfRef">9.1.1. </a><a href="#name-vetting-claim-agent-vca" class="section-name selfRef">Vetting Claim Agent - “vca”</a>
+<a href="#section-9.1.1" class="section-number selfRef">9.1.1. </a><a href="#name-vetting-claim-agent-vca" class="section-name selfRef">Vetting Claim Agent - "vca"</a>
           </h4>
 <p id="section-9.1.1-1">The Vetting Claim Agent is a required claim agent data type and is also the first claim that <span class="bcp14">MUST</span> be established to establish a globally unique entity-id to represent the Subject Entity in the Notary Agent uniquely.<a href="#section-9.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.1-2">The Vetting Claim object is defined to include the following key values in the claim object:<a href="#section-9.1.1-2" class="pilcrow">¶</a></p>
@@ -2541,7 +2498,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
 <div id="right-to-use-claim-agent-rtuca">
 <section id="section-9.1.2">
           <h4 id="name-right-to-use-claim-agent-rt">
-<a href="#section-9.1.2" class="section-number selfRef">9.1.2. </a><a href="#name-right-to-use-claim-agent-rt" class="section-name selfRef">Right to Use Claim Agent - “rtuca”</a>
+<a href="#section-9.1.2" class="section-number selfRef">9.1.2. </a><a href="#name-right-to-use-claim-agent-rt" class="section-name selfRef">Right to Use Claim Agent - "rtuca"</a>
           </h4>
 <p id="section-9.1.2-1">The Right to Use Claim Agent is a required claim agent data type and is tied to a telephone number service provider or Responsible Organization that is authorized to assign telephone numbers. The Subject Entity has a business relationship with their telephone number provider that also either directly or through a relationship with a Claim Agent can validate the assigned Telephone Number.<a href="#section-9.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.2-2">Note: the telephone number service provider also should provide the mechanism to provide a delegate certificate with the telephone number resource as part of the TNAuthList.<a href="#section-9.1.2-2" class="pilcrow">¶</a></p>
@@ -2560,7 +2517,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
 <div id="rich-call-data-claim-agent-rcdca">
 <section id="section-9.1.3">
           <h4 id="name-rich-call-data-claim-agent-">
-<a href="#section-9.1.3" class="section-number selfRef">9.1.3. </a><a href="#name-rich-call-data-claim-agent-" class="section-name selfRef">Rich Call Data Claim Agent - “rcdca”</a>
+<a href="#section-9.1.3" class="section-number selfRef">9.1.3. </a><a href="#name-rich-call-data-claim-agent-" class="section-name selfRef">Rich Call Data Claim Agent - "rcdca"</a>
           </h4>
 <p id="section-9.1.3-1">The Rich Call Data Claim Agent is an optional claim agent data type and is tied to Rich Call Data as defined in <span>[<a href="#I-D.ietf-stir-passport-rcd" class="cite xref">I-D.ietf-stir-passport-rcd</a>]</span>.<a href="#section-9.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.3-2">The Rich Call Data Claim object is defined to include the following key values in the claim object:<a href="#section-9.1.3-2" class="pilcrow">¶</a></p>
@@ -2582,7 +2539,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
 <div id="consent-claim-agent-cca">
 <section id="section-9.1.4">
           <h4 id="name-consent-claim-agent-cca">
-<a href="#section-9.1.4" class="section-number selfRef">9.1.4. </a><a href="#name-consent-claim-agent-cca" class="section-name selfRef">Consent Claim Agent - “cca”</a>
+<a href="#section-9.1.4" class="section-number selfRef">9.1.4. </a><a href="#name-consent-claim-agent-cca" class="section-name selfRef">Consent Claim Agent - "cca"</a>
           </h4>
 <p id="section-9.1.4-1">The Consent Claim Agent is an optional claim agent data type and is tied to a consent assertion associated to a destination telephone number.<a href="#section-9.1.4-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.4-2">The Consent Claim object is defined to include the following key values in the claim object:<a href="#section-9.1.4-2" class="pilcrow">¶</a></p>
@@ -2609,7 +2566,7 @@ transparency-receipt: Transparency receipt issued by the transparency service.  
       <h2 id="name-vesper-passport-token-as-a-">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-vesper-passport-token-as-a-" class="section-name selfRef">Vesper PASSporT Token as a wrapper for Multiple Vesper Claims Presentation</a>
       </h2>
-<p id="section-10-1">A Subject Entity (SE), acting as the Holder of multiple Vesper claims as SD-JWT + reciepts, may need to present a combination of these tokens to satisfy various verification requirements in a single interaction. For instance, in the STIR ecosystem, the SE might first present a vetting Vesper claim to a Telephone Number Service Provider (TNSP) to prove its identity. Once trusted, the TNSP issues a Right To Use (RTU) Vesper token for a specific Telephone Number (TN) and associated Rich Call Data (RCD). The SE can then present both the vetting and RTU Vesper claims to the AS when signing a call.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">A Subject Entity (SE), acting as the Holder of multiple Vesper claims as SD-JWT + receipts, may need to present a combination of these tokens to satisfy various verification requirements in a single interaction. For instance, in the STIR ecosystem, the SE might first present a vetting Vesper claim to a Telephone Number Service Provider (TNSP) to prove its identity. Once trusted, the TNSP issues a Right To Use (RTU) Vesper claim for a specific Telephone Number (TN) and associated Rich Call Data (RCD). The SE can then present both the vetting and RTU Vesper claims to the AS when signing a call.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <div id="structure-of-multiple-vesper-claim-presentation">
 <section id="section-10.1">
         <h3 id="name-structure-of-multiple-vespe">
@@ -2958,7 +2915,7 @@ U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
 <a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-json-web-token-claims" class="section-name selfRef">JSON Web Token claims</a>
         </h3>
 <p id="section-13.1-1">This specification requests that the IANA add two new claims to the JSON Web Token Claims registry as defined in <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span>.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
-<p id="section-13.1-2">Claim Name: “vesper”<a href="#section-13.1-2" class="pilcrow">¶</a></p>
+<p id="section-13.1-2">Claim Name: "vesper"<a href="#section-13.1-2" class="pilcrow">¶</a></p>
 <p id="section-13.1-3">Claim Description: A JSON object that includes both an SD-JWT object containing Vesper Claims from a Vesper Claim Agent and a Notary Agent transparency receipt object as required by the STIR Vesper framework<a href="#section-13.1-3" class="pilcrow">¶</a></p>
 <p id="section-13.1-4">Change Controller: IESG<a href="#section-13.1-4" class="pilcrow">¶</a></p>
 <p id="section-13.1-5">Specification Document(s): [RFCThis]<a href="#section-13.1-5" class="pilcrow">¶</a></p>
@@ -2969,7 +2926,7 @@ U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
         <h3 id="name-passport-types">
 <a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-passport-types" class="section-name selfRef">PASSporT Types</a>
         </h3>
-<p id="section-13.2-1">This specification requests that the IANA add a new entry to the Personal Assertion Token (PASSporT) Extensions registry for the type “vesper” which is specified in [RFCThis].<a href="#section-13.2-1" class="pilcrow">¶</a></p>
+<p id="section-13.2-1">This specification requests that the IANA add a new entry to the Personal Assertion Token (PASSporT) Extensions registry for the type "vesper" which is specified in [RFCThis].<a href="#section-13.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2982,7 +2939,7 @@ U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
 <dl class="references">
 <dt id="I-D.ietf-oauth-selective-disclosure-jwt">[I-D.ietf-oauth-selective-disclosure-jwt]</dt>
       <dd>
-<span class="refAuthor">Fett, D.</span>, <span class="refAuthor">Yasuda, K.</span>, and <span class="refAuthor">B. Campbell</span>, <span class="refTitle">"Selective Disclosure for JWTs (SD-JWT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-selective-disclosure-jwt-12</span>, <time datetime="2024-09-03" class="refDate">3 September 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-12">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-12</a>&gt;</span>. </dd>
+<span class="refAuthor">Fett, D.</span>, <span class="refAuthor">Yasuda, K.</span>, and <span class="refAuthor">B. Campbell</span>, <span class="refTitle">"Selective Disclosure for JWTs (SD-JWT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-selective-disclosure-jwt-13</span>, <time datetime="2024-10-18" class="refDate">18 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-13">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-sipcore-callinfo-spam">[I-D.ietf-sipcore-callinfo-spam]</dt>
       <dd>
