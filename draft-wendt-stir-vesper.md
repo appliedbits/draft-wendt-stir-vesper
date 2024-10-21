@@ -1017,7 +1017,11 @@ Example:
 }
 ~~~~~~~~~~~~~
 
-## Example Issuance
+# Examples
+
+Note: this example section is still very much a work in progress
+
+## Example SD-JWT Claim Token Issuance
 
 The Issuer is using the following input claim set:
 
@@ -1251,9 +1255,15 @@ YWpBIiwgInVwZGF0ZWRfYXQiLCAxNTcwMDAwMDAwXQ~WyJsa2x4RjVqTVlsR1RQVW92T
 U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
 ~~~~~~~~~~~~~
 
-Presentation
+## Example Vesper PASSporT
 
 The following non-normative example shows a Vesper PASSporT as it would be sent from the Holder (SE) to the Verifier.
+
+Add Example
+
+## Example Presentation
+
+Examples of different presentation scenarios
 
 Add Example
 
