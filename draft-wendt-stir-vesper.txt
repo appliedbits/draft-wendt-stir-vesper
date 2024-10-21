@@ -172,12 +172,15 @@ Table of Contents
      10.1.  Structure of multiple Vesper Claim Presentation
    11. Preventing Replay Attacks
      11.1.  Mitigation Strategy - JWT ID (JTI) Claim
-     11.2.  Example Issuance
-   12. Security Considerations
-   13. IANA Considerations
-     13.1.  JSON Web Token claims
-     13.2.  PASSporT Types
-   14. Normative References
+   12. Examples
+     12.1.  Example SD-JWT Claim Token Issuance
+     12.2.  Example Vesper PASSporT
+     12.3.  Example Presentation
+   13. Security Considerations
+   14. IANA Considerations
+     14.1.  JSON Web Token claims
+     14.2.  PASSporT Types
+   15. Normative References
    Acknowledgments
    Authors' Addresses
 
@@ -1720,7 +1723,11 @@ Table of Contents
      ...
    }
 
-11.2.  Example Issuance
+12.  Examples
+
+   Note: this example section is still very much a work in progress
+
+12.1.  Example SD-JWT Claim Token Issuance
 
    The Issuer is using the following input claim set:
 
@@ -1940,20 +1947,26 @@ Table of Contents
    YWpBIiwgInVwZGF0ZWRfYXQiLCAxNTcwMDAwMDAwXQ~WyJsa2x4RjVqTVlsR1RQVW92T
    U5JdkNBIiwgIlVTIl0~WyJuUHVvUW5rUkZxM0JJZUFtN0FuWEZBIiwgIkRFIl0~
 
-   Presentation
+12.2.  Example Vesper PASSporT
 
    The following non-normative example shows a Vesper PASSporT as it
    would be sent from the Holder (SE) to the Verifier.
 
    Add Example
 
-12.  Security Considerations
+12.3.  Example Presentation
+
+   Examples of different presentation scenarios
+
+   Add Example
+
+13.  Security Considerations
 
    TODO Security
 
-13.  IANA Considerations
+14.  IANA Considerations
 
-13.1.  JSON Web Token claims
+14.1.  JSON Web Token claims
 
    This specification requests that the IANA add two new claims to the
    JSON Web Token Claims registry as defined in [RFC7519].
@@ -1968,13 +1981,13 @@ Table of Contents
 
    Specification Document(s): [RFCThis]
 
-13.2.  PASSporT Types
+14.2.  PASSporT Types
 
    This specification requests that the IANA add a new entry to the
    Personal Assertion Token (PASSporT) Extensions registry for the type
    "vesper" which is specified in [RFCThis].
 
-14.  Normative References
+15.  Normative References
 
    [I-D.ietf-oauth-selective-disclosure-jwt]
               Fett, D., Yasuda, K., and B. Campbell, "Selective
