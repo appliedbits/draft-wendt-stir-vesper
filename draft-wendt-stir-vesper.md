@@ -1,33 +1,33 @@
-—
-title: “VESPER PASSporT and Identity Tokens - VErifiable STI Personas”
-abbrev: “vesper”
+---
+title: "VESPER PASSporT and Identity Tokens - VErifiable STI Personas"
+abbrev: "vesper"
 category: std
 
 docname: draft-wendt-stir-vesper-latest
-submissiontype: IETF  # also: “independent”, “editorial”, “IAB”, or “IRTF”
+submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
 consensus: true
 v: 3
-area: “Applications and Real-Time”
-workgroup: “Secure Telephone Identity Revisited”
+area: "Applications and Real-Time"
+workgroup: "Secure Telephone Identity Revisited"
 keyword:
  - telephone number
  - vetting
  - KYC
 venue:
-  group: “Secure Telephone Identity Revisited”
-  type: “Working Group”
-  mail: “stir@ietf.org”
-  arch: “https://mailarchive.ietf.org/arch/browse/stir/“
-  github: “appliedbits/draft-wendt-stir-vesper”
-  latest: “https://appliedbits.github.io/draft-wendt-stir-vesper/draft-wendt-stir-vesper.html”
+  group: "Secure Telephone Identity Revisited"
+  type: "Working Group"
+  mail: "stir@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/stir/"
+  github: "appliedbits/draft-wendt-stir-vesper"
+  latest: "https://appliedbits.github.io/draft-wendt-stir-vesper/draft-wendt-stir-vesper.html"
 
 author:
  -
     fullname: Chris Wendt
     organization: Somos, Inc.
-    email: “chris@appliedbits.com”
+    email: "chris@appliedbits.com"
     country: US
  -
     fullname: Rob Sliwa
@@ -47,19 +47,18 @@ normative:
 
 informative:
 
-
-— abstract
+--- abstract
 
 This document formalizes a profile and a framework for the use of delegate certificates and authority tokens to strengthen the association between telephone number assignments and the entities that have the authoritative right to use them. It defines a model in which the TNAuthList Authority Token serves as a trusted representation of telephone number assignment and right-to-use (RTU), anchored by a Notary Agent that logs these associations through verifiable transparency mechanisms. The framework also extends the use of authority tokens to support other PASSporT claims like Rich Call Data (RCD) by defining a role for JWTClaimConstraint Authority Tokens. These tokens are issued by authoritative or recognized and vetted claim agents within the ecosystem to assert information associated with the entity assigned a telephone number. The Notary Agent plays a critical role in recording these claims and their provenance, enhancing transparency and accountability.
 Delegate certificates encapsulate and incorporate both the telephone number and associated information validated via authority tokens to the certification authority issuing them, binding them to the authenticated telephone number of the calling party. These certificates are published to a certificate transparency log, enabling relying parties to independently verify the integrity and legitimacy of number use and related claims. The VESPER (Verifiable STI PERsona) approach utilizes STIR protocols and the ACME authority token to formalizing a verifiable, auditable, and privacy-conscious foundation for associating telephone numbers with vetted entities and validated assertion of associated metadata.
 
-— middle
+--- middle
 
 # Introduction
 
 The Secure Telephone Identity (STI) architecture, based on STI certificates {{RFC8226}}, PASSporTs {{RFC8225}}, and the SIP Identity header field {{RFC8224}}, define the foundational use of digital signatures and tokens to protect the integrity of calling information, particularly the telephone number, during a communications session. While these mechanisms help validate call signaling, they do not directly establish who is authorized to use a given telephone number. This document provides a profile of the STI architecture by formalizing the use of delegate certificates and authority tokens to more clearly and verifiably associate a telephone number with the entity—person or business—responsible for its use. This stronger linkage is especially important as misuse of telephone numbers by unauthorized parties continues to undermine trust in communications networks. 
 
-To address this, the VESPER framework introduces roles and interactions that mirror proven practices from other trust-based industries, such as Know Your Customer (KYC) and Know Your Business (KYB) procedures in finance. Through a defined process, an Entity is issued a TNAuthList Authority Token defined in {{RFC9448}}, establishing their right to use a telephone number. Additional information an entity would like to assert to a called party, such as Rich Call Data (RCD) {{I-D.ietf-stir-passport-rcd}}, can be asserted and authorized using JWTClaimConstraints Authority Tokens {{I-D.wendt-acme-authority-token-JWTClaimCon}}. JWTClaimsContraints have the interesting property that they can be used to assert either direct values or the integrity hashes of values (e.g., using "rcdi" claims defined in {{I-D.ietf-stir-passport-rcd}}) to enhance the ability to protect the privacy of information when desired or required. These tokens are used in challenges toward the issuance of delegate certificates which can be transparently recorded by a Notary Agent ecosystem role, which acts as a neutral registrar of these claims associated with telephone numbers without exposing underlying private data unless explicitly authorized or desired. Transparent declarations of claim assertions have the potential beneficial property of enhancing the trust of the asserted claims based on monitoring of these claims to avoid fraudulent impersonation that the STI framework is intended to solve.
+To address this, the VESPER framework introduces roles and interactions that mirror proven practices from other trust-based industries, such as Know Your Customer (KYC) and Know Your Business (KYB) procedures in finance. Through a defined process, an Entity is issued a TNAuthList Authority Token defined in {{RFC9448}}, establishing their right to use a telephone number. Additional information an entity would like to assert to a called party, such as Rich Call Data (RCD) {{I-D.ietf-stir-passport-rcd}}, can be asserted and authorized using JWTClaimConstraints Authority Tokens {{I-D.wendt-acme-authority-token-JWTClaimCon}}. JWTClaimContraints have the interesting property that they can be used to assert either direct values or the integrity hashes of values (e.g., using "rcdi" claims defined in {{I-D.ietf-stir-passport-rcd}}) to enhance the ability to protect the privacy of information when desired or required. These tokens are used in challenges toward the issuance of delegate certificates which can be transparently recorded by a Notary Agent ecosystem role, which acts as a neutral registrar of these claims associated with telephone numbers without exposing underlying private data unless explicitly authorized or desired. Transparent declarations of claim assertions have the potential beneficial property of enhancing the trust of the asserted claims based on monitoring of these claims to avoid fraudulent impersonation that the STI framework is intended to solve.
 
 This VESPER trust model and profile is enhanced using eco-system wide accountability. Transparency logs formalize the issuance of certificates and the relationship between telephone numbers, associated claims and their rightful users, helping detect and prevent fraudulent or conflicting claims by interested parties and auditing mechanisms. By shifting from implicit trust in digital signatures alone to an explicit framework of vetted identities and transparent claims, this approach builds a foundation for enhanced verifiable communications. It enables the responsible use of telephone numbers, discourages impersonation, and strengthens enforcement against abuse, ultimately fostering greater confidence in telephone number-based communications.
 
@@ -176,7 +175,7 @@ The signed PASSporT is then attached to the SIP Identity header and transmitted 
 	* That a corresponding transparency receipt exists, proving the certificate was publicly recorded.
 
 If all verifications succeed, the relying party can trust that the call is both authorized and attributable, and that all claims have been validated by responsible participants in the ecosystem.
-
+p
 Should questions arise, such as disputes over the legitimacy of the claims, the identity of the calling Entity, or the integrity of the Claim Agent, the Notary Agent serves as the central authority for managing escalation and disclosure. This includes providing access to Responsible Party information via a privacy-preserving and legally compliant resolution process, aligned with ecosystem governance and policy enforcement.
 
 # Security Considerations
@@ -187,9 +186,8 @@ TODO Security
 
 None
 
-— back
-
 # Acknowledgments
-{:numbered=“false”}
 
 TODO acknowledge.
+
+—-- back
