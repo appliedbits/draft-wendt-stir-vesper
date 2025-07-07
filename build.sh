@@ -1,9 +1,10 @@
 #!/bin/bash
 
 TITLE="draft-wendt-stir-vesper"
-VERSION="-02"
+VERSION="-03"
 
-/opt/homebrew/Cellar/gem-kramdown-rfc/1.7.19/gems/kramdown-rfc2629-1.7.19/bin/kramdown-rfc $TITLE$VERSION.md > $TITLE$VERSION.xml
-xml2rfc -q $TITLE$VERSION.xml -o $TITLE$VERSION.txt --text
+/opt/homebrew/Cellar/gem-kramdown-rfc/1.7.29/gems/kramdown-rfc2629-1.7.29/bin/kramdown-rfc --verbose --v3 $TITLE$VERSION.md > $TITLE$VERSION.xml
+#/opt/homebrew/opt/ruby/bin/kramdown-rfc --verbose --v3 $TITLE$VERSION.md > $TITLE$VERSION.xml
+xml2rfc -v $TITLE$VERSION.xml -o $TITLE$VERSION.txt --text
 
 # /Users/cwendt/Sync/MyDocs/ietf
