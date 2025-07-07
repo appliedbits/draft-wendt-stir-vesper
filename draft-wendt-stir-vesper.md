@@ -15,13 +15,6 @@ keyword:
  - telephone number
  - vetting
  - KYC
-venue:
-  group: "Secure Telephone Identity Revisited"
-  type: "Working Group"
-  mail: "stir@ietf.org"
-  arch: "https://mailarchive.ietf.org/arch/browse/stir/"
-  github: "appliedbits/draft-wendt-stir-vesper"
-  latest: "https://appliedbits.github.io/draft-wendt-stir-vesper/draft-wendt-stir-vesper.html"
 
 author:
  -
@@ -43,7 +36,7 @@ normative:
   RFC9447:
   RFC9448:
   I-D.ietf-stir-passport-rcd:
-  I-D.wendt-acme-authority-token-JWTClaimCon:
+  I-D.wendt-acme-authority-token-jwtclaimcon:
 
 informative:
 
@@ -58,7 +51,7 @@ Delegate certificates encapsulate and incorporate both the telephone number and 
 
 The Secure Telephone Identity (STI) architecture, based on STI certificates {{RFC8226}}, PASSporTs {{RFC8225}}, and the SIP Identity header field {{RFC8224}}, define the foundational use of digital signatures and tokens to protect the integrity of calling information, particularly the telephone number, during a communications session. While these mechanisms help validate call signaling, they do not directly establish who is authorized to use a given telephone number. This document provides a profile of the STI architecture by formalizing the use of delegate certificates and authority tokens to more clearly and verifiably associate a telephone number with the entity—person or business—responsible for its use. This stronger linkage is especially important as misuse of telephone numbers by unauthorized parties continues to undermine trust in communications networks.
 
-To address this, the VESPER framework introduces roles and interactions that mirror proven practices from other trust-based industries, such as Know Your Customer (KYC) and Know Your Business (KYB) procedures in finance. Through a defined process, an Entity is issued a TNAuthList Authority Token defined in {{RFC9448}}, establishing their right to use a telephone number. Additional information an entity would like to assert to a called party, such as Rich Call Data (RCD) {{I-D.ietf-stir-passport-rcd}}, can be asserted and authorized using JWTClaimConstraints Authority Tokens {{I-D.wendt-acme-authority-token-JWTClaimCon}}. JWTClaimContraints have the interesting property that they can be used to assert either direct values or the integrity hashes of values (e.g., using "rcdi" claims defined in {{I-D.ietf-stir-passport-rcd}}) to enhance the ability to protect the privacy of information when desired or required. These tokens are used in challenges toward the issuance of delegate certificates which can be transparently recorded by a Notary Agent ecosystem role, which acts as a neutral registrar of these claims associated with telephone numbers without exposing underlying private data unless explicitly authorized or desired. Transparent declarations of claim assertions have the potential beneficial property of enhancing the trust of the asserted claims based on monitoring of these claims to avoid fraudulent impersonation that the STI framework is intended to solve.
+To address this, the VESPER framework introduces roles and interactions that mirror proven practices from other trust-based industries, such as Know Your Customer (KYC) and Know Your Business (KYB) procedures in finance. Through a defined process, an Entity is issued a TNAuthList Authority Token defined in {{RFC9448}}, establishing their right to use a telephone number. Additional information an entity would like to assert to a called party, such as Rich Call Data (RCD) {{I-D.ietf-stir-passport-rcd}}, can be asserted and authorized using JWTClaimConstraints Authority Tokens {{I-D.wendt-acme-authority-token-jwtclaimcon}}. JWTClaimContraints have the interesting property that they can be used to assert either direct values or the integrity hashes of values (e.g., using "rcdi" claims defined in {{I-D.ietf-stir-passport-rcd}}) to enhance the ability to protect the privacy of information when desired or required. These tokens are used in challenges toward the issuance of delegate certificates which can be transparently recorded by a Notary Agent ecosystem role, which acts as a neutral registrar of these claims associated with telephone numbers without exposing underlying private data unless explicitly authorized or desired. Transparent declarations of claim assertions have the potential beneficial property of enhancing the trust of the asserted claims based on monitoring of these claims to avoid fraudulent impersonation that the STI framework is intended to solve.
 
 This VESPER trust model and profile is enhanced using eco-system wide accountability. Transparency logs formalize the issuance of certificates and the relationship between telephone numbers, associated claims and their rightful users, helping detect and prevent fraudulent or conflicting claims by interested parties and auditing mechanisms. By shifting from implicit trust in digital signatures alone to an explicit framework of vetted identities and transparent claims, this approach builds a foundation for enhanced verifiable communications. It enables the responsible use of telephone numbers, discourages impersonation, and strengthens enforcement against abuse, ultimately fostering greater confidence in telephone number-based communications.
 
@@ -84,10 +77,10 @@ The VESPER Trust Model establishes a structured framework for asserting and veri
 
 At it's core, the model is built on a trust structure with the following key roles:
 
-	1.	Entities (e.g., individuals or organizations) seeking to assert their right to use a telephone number and assert claims about themselves or a communications,
-	2.  Responsible providers and organizations that are authorized to allocate and assign numbers within a jurisdictional numbering plan,
-	3.	Claim Agents that are authorized and recognized for validating and issuing claims about those entities, and
-	4.	A Notary Agent that records claim issuance events and ensures transparency and traceability within the ecosystem.
+1.	Entities (e.g., individuals or organizations) seeking to assert their right to use a telephone number and assert claims about themselves or a communications,
+2.  Responsible providers and organizations that are authorized to allocate and assign numbers within a jurisdictional numbering plan,
+3.	Claim Agents that are authorized and recognized for validating and issuing claims about those entities, and
+4.	A Notary Agent that records claim issuance events and ensures transparency and traceability within the ecosystem.
 
 Participation in this trust model requires a shared set of policies and standards governing how entities are vetted and how claims are created and validated. These policies define the requirements for asserting an entity’s identity, the right to use a telephone number, and, where applicable, additional claims and associated attributes (i.e. PASSporT type defined claims, like Rich Call Data). Claims are structured representations of verified information, issued by Claim Agents. Each claim type is standardized via PASSporT type specifications in the STIR working group, with clearly defined required and optional key-value pairs, ensuring interoperability and consistency across the ecosystem.
 Through this model, VESPER provides a scalable and transparent foundation for building trust in telephone-based communications, with the flexibility to support both fully attributed and privacy-respecting use cases.
@@ -105,9 +98,9 @@ An Entity is the individual or organization seeking to assert its authority to u
 A Responsible Provider, sometimes called a Telephone Number Service Provider (TNSP), or Responsible Organization (RespOrg) plays both their traditional well-defined role in the allocation and assignment of telephone numbers in accordance with national or international numbering plans generally followed internationally via e.164 and e.164.1 but also a foundational role in the VESPER ecosystem by validation of the association of telephone number assignments to Entities. These entities operate under regulatory authority and are responsible for administering number resources associated with a specific country code or region.
 
 Their responsibilities include:
-	
-	* Number Assignment: Allocating telephone numbers to Entities under the rules of an authorized numbering plan.
-	* Entity Association: Establishing and maintaining a record that links each assigned telephone number to a specific, uniquely identified entity. This includes assigning a persistent identifier or account reference to the Entity to which a number is assigned providing an opaque identifier. This identifier can be used by the Entity to reference themselves in an opaque way for accessing assignment relevant information including TNAuthList Authority Tokens or also referenced during any disputes or disclosures when necessary.
+
+* Number Assignment: Allocating telephone numbers to Entities under the rules of an authorized numbering plan.
+* Entity Association: Establishing and maintaining a record that links each assigned telephone number to a specific, uniquely identified entity. This includes assigning a persistent identifier or account reference to the Entity to which a number is assigned providing an opaque identifier. This identifier can be used by the Entity to reference themselves in an opaque way for accessing assignment relevant information including TNAuthList Authority Tokens or also referenced during any disputes or disclosures when necessary.
 
 While the Responsible Provider or RespOrg does not directly issue proof of assignment or participate in the claim transparency process, their role, even as it currently exists, is essential in grounding the trust framework in authoritative number assignment data. Other ecosystem participants, such as Claim Agents and Notary Agents, can and should reference assignment records governing the Right to Use (RTU) maintained by Responsible Providers or RespOrgs to validate issuance of delegate certificates to the valid Entities.
 
@@ -121,9 +114,9 @@ Each Claim Agent is uniquely identified within the VESPER ecosystem and should b
 
 The Notary Agent (NA) serves as the ecosystem’s registrar and transparency authority. It performs three critical functions:
 
-  1. Registration of Responsible Providers and Responsible Organizations that correspond to the traditional roles in accordance with a national or international numbering plans.
-	2. Registration of Claim Agents, ensuring each is uniquely identifiable and authorized to issue specific types of claims.
-	3. Operation of a Transparency Log, which issues cryptographic receipts to confirm and timestamp the existence of each claim.
+1. Registration of Responsible Providers and Responsible Organizations that correspond to the traditional roles in accordance with a national or international numbering plans.
+2. Registration of Claim Agents, ensuring each is uniquely identifiable and authorized to issue specific types of claims.
+3. Operation of a Transparency Log, which issues cryptographic receipts to confirm and timestamp the existence of each claim.
 
 Notarization can be privacy-preserving, where only cryptographic hashes of claims are logged, or fully transparent, allowing public visibility of claim contents to detect conflicts or impersonation attempts. This optional public disclosure enables monitoring of duplicate or unauthorized claims across the ecosystem.
 
@@ -149,12 +142,12 @@ Additionally, following this association, a TNAuthList Authority Token can be is
 
 In parallel, a Claim Agent may be used to validate additional attributes that the Entity wishes to assert when originating calls, such as Rich Call Data (RCD). These validated attributes are encoded in a JWTClaimConstraints Authority Token, which governs what claims the Entity is authorized to present in communications. The Claim Agent may also use the TNAuthList Authority Token as proof of assignment and the Right-to-Use the telephone numbers being asserted by the Entity. This should also be utilized to govern the constraint of the "orig" claim to only the valid associated numbers to the Entity.
 
-Once both tokens have been obtained, the Entity initiates a Certificate Signing Request (CSR) to a CA authorized to issue certificates within the STIR ecosystem. As per the mechanisms outlined in {{RFC9447}}, {{RFC9448}}, and {{I-D.wendt-acme-authority-token-JWTClaimCon}}, the TNAuthList and JWTClaimConstraints tokens are presented as ACME challenge responses to prove the Entity’s authority over the number and its validated claims.
+Once both tokens have been obtained, the Entity initiates a Certificate Signing Request (CSR) to a CA authorized to issue certificates within the STIR ecosystem. As per the mechanisms outlined in {{RFC9447}}, {{RFC9448}}, and {{I-D.wendt-acme-authority-token-jwtclaimcon}}, the TNAuthList and JWTClaimConstraints tokens are presented as ACME challenge responses to prove the Entity’s authority over the number and its validated claims.
 
 Upon successful validation, the CA issues a delegate certificate to the Entity. This certificate includes:
 
-	* A TNAuthList extension {{RFC8226}}, representing the telephone number(s) the certificate holder is authorized to use.
-	* A JWTClaimConstraints extension {{RFC8226}} and/or EnhancedJWTClaimConstraints extension {{RFC9118}}, representing the constraints on claims the certificate holder is permitted to assert.
+* A TNAuthList extension {{RFC8226}}, representing the telephone number(s) the certificate holder is authorized to use.
+* A JWTClaimConstraints extension {{RFC8226}} and/or EnhancedJWTClaimConstraints extension {{RFC9118}}, representing the constraints on claims the certificate holder is permitted to assert.
 
 The issued certificate is then submitted to a certificate transparency log. A corresponding transparency receipt is returned to the Entity and/or CA to provide verifiable proof of publication. This transparency mechanism enables ecosystem-wide monitoring and validation of certificate issuance and claim legitimacy.
 
@@ -168,14 +161,14 @@ Critically, the JWTClaimConstraints extension in the certificate enforces the se
 
 The signed PASSporT is then attached to the SIP Identity header and transmitted with the call. The Verification Service (VS) on the receiving side performs STIR verification, checking:
 
-	* That the PASSporT signature is valid.
-	* That the delegate certificate is trusted, unexpired, and issued by a recognized CA.
-	* That the certificate includes a valid TNAuthList extension for the telephone number in use in the “orig” claim.
-	* That any asserted claims conform to the JWTClaimConstraints and/or EnhancedJWTClaimConstraints in the certificate.
-	* That a corresponding transparency receipt exists, proving the certificate was publicly recorded.
+* That the PASSporT signature is valid.
+* That the delegate certificate is trusted, unexpired, and issued by a recognized CA.
+* That the certificate includes a valid TNAuthList extension for the telephone number in use in the “orig” claim.
+* That any asserted claims conform to the JWTClaimConstraints and/or EnhancedJWTClaimConstraints in the certificate.
+* That a corresponding transparency receipt exists, proving the certificate was publicly recorded.
 
 If all verifications succeed, the relying party can trust that the call is both authorized and attributable, and that all claims have been validated by responsible participants in the ecosystem.
-p
+
 Should questions arise, such as disputes over the legitimacy of the claims, the identity of the calling Entity, or the integrity of the Claim Agent, the Notary Agent serves as the central authority for managing escalation and disclosure. This includes providing access to Responsible Party information via a privacy-preserving and legally compliant resolution process, aligned with ecosystem governance and policy enforcement.
 
 # Security Considerations
