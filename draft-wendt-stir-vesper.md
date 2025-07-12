@@ -108,7 +108,7 @@ While the Responsible Provider or RespOrg does not directly issue proof of assig
 
 Claim Agents are trusted parties in the ecosystem responsible for validating information about Entities and issuing authoritative or verified claims. These claims cover claims associated with PASSporT defined claims including identity details or Rich Call Data (RCD).
 
-Each Claim Agent is uniquely identified within the VESPER ecosystem and should be registered with a Notary Agent (NA) (CW: should it?). Once a Claim Agent performs its vetting process, it issues signed JWTClaimConstraint Authority Tokens containing the validated claim information or integrity hashes for those claims for the Entity depending on privacy preferences.
+Each Claim Agent is uniquely identified within the VESPER ecosystem and should be registered with a Notary Agent (NA). Once a Claim Agent performs its vetting process, it issues signed JWTClaimConstraint Authority Tokens containing the validated claim information or integrity hashes for those claims for the Entity depending on privacy preferences as defined in {{RFC9795}}
 
 ### Notary Agent Responsibilities
 
@@ -170,6 +170,86 @@ The signed PASSporT is then attached to the SIP Identity header and transmitted 
 If all verifications succeed, the relying party can trust that the call is both authorized and attributable, and that all claims have been validated by responsible participants in the ecosystem.
 
 Should questions arise, such as disputes over the legitimacy of the claims, the identity of the calling Entity, or the integrity of the Claim Agent, the Notary Agent serves as the central authority for managing escalation and disclosure. This includes providing access to Responsible Party information via a privacy-preserving and legally compliant resolution process, aligned with ecosystem governance and policy enforcement.
+
+## Detailed Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant RP      as Responsible<br>Provider
+    participant NA      as Notary<br>Agent
+    participant SCA     as Subordinate<br>CA
+    participant ENT     as Entity
+    participant CLA     as Claim<br>Agent
+    participant STI_CT  as STI-CT<br>Log
+
+    %% Registration & infra bootstrap
+    RP->>NA: (1) Register with chosen NA
+    NA->>RP: (2) Confirms & instantiates dedicated SCA
+
+    %% Entity on-boarding & RTU
+    RP->>NA: (3) Registers Entity
+    NA->>NA: (4) Create unique, opaque Entity ID + API Creds for Entity
+    RP->>NA: (5) Assigns TN(s) to Entity
+    RP->>NA: (6) Authorise RTU event
+
+    %% RTU certificate
+    ENT->>NA: (7) Asks NA for Authority Token using API Creds
+    NA-->>ENT: (8) Authority Token
+    ENT->>SCA: (9) CSR incl. EntityID & TNAuthList
+    SCA->>STI_CT: (10) Log cert → SCT
+    STI_CT-->>SCA: (11) SCT
+    SCA-->>ENT: (12) Delegate Cert + SCT
+
+    %% Claim-Agent vetting
+    ENT->>CLA: (13) RCD vetting request
+    CLA-->>ENT: (14) Signed JWTClaimConstraint token
+
+    %% Enhanced cert with RCD
+    ENT->>CLA: (15) Ask Claim Agent for RCD Authority Token
+    CLA-->>ENT: (16) RCD Authrity Token
+    ENT->>SCA: (17) ACME order (TNAuthList + RCD authority token)
+    SCA->>SCA: (18) Verify token sig via NA-published CLA key
+    SCA->>STI_CT: (19) Log enhanced cert → SCT
+    STI_CT-->>SCA: (20) SCT
+    SCA-->>ENT: (21) Enhanced Delegate Cert
+
+    %% Operational use
+    ENT->>ENT: (22) Signs PASSporT on calls with latest cert
+```
+
+
+### Registration (steps 1–2)
+
+1. A Responsible Provider (RP) formally on-boards with a chosen Notary Agent (NA).
+2. The NA confirms the relationship and spins up (or assigns) an SCA - an ACME capable Subordinate CA operating under STIR certificate policy - dedicated to that RP. This creates a clear chain of trust rooted in the NA and bounded to the RP’s numbering authority.
+
+### Entity on-boarding & Right-To-Use (steps 3–6)
+
+3-4. The RP registers an Entity (ENT) with the NA. The NA issues an opaque, globally unique Entity ID plus API credentials that the Entity will use when interacting with the NA.
+5-6. The RP binds one or more telephone numbers (TN) to that Entity and explicitly authorizes a Right To Use (RTU) event in the NA's system. This yields a signed TNAuthList object held by the NA that represents the authoritative number assignment record.
+
+### RTU delegate certificate (steps 7–12)
+
+7-8. Using its API credentials, the Entity requests an Authority Token (AT) for those TNs from the NA. The NA issues an AT containing (at minimum) the Entity ID and TNAuthList.
+9. The Entity submits an ACME certificate signing order (CSR) to the SCA.
+10-11. Before issuance, the SCA publishes the delegate certificate to an STI Certificate-Transparency (STI-CT) log and receives a Signed Certificate Timestamp (SCT).
+12. The SCA returns the Delegate Certificate plus SCT to the Entity. At this point the Entity can sign calls, but only with the RTU TNAuthList and without any enhanced claims such as RCD.
+
+### Claim-Agent vetting (steps 13–14)
+
+13-14. If the Entity wishes to present Rich Call Data, it submits the requested branding/identity material to a Claim Agent (CLA). After performing its vetting workflow, the CLA issues a signed JWTClaimConstraint Authority Token restricting exactly which RCD elements may appear.
+
+### Delegate Certificate containing RCD (steps 15–21)
+
+15-16. The Entity requests an RCD Authority Token from the CLA. The token binds the vetted RCD data to the Entity ID and TNAuthList.
+17-18. The Entity places a new ACME order at the SCA, now carrying two tokens: the original TNAuthList AT and the new RCD AT. The SCA validates signature chains for both, relying on the NA-published public key that attests the CLA’s authority to issue RCD tokens.
+19-20. The SCA publishes the Delegate Certificate (now containing both TNAuthList and JWTClaimConstraint extensions) to the STI-CT log and receives a SCT.
+21. The Delegate Certificate verifiably linking TNs, Entity, and authorized RCD is returned to the Entity.
+
+### Operational use (step 22)
+
+22. For every outbound SIP call, the Entity's STI-AS creates a PASSporT object, signs it with the Delegate Certificate, and inserts the result in the SIP Identity header. A Verification Service (STI-VS) validates the PASSporT, the certificate chain, the SCT(s), and enforces that any RCD present matches the JWTClaimConstraint extension. Calls that fail these checks can be branded as suspect or rejected, while successful validations provide verifiable trust in both number ownership and presented identity data.
 
 # Security Considerations
 
