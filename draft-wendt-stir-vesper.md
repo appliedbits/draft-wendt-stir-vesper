@@ -1,9 +1,9 @@
 ---
-title: "VESPER - Framework for VErifiable STI Personas"
+title: "VESPER - Verifiable STI Presentation and Evidence for RTU"
 abbrev: "VESPER"
 category: std
 
-docname: draft-wendt-stir-vesper-06
+docname: draft-wendt-stir-vesper-07
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
@@ -13,8 +13,7 @@ area: "Applications and Real-Time"
 workgroup: "Secure Telephone Identity Revisited"
 keyword:
  - telephone number
- - vetting 
- - KYC
+ - domain
 
 author:
  -
@@ -37,28 +36,34 @@ normative:
   RFC9448:
   RFC9795:
   I-D.ietf-stir-rfc4916-update:
-  I-D.wendt-acme-authority-token-jwtclaimcon:
+  I-D.ietf-acme-authority-token-jwtclaimcon:
   I-D.ietf-stir-certificates-shortlived:
-  I-D.ietf-spice-glue-id:
 
 informative:
 
 --- abstract
 
-This document formalizes a profile and a framework for the use of delegate certificates and authority tokens to strengthen the association between telephone number assignments and the entities that have the authoritative right to use them on the telephone network. It defines a model in which the TNAuthList Authority Token serves as a trusted representation of telephone number assignment and right-to-use (RTU), anchored by a Notary Agent that logs these associations through verifiable transparency mechanisms. The framework also extends the use of authority tokens to support other PASSporT claims like Rich Call Data (RCD) by defining a role for JWTClaimConstraints Authority Tokens. These tokens are issued by authoritative or recognized and vetted claim agents within the ecosystem to assert information associated with the entity assigned a telephone number. The Notary Agent plays a critical role in recording these claims and their provenance, enhancing transparency and accountability.
-Delegate certificates encapsulate and incorporate both the telephone number and associated information validated via authority tokens to the certification authority issuing them, binding them to the authenticated telephone number of the calling party. These certificates are published to a certificate transparency log, enabling relying parties to independently verify the integrity and legitimacy of number use and related claims. The VESPER (Verifiable STI PERsona) approach utilizes STIR protocols and the ACME authority token to formalizing a verifiable, auditable, and privacy-conscious foundation for associating telephone numbers with identifiable entities and assertion of associated metadata.
+This document defines VESPER (Verifiable STI Presentation and Evidence for RTU) as a framework for issuing, distributing, and verifying delegate certificates that cryptographically bind two trust elements and one origination scope: the telephone number authority assigned by a responsible provider or organization to the responsible entity, the domain identity of the responsible entity established through control of its domain and associated certificate credentials, and the set of originating service providers (OSPs) enabled as legitimate originators for calls from those telephone numbers onto the telephone network.
+
+The delegate certificate is the canonical trust artifact. It carries the assigned telephone numbers and the set of enabled originating service provider codes (SPCs) in a TNAuthList extension, the entity's domain in a Subject Alternative Name, optional claim constraints via JWTClaimConstraints and EnhancedJWTClaimConstraints extensions, and a transparency receipt proving the certificate was recorded in a public log prior to use. Origination by any service provider not identified in the certificate's TNAuthList is not considered legitimate for those telephone numbers. The certificate's trust is backed by two authority tokens: a TNAuthList Authority Token representing the responsible provider or organization's telephone number assignment authority, and optionally a JWTClaimConstraints Authority Token authorizing additional PASSporT claims and constraining their values.
+
+From this certificate, two output token types are derived: a PASSporT signed by the delegate certificate for use in SIP signaling as defined in {{RFC8224}}, and a portable RTU Token (a JWT with a confirmation claim) for use in origination policy distribution, web verification, and other multi-channel trust contexts.
+
+The domain-telephone number binding established by this framework enables verifiable trust signals across voice, web, SMS/messaging, and email channels. When a telephone number appears in a webpage, email, or message as a tel URI or when a URL appears in a communication associated with a telephone number, the VESPER certificate provides a basis for validating that these references are associated with the domain of the responsible entity. References that cannot be validated against the certificate's domain-TN binding should be treated as potentially fraudulent. This document does not define relying-party enforcement policy, user interface behavior, or jurisdictional governance.
 
 --- middle
 
 # Introduction
 
-The Secure Telephone Identity (STI) architecture, based on STI certificates {{RFC8226}}, PASSporTs {{RFC8225}}, and the SIP Identity header field {{RFC8224}}, define the foundational use of digital signatures and tokens to protect the integrity of calling information, particularly the telephone number, during a communications session. While these mechanisms help validate call signaling, they do not directly establish the entity who is authorized to use a given telephone number. This document provides a profile of the STI architecture by formalizing the use of delegate certificates and authority tokens to more clearly and verifiably associate a telephone number with the entity responsible for its use. This stronger linkage is especially important as misuse (i.e., the illegimate spoofing and impersonation) tied to telephone numbers by unauthorized parties continues to undermine trust in communications networks.
+The Secure Telephone Identity (STI) architecture, based on STI certificates {{RFC8226}}, PASSporTs {{RFC8225}}, and the SIP Identity header field {{RFC8224}}, provides cryptographic integrity protection for calling information in real-time communications. These mechanisms enable relying parties to verify that a telephone number was not modified in transit and that it was signed using credentials authorized for that number. However, the STI architecture does not define how a telephone number is authoritatively associated with the domain-based identity of the entity to which it was assigned pursuant to applicable numbering plan policies, nor does it provide a mechanism to identify which originating service providers are enabled as legitimate originators for calls from that entity's telephone numbers.
 
-To address this, the VESPER framework introduces roles and interactions that mirror proven practices from other trust-based industries, such as Know Your Customer (KYC) and Know Your Business (KYB) procedures well established in the financial industry. Through a defined process and as an adjunct to the authoritative telephone number assignment process involving Responsible Providers or Organizations and the jurisdictional Numbering Administrator, an Entity is issued a TNAuthList Authority Token defined in {{RFC9448}}, establishing their right to use a telephone number. Beyond establishing the authority of the telephone number, optionally additional information an entity may like to assert to a called party, such as Rich Call Data (RCD) {{RFC9795}}, can be asserted and authorized using JWTClaimConstraints Authority Tokens {{I-D.wendt-acme-authority-token-jwtclaimcon}}. JWTClaimContraints have the interesting property that they can be used to assert either direct values or the integrity hashes of values (e.g., using "rcdi" claims defined in {{RFC9795}}) to enhance the ability to protect the privacy of information when desired or required. These Authority Tokens are used in challenges toward the issuance of delegate certificates which can be transparently recorded in a transparency log, which can act as a set of neutral eco-system registrar points for representing asserted claims associated with telephone numbers with or without exposing underlying data as explicitly authorized or desired. Transparent declarations of claim assertions have the potential beneficial property of enhancing the trust of the asserted claims based on monitoring of these claims to avoid fraudulent impersonation that the STI framework is intended to solve.
+In practice, telephone numbers appear across a wide range of digital contexts: in SIP signaling, on websites, in SMS and rich communication messages, and in email. Today, there is no standard mechanism for a relying party to verify that a domain presenting a telephone number is the same entity to which that number was assigned, or to confirm that an OSP originating a call is one of the legitimate originators enabled for that number. This gap enables impersonation, unauthorized origination, and the presentation of misleading contact information across digital channels.
 
-In addition to supporting call authentication of the originating party, the VESPER framework can also extend to the validation of the called party through the use of connected identity as defined in {{I-D.ietf-stir-rfc4916-update}}. In this model, the same authority token and delegate certificate mechanisms that bind an originating telephone number to a vetted entity can be applied in the reverse direction, enabling a called party to assert its validated identity via signed PASSporTs included in SIP responses. This optional capability broadens the scope of accountability and transparency to both ends of the communication session while maintaining the privacy-conscious design principles of VESPER.
+VESPER addresses this by defining a delegate certificate that serves as a single, auditable trust artifact binding three things: the telephone numbers assigned to the responsible entity, the domain that entity controls and for which it holds certificate credentials, and the set of originating service providers enabled as legitimate originators for calls from those telephone numbers. Because this binding is expressed in a standard X.509 certificate subject to existing STIR certificate policy, it can be validated using widely deployed PKI mechanisms and recorded in a transparency system for ecosystem auditability.
 
-This VESPER trust model and profile is enhanced using eco-system wide accountability. Transparency logs formalize and announce the issuance of certificates and the relationship between telephone numbers, associated claims and their rightful users, helping detect and prevent fraudulent or conflicting claims by interested parties and auditing mechanisms. By shifting from implicit trust in digital signatures alone to an explicit framework of vetted identities and transparent claims, this approach builds a foundation for enhanced verifiable communications. It enables the responsible use of telephone numbers and auditability, discourages impersonation, and strengthens enforcement against abuse, ultimately fostering greater confidence in telephone number-based communications.
+The domain-telephone number binding introduced by this framework has broad applicability beyond voice. A web resource that references a telephone number can be verified as authentic by checking whether its domain is bound to that number in a VESPER delegate certificate. An SMS message that includes a URL can be evaluated for trustworthiness by confirming that the domain in the URL is associated with the originating telephone number. An email from a domain that references a telephone number can be validated against the same certificate. This multi-channel trust surface is a direct consequence of anchoring telephone number authority to a verifiable domain identity.
+
+This document defines the certificate profile, the certificate repository and TN-keyed discovery mechanism, the PASSporT usage profile, the RTU Token format, and the relationship to origination policy distribution. Decisions regarding trust enforcement, user interface presentation, and jurisdictional governance are intentionally outside the scope of this specification.
 
 # Conventions and Definitions
 
@@ -66,339 +71,383 @@ This VESPER trust model and profile is enhanced using eco-system wide accountabi
 
 # Overview
 
-This document defines a framework for the authoritative association of telephone numbers to the entities responsible for their use, using delegate certificates and authority tokens for issuance and certificate transparency for eco-system auditing. Within this framework, referred to as VESPER (VErifiable STI PERsonas), entities are represented through verifiable claims that establish their right to use a telephone number and, optionally, their asserted claim attributes such as Rich Call Data (RCD) or other claims defined via PASSporT claim and type specifications. These claims are issued by trusted responsible parties and are anchored through transparency mechanisms to support trust, auditability, and privacy as appropriate.
+## The VESPER Delegate Certificate
 
-The core premise is that a telephone number, when used as a communications identifier, must be explicitly bound to the real-world party authorized to use it. While telephone numbers have long served as identifiers in global communications, the absence of a strong binding between a number and a responsible party has allowed for abuse, most notably through number spoofing and impersonation fraud. In many cases, bad actors exploit the lack of accountability to mislead call recipients, avoid traceability, or impersonate legitimate businesses and individuals. To address this, the VESPER framework introduces a standardized method for expressing and publishing the right-to-use (RTU) of a telephone number through the issuance of a TNAuthList Authority Token from a centralized jurisdictional Number Administrator. This token is issued following the assignment or delegation of a number. The issuance of the delegate certificate is recorded in a transparency log providing relying parties an eco-system wide verification of the association between a number and its authorized entity, authorized by the regulated Responsible Provider or Organization that is authorized to assign numbers via jurisdictional regulatory policies over telephone numbers.
+The VESPER framework is built around a delegate certificate issued to the entity that holds the right-to-use for one or more telephone numbers. This certificate is issued within the STIR ecosystem PKI, whose trust anchors govern the authority chain. The delegate certificate represents the issued credentials that bind telephone number authority to the entity that is the domain holder and subject of the certificate. Trust assertions in VESPER are expressions of what is certified in this credential, validated against the STIR ecosystem trust anchors through the certificate chain.
 
-Beyond the association of telephone numbers, JWTClaimConstraints {{RFC8226}} and EnhancedJWTClaimConstraints {{RFC9118}} play a critical role in delegate certificates issued under the VESPER framework. They provide a standardized mechanism for Certification Authorities to explicitly constrain any additional claims a delegate certificate holder is permitted to assert in communications. This constraint mechanism ensures that even if a certificate is misused or presented outside its intended scope, the relying party can verify whether the claims presented are authorized by the issuer. Certification Authorities derive these constraints from Authority Tokens issued by vetted Claim Agents, which serve as cryptographic proof of the claim validations. By limiting the scope of claims to those proven and approved during the certificate issuance process, using JWTClaimConstraints Authority Tokens provided by trusted Claim Agents that take responsibility for vetting those additional claims makes VESPER extensible just as PASSporT claims are intended to do to protect both the telephone number and other assertions made through PASSporTs.
+The certificate carries the following:
 
-Unlike prior models that rely on implicit trust in the caller or the STI signer, this approach provides an explicit, auditable, and standards-based path to associate communications with a known and authorized party. The VESPER framework does not define how vetting (e.g., KYC/KYB) is performed, nor does it prescribe specific policy requirements for what the relying party should do with this information. Instead, it focuses on standardizing how vetted results and right-to-use associations are asserted, recorded, and presented within the STIR ecosystem focused on the telephone number first and additional claims and assertions second.
+* Telephone number authority: one or more telephone numbers (or ranges) in the TNAuthList extension, representing the entity's right-to-use as assigned by a responsible provider or organization pursuant to applicable numbering plan policies. The authoritative role of the responsible provider or organization is represented in the STI certificate chain: the STI Certification Authority (STI CA) that issues the delegate certificate operates under certificate policy that recognizes the responsible provider or organization's authority over the relevant telephone numbers. Combined with the TNAuthList Authority Token issued by that responsible provider or organization and presented to the STI CA, this certificate chain representation is what enables and validates the issuance of the delegate certificate.
+* Originating service provider enablement: one or more service provider codes (SPCs) in the same TNAuthList extension, identifying the OSPs enabled as legitimate originators for calls from those telephone numbers onto the telephone network. Any OSP not identified in this list that originates calls from those numbers should be treated as operating without legitimate authorization. Both TN entries and SPC entries MAY appear together in a single TNAuthList, as permitted by {{RFC8226}}.
+* Domain identity: a DNS domain name in the SubjectAltName extension (dNSName), representing the entity's domain as established through WebPKI. This domain is the stable, verifiable identifier for the entity across all channels.
+* Optional claim constraints: JWTClaimConstraints {{RFC8226}} and/or EnhancedJWTClaimConstraints {{RFC9118}} extensions, authorizing additional PASSporT claims (such as Rich Call Data) and optionally constraining their values. These constraints are backed by a JWTClaimConstraints Authority Token issued in accordance with {{I-D.ietf-acme-authority-token-jwtclaimcon}}.
+* Transparency receipt: a Signed Certificate Timestamp (SCT) or equivalent proof of inclusion, embedded in the certificate, proving that the certificate was submitted to and recorded in a transparency log before use.
 
-By reinforcing the accountability of number usage and enabling the trusted presentation of related identity claims, this architecture enhances integrity, supports privacy, and enables enforcement mechanisms to deter misuse or mis-issuance issues.
+Short-lived certificates MUST be used. Implementations MUST support the profile in {{I-D.ietf-stir-certificates-shortlived}} and MUST convey the certificate chain inline using the "x5c" PASSporT header parameter.
 
-VESPER implementations MUST support short-lived delegate certificates and SHOULD use "x5c" to convey certificates inline. Transparency logging remains required.
+## Domain as First-Class Trust Element
 
-# Vesper Architectural Overview
+Prior STIR specifications establish telephone number authority through the TNAuthList but do not bind that authority to the real-world entity to which the number was assigned. VESPER introduces the entity's domain as the binding element that connects telephone number authority to an established Internet identity.
 
-## The VESPER Framework Architecture
+The domain in the delegate certificate SAN corresponds to the domain the responsible entity controls and for which it holds certificate credentials. Control of that domain, established through the entity's ability to obtain certificate credentials for it, provides a corroborating identity signal that is independent of the telephone number ecosystem. When a relying party validates a VESPER delegate certificate, it obtains verifiable evidence that a specific Internet entity — identified by the domain it controls — has been assigned credentials for specific telephone numbers by a responsible provider or organization.
 
-The VESPER framework establishes a structured framework for asserting and verifying the association between a telephone number and the entity authorized to use it. This model supports a broad range of communications use cases, from fully attributed business communications with rich identity information to privacy-conscious person scenarios that require only verification that the number is in legitimate use by a real validated entity.
+## Certificate Repository and TN-Keyed Discovery
 
-At its core, the model is built on a trust structure with the following key roles:
+An entity that holds a VESPER delegate certificate MUST publish that certificate at a stable, domain-controlled location so that relying parties can retrieve it given a telephone number. The certificate repository is hosted at one of the following locations:
 
-1. Entities (e.g., individuals or organizations) seeking to assert their right to use a telephone number and assert claims about themselves or a set of communications,
-2. Responsible providers and organizations that are authorized to allocate and assign numbers within a jurisdictional numbering plan,
-3. Claim Agents that are authorized and recognized for validating and issuing claims about those entities, and
-4. A Numbering Administrator (NA), both jurisdictional to a country code and neutral to the eco-system, that represents authoritative policies for number uses within that jurisdiction and facilitates a minimum tie of telephone numbers to entity identifiers and ensures transparency, traceability, and auditability within the ecosystem.
+* MUST support: `https://stir.{domain}/` (e.g., `https://stir.example.com/`)
+* MAY support: `https://{domain}/.well-known/stir/`
 
-Participation in the VESPER framework requires a shared set of policies governing how entities are vetted and how claims are created and validated. These policies define the requirements for asserting an entity's identity, the right to use a telephone number, and optionally and where applicable, additional claims and associated attributes (i.e. PASSporT type defined claims, like Rich Call Data). Claims beyond the telephone number are structured representations of verified information, issued by authorized or accepted Claim Agents. Each claim type is standardized via PASSporT type specifications {{RFC8225}} in the STIR working group, with clearly defined required and optional key-value pairs, ensuring interoperability and consistency across the ecosystem.
-Through this model, VESPER provides a scalable and transparent foundation for building trust in telephone-based communications, with the flexibility to support both fully attributed and privacy-respecting use cases.
+The TLS certificate on the repository host validates domain ownership through standard WebPKI. The domain in the repository's TLS certificate MUST match the dNSName SAN in the VESPER delegate certificate. No cross-signing between the STI delegate certificate and the web TLS certificate is required or defined.
 
-## Roles and Responsibilities in the VESPER Framework
+### TN-Keyed Lookup
 
-The VESPER trust framework defines a set of roles that work together to assert and validate claims about telephone numbers and the entities authorized to use them. At the core of this ecosystem are two primary roles: Entities and Claim Agents. Entities are individuals or organizations that wish to establish their authority to use a telephone number and, optionally, present additional vetted identity attributes. Claim Agents are responsible for validating this information and issuing standardized, structured claims.
+To enable relying-party lookup without exposing the entity's complete set of telephone numbers, lookups are keyed by a hash of the telephone number rather than by a directory or index. A relying party that has observed a telephone number performs the following steps:
 
-### Entity
+1. Normalize the telephone number to E.164 format (e.g., `+12125551234`).
+2. Compute `hash = base64url( SHA-256( E.164-string ) )`.
+3. Fetch `https://stir.{domain}/{hash}.json`.
+4. The response is a JSON object containing at minimum:
+   - `cert`: an HTTPS URL pointing to the delegate certificate file (a UUID-named `.pem`, e.g., `https://stir.example.com/certs/{UUID}.pem`)
+   - `receipt`: the transparency receipt or a reference to it
+5. Fetch and validate the certificate at the `cert` URL.
 
-An Entity is the individual or organization seeking to assert its authority to use a specific telephone number and, optionally, to present additional vetted claims such as business name or purpose. The Entity is the central actor around which the claims and trust relationships are formed.
+The use of a hash-derived lookup path means that a relying party who knows a telephone number can locate the corresponding certificate deterministically, while an observer who does not know the telephone numbers cannot enumerate the entity's number inventory by traversing the repository. Certificate files are named with opaque UUIDs to prevent guessing from the certificate URL itself.
+
+For entities with large TN ranges, the publishing side MAY generate hash entries for each individual number in the range pointing to the same certificate. This is a publishing implementation detail and does not affect the lookup protocol.
+
+## Two Output Tokens
+
+### PASSporT (SIP Signaling)
+
+For use in SIP signaling as defined in {{RFC8224}}, VESPER uses a standard PASSporT {{RFC8225}} signed by the delegate certificate. The PASSporT carries:
+
+* Standard claims: `orig`, `dest`, `iat`
+* The `vper` claim: `{ "domain": "example.com" }` where `domain` is the entity's domain and MUST match the dNSName SAN in the signing delegate certificate
+* Optional additional claims authorized by JWTClaimConstraints in the certificate (e.g., Rich Call Data)
+
+Implementations MUST use the `x5c` header parameter to convey the certificate chain inline. Verification Services MUST prefer `x5c` over `x5u` and MUST NOT dereference `x5u` when a valid `x5c` chain is present.
+
+### RTU Token (Portable Distribution)
+
+For contexts beyond SIP signaling including origination policy distribution, web verification, and multi-channel trust use cases, VESPER defines an RTU Token. The RTU Token is a JWT (not PASSporT-typed) signed by the delegate certificate's private key, with a `cnf` (confirmation) claim {{RFC7800}} that binds the token to the signing certificate's public key.
+
+The RTU Token carries the entity's TNs, domain, and enabled originating service provider codes and may optionally include claim-constrained attributes. It serves as a distributable, verifiable credential that can be presented to OSPs, relying parties, or policy systems without requiring those parties to perform live certificate lookups.
+
+A future extension of the RTU Token using SD-JWT to support selective disclosure and a holder-wallet model is anticipated but not defined in this document.
+
+## Multi-Channel Trust Surface
+
+The binding of telephone number authority and domain identity in a single delegate certificate creates verifiable trust signals that extend beyond voice signaling into every digital channel where telephone numbers and domain names co-occur.
+
+Voice and SIP: The PASSporT signed by the delegate certificate provides cryptographic verification that the originating TN was assigned to the entity whose domain is certified in the certificate, and that origination is occurring through an OSP identified as a legitimate originator in the certificate's TNAuthList.
+
+Web: A relying party that encounters a telephone number on a web page — whether as a `tel:` URI or in display text — can verify that the page's origin domain is bound to that number by querying the certificate repository at `stir.{domain}`. If the TN appears in the TNAuthList of the certificate served there, the domain is verified as the authorized holder of that number. Conversely, a `tel:` URI on a page whose domain does not match the certificate for that TN should be treated as a potential spoofing indicator.
+
+SMS and Rich Messaging: A message received from a telephone number that includes a URL can be evaluated by checking whether the domain in the URL is bound to the originating TN via a VESPER certificate. A URL whose domain does not match the certified domain for the originating TN should be treated as a potential fraud indicator, as it suggests the message content is not associated with the entity that holds the right-to-use for that number. This provides a trust signal for URL safety that is grounded in telephone number authority rather than reputation alone.
+
+Email: An email from a domain that references a telephone number in a signature block, a notification, or a verification message can be validated by checking whether that domain is bound to the referenced TN in a VESPER certificate. A `tel:` URI in an email whose sending domain does not match the certificate for that TN is a signal that the reference may not be legitimate.
+
+In all cases, the trust signal is that the domain and the telephone number have been co-certified through the STI ecosystem. The VESPER certificate establishes an exclusive association: references to a telephone number or to URLs under a domain that do not match the certificate's domain-TN binding should be treated as potentially fraudulent, regardless of the channel in which they appear.
+
+# VESPER Roles and Certificate Issuance
+
+## Roles
+
+The VESPER framework defines the following functional roles. This document standardizes the artifacts and verification inputs used across these roles and does not prescribe organizational governance models, jurisdiction-specific business identifiers, or relying-party enforcement and UI policy.
+
+1. Domain Operator: the entity that controls a domain and holds the right-to-use for one or more telephone numbers. The Domain Operator is the subject of the VESPER delegate certificate and operates the certificate repository at its domain.
+2. Right-to-Use (RTU) Authority: the ecosystem participant(s) that can authoritatively represent telephone number assignment for issuance of TNAuthList-constrained credentials (e.g., numbering administrators, responsible organizations/providers, or other established RTU authorities).
+3. STI Certification Authority (STI CA): issues VESPER delegate certificates after validating RTU evidence and domain association, operating under STIR ecosystem certificate policy {{RFC8226}}.
+4. Transparency Log Operator(s): record issued delegate certificates and return SCTs or other verifiable proofs of inclusion to enable ecosystem auditability and detection of mis-issuance.
+
+## Role Responsibilities
+
+### Domain Operator
+
+The Domain Operator controls a domain (e.g., `example.com`) and holds the right-to-use for the telephone numbers listed in its VESPER delegate certificate. The Domain Operator operates the certificate repository at `https://stir.{domain}/`, publishes TN-keyed lookup entries for each authorized number, and uses the delegate certificate's private key to sign PASSporTs and RTU Tokens.
+
+In some deployments the Domain Operator may hold telephone numbers directly (e.g., an enterprise with assigned numbers). In others, the Domain Operator may be acting as an authorized agent for a right-to-use holder, provided the issued delegate certificate reflects that authorization.
 
 ### Responsible Provider or Responsible Organization
 
-A Responsible Provider, sometimes called a Telephone Number Service Provider (TNSP), or Responsible Organization (RespOrg) plays both their traditional well-defined role in the allocation and assignment of telephone numbers in accordance with national or international numbering plans generally followed internationally via e.164 and e.164.1 but also a foundational role in the VESPER ecosystem by validation of the association of telephone number assignments to Entities. These entities operate under regulatory authority and are responsible for administering number resources associated with a specific country code or region.
+A Responsible Provider, sometimes called a Telephone Number Service Provider (TNSP), or Responsible Organization (RespOrg) plays both their traditional well-defined role in the allocation and assignment of telephone numbers in accordance with national or international numbering plans generally followed internationally via E.164 and E.164.1 but also a foundational role in the VESPER ecosystem by validation of the association of telephone number assignments to certificate subjects (i.e., RTU holders). These parties operate under regulatory authority and are responsible for administering number resources associated with a specific country code or region.
 
 Their responsibilities include:
 
-* Number Assignment: Allocating telephone numbers to Entities under the rules of an authorized numbering plan.
-* Entity Association: Establishing and maintaining a record that links each assigned telephone number to a specific, uniquely identified entity. This includes assigning a persistent identifier or account reference to the Entity to which a number is assigned providing an opaque identifier. This identifier can be used by the Entity to reference themselves in an opaque way for accessing assignment relevant information including TNAuthList Authority Tokens or also referenced during any disputes or disclosures when necessary.
+* Number Assignment: Allocating telephone numbers to certificate subjects under the rules of an authorized numbering plan.
+* Certificate Subject Association: Establishing and maintaining a record that links each assigned telephone number to a specific, uniquely identified certificate subject. This includes assigning a persistent identifier or account reference to the certificate subject to which a number is assigned, providing an opaque identifier. This identifier can be used by the certificate subject to reference its assignment and to support issuance workflows (e.g., RTU evidence or TNAuthList Authority Tokens), and may be referenced during disputes or disclosures when necessary.
 
-The Responsible Provider or Organization follows the numbering assignment process but additionally authorizes an TNAuthList Authority Token to be used by a Certification Authority in the issuance of a delegate certificate that minimally includes a TNAuthList extension that corresponds ot the telephone number.  
+The Responsible Provider or Organization follows the applicable numbering assignment process and supports issuance (directly or indirectly) of RTU evidence that can be presented to an STI CA for issuance of TNAuthList-constrained delegate certificates. VESPER does not require publication of jurisdiction-specific entity identifiers as part of this base authorization flow.
 
-### Claim Agent Responsibilities
+### Transparency Log Operator Responsibilities
 
-Claim Agents are trusted parties in the ecosystem responsible for validating information about Entities and issuing authoritative or verified claims. These claims cover claims associated with PASSporT defined claims including identity details or Rich Call Data (RCD).
+Transparency Log Operators provide ecosystem auditability for issued delegate certificates by recording certificates and returning verifiable proofs of inclusion (e.g., SCTs or receipts). This enables relying parties and observers to detect mis-issuance and to validate that a certificate used for authorization has been publicly recorded.
 
-Claim Agents provide JWTClaimConstraints Authority Tokens to validate inclusion of these constrainted claim assertions to the issuance of delegate certificates to the valid Entities. Once a Claim Agent performs its vetting process, it issues signed JWTClaimConstraints Authority Tokens containing the validated claim information or integrity hashes for those claims for the Entity depending on privacy preferences.
-
-### Juridictional Number Administrator Responsibilities
-
-The Number Administrator (NA) serves as the ecosystem's neutral registrar and transparency authority. It performs three critical functions:
-
-1. Registration of Responsible Providers and Responsible Organizations that correspond to the traditional roles in accordance with a national or international numbering plans.
-2. Registration of Claim Agents, ensuring each is uniquely identifiable and authorized to issue specific types of claims.
-3. Coordination of eco-system Transparency Logs, which issues cryptographic receipts to confirm and timestamp the existence of each claim.
-
-While this document does not define a dispute resolution process, any conflicts or misclaims discovered through transparency should be escalated through a neutral ecosystem-specific mechanisms, likely coordinated by the NA role in communication with relevant Responsible Providers or Organizations or Claim Agents.
-
-## Claim Agents and Claim Information Privacy
-
-Privacy is a foundational principle of the VESPER framework. Claim Agents are not required to expose or publish sensitive data about Entities when recording claims. Instead, claims can be privacy-protected by logging only the cryptographic hashes of the claim content in the transparency log, preserving proof without revealing the underlying details.
-
-### Public vs. Private Disclosure
-
-For claim information that is public by nature, such as business names, logos, or other potential claim assertions relevent to identifying the calling party, Claim Agents may choose to constrain the direct values of the claims to log the data in full within certificates for public visibility. This public transparency helps the ecosystem identify conflicting or fraudulent claims and reinforces trust through open scrutiny.
-
-Conversely, for private or sensitive claims (e.g., internal identifiers or personally identifiable information), Claim Agents may choose to log only a hash of the data or not at all. This approach ensures that the claim's authenticity can still be verified without compromising the Entity's privacy, if and when required. Disclosure of such claims remains at the discretion of the Entity or may occur in limited cases where legal or regulatory obligations apply.
+This document does not define a dispute resolution process. Disputes and remediation are handled by ecosystem governance outside the scope of this specification.
 
 ## Delegate Certificate Issuance Process
 
-In the VESPER framework, the issuance of a delegate certificate to an Entity involves the multiple roles defined and referenced in this document, including the Responsible Provider or Responsible Organization, Claim Agents and a trusted Certification Authority (CA) operating under the STIR eco-system certificate policy governing STIR certificates defined in {{RFC8226}}.
+In the VESPER framework, issuance of a delegate certificate involves the roles defined in this document, including the Responsible Provider or Responsible Organization (as applicable to the numbering plan), and an STI Certification Authority (STI CA) operating under the STIR ecosystem certificate policy {{RFC8226}}.
 
-The process begins when a Responsible Provider or Responsible Organization assigns a telephone number to an Entity. As part of that assignment, the Entity is formally associated with the number as is typical in a Number Administration assignment system, but additionally via an associated opaque and unique identifier.  This could be globally unique identifier or a public-key that is provably associated to the entity and  establishes an auditable relationship between the number and the right-to-use holder. The opaque unique identifier helps to uphold the privacy of the eco-system as part of normal telephone number allocation and assignment has traditionally followed but allows for non-repudiation throughout the ecosystem. Thus, when potential policy violations occur, the Entity identifier provides an indisputable path to the corresponding Responsible Providers and Organizations and to the Entities assigned the telephone number via the delegated certificate in question.
+The issuance flow is telephone-number-first:
 
-Additionally, following this association, a TNAuthList Authority Token can be issued to the Entity. This token authoritatively represents the Entity's Right-To-Use the telephone number and can serve as cryptographic proof of assignment to an authorized CA that requires that proof to issue a delegate certificate.
+1. A Right-to-Use (RTU) Authority (e.g., a responsible organization/provider or other established RTU authority) produces verifiable RTU evidence for one or more telephone numbers.
+2. The subject requesting the delegate certificate (the RTU holder, or an authorized agent acting on its behalf) presents that RTU evidence to an STI CA.
+3. The STI CA validates the RTU evidence (e.g., via ACME challenges) and issues a TNAuthList-constrained delegate certificate.
+4. The issued certificate is recorded in a transparency system and is subsequently used to sign PASSporTs.
 
-In parallel, a Claim Agent may be used to validate additional attributes that the Entity wishes to assert when originating calls, such as Rich Call Data (RCD). These validated attributes are encoded in a JWTClaimConstraints Authority Token, which governs what claims the Entity is authorized to present in communications. The Claim Agent may also use the TNAuthList Authority Token as proof of assignment and the Right-to-Use the telephone numbers being asserted by the Entity. This should also be utilized to govern the constraint of the "orig" claim to only the valid associated numbers to the Entity.
+This specification does not require the publication of jurisdiction-specific business identifiers or registry-derived identity artifacts as inputs to the base issuance flow.
 
-Once both tokens have been obtained, the Entity initiates a Certificate Signing Request (CSR) to their preferred CA authorized to issue certificates within the STIR ecosystem. As per the mechanisms outlined in {{RFC9447}}, {{RFC9448}}, and {{I-D.wendt-acme-authority-token-jwtclaimcon}}, the TNAuthList and JWTClaimConstraints tokens are presented as ACME challenge responses to prove the Entity's authority over the number and its validated claims.
+### Establishing Telephone Number Authority
 
-Upon successful validation of the Authority Tokens required, the CA issues a delegate certificate to the Entity.
+The trust anchor for telephone number authority in VESPER is established through two complementary representations. First, the authoritative responsible provider or organization is represented in the STI certificate chain itself: the STI CA that issues the delegate certificate operates under certificate policy that recognizes the responsible provider or organization's authority to assign telephone numbers pursuant to applicable numbering plan policies for the relevant country code. Second, the TNAuthList Authority Token, issued by that same responsible provider or organization, cryptographically represents the right-to-use of the specific telephone number(s) assigned to the certificate subject.
 
-CAs SHOULD issue short-lived certificates with brief validity intervals. Entities SHOULD automate renewal to avoid service interruptions.
+It is the combination of these two representations — the responsible provider or organization's presence in the certificate chain and the TNAuthList Authority Token asserting the specific assignment — that enables and validates issuance of the TNAuthList-constrained delegate certificate by the STI CA. The STI CA validates the TNAuthList Authority Token using mechanisms such as {{RFC9447}}, {{RFC9448}}, and {{I-D.ietf-acme-authority-token-jwtclaimcon}}, presented as part of an ACME challenge response. A relying party that validates the full delegate certificate chain therefore has cryptographic assurance of both the responsible provider or organization's authority and the specific telephone number assignment.
 
-This certificate MUST include:
+### Optional Authorization of Additional Claims
 
-* A TNAuthList extension {{RFC8226}}, representing the telephone number(s) the certificate holder is authorized to use.
+If a certificate subject wishes to assert additional PASSporT claims beyond the base claims defined in {{RFC8225}} (e.g., Rich Call Data (RCD) {{RFC9795}}), those claims must be authorized via a JWTClaimConstraints Authority Token {{I-D.ietf-acme-authority-token-jwtclaimcon}}. This token governs what claims (and claim values, where applicable) the subject is authorized to present in communications, and is presented to the STI CA as part of the certificate issuance process.
 
-This certificate, if additional claims and assertions are made beyond the base PASSporT claims defined in {{RFC8225}}, MUST include:
+Where a JWTClaimConstraints Authority Token is used, it SHOULD be scoped to the same telephone number authority being requested (e.g., by referencing the same TNAuthList Authority Token or equivalent RTU evidence), ensuring the two authority tokens are coherently bound to the same certificate subject. The trust anchor for any additional claims asserted in PASSporTs signed by the issued certificate is the JWTClaimConstraints Authority Token presented at issuance.
 
-* A JWTClaimConstraints extension {{RFC8226}} and/or EnhancedJWTClaimConstraints extension {{RFC9118}}, representing the constraints on claims the certificate holder is permitted to assert.
+### Certificate Request and Issuance
 
-The issued certificate is then submitted to a certificate transparency log. A corresponding transparency receipt is returned to the Entity and/or CA to provide verifiable proof of publication. 
+Once the required RTU evidence (and any optional claim-authorization evidence) has been obtained, the certificate subject generates a Certificate Signing Request (CSR) and initiates issuance with an STI CA authorized to issue certificates within the STIR ecosystem.
 
-## VESPER Certificate Profile (Short-Lived & Inline Conveyance)
+The subject presents the RTU evidence (and, if applicable, the JWTClaimConstraints Authority Token) to the STI CA as part of the ACME issuance process. Upon successful validation, the STI CA issues a delegate certificate.
 
-VESPER delegate certificates MUST support the short-lived certificate profile in {{I-D.ietf-stir-certificates-shortlived}}. PASSporTs MUST include the certificate chain using the "x5c" header. Verification Services SHOULD prefer "x5c" over "x5u" if included, and MUST NOT dereference "x5u" if "x5c" is present and valid. Short-lived certificates reduce the need for revocation infrastructure and eliminate external certificate fetches.
+STI CAs SHOULD issue short-lived certificates with brief validity intervals as specified in {{I-D.ietf-stir-certificates-shortlived}}, and subjects SHOULD automate renewal to avoid service interruptions.
+
+The issued delegate certificate MUST include:
+
+* A TNAuthList extension {{RFC8226}}, representing the telephone number(s) the certificate holder is authorized to use and, where applicable, the SPC(s) of the originating service providers authorized to carry traffic for those numbers. TN entries and SPC entries MAY appear together in a single TNAuthList extension.
+
+If the certificate is intended to authorize claims beyond the base PASSporT claims defined in {{RFC8225}}, it MUST also include:
+
+* A JWTClaimConstraints extension {{RFC8226}} and/or EnhancedJWTClaimConstraints extension {{RFC9118}}, representing constraints on claims the certificate holder is permitted to assert.
+
+### Transparency Recording
+
+The issued certificate MUST be submitted to a transparency log. A corresponding SCT or other verifiable proof of inclusion is returned to the submitting party and MUST be embedded in the certificate prior to deployment. The embedded transparency receipt provides relying parties with verifiable evidence that the certificate was publicly recorded before use, without requiring a live log query.
+
+Transparency recording provides ecosystem visibility and supports detection of mis-issuance. This specification does not define remediation procedures; handling of mis-issuance and trust decisions are governed by ecosystem policy outside the scope of this document.
+
+## VESPER Certificate Profile
+
+VESPER delegate certificates MUST conform to the STIR certificate profile in {{RFC8226}} and MUST support the short-lived certificate profile in {{I-D.ietf-stir-certificates-shortlived}}.
+
+### Subject and SubjectAltName
+
+The certificate Subject SHOULD include an Organization (O) field reflecting the entity's name. The SubjectAltName extension MUST include a dNSName entry carrying the entity's domain (e.g., `example.com`). This domain MUST be DNS-resolvable, MUST match the domain of the certificate repository host, and MUST match the `domain` field of any `vper` claim in PASSporTs signed by this certificate.
+
+### TNAuthList Extension
+
+The certificate MUST include a TNAuthList extension {{RFC8226}}. The TNAuthList is a SEQUENCE OF TNEntry, where each TNEntry is a CHOICE of telephone number (TN), telephone number range, or service provider code (SPC). VESPER delegate certificates MAY include both TN entries and SPC entries in the same TNAuthList extension.
+
+* TN entries represent the telephone numbers assigned to and held by the certificate subject, as established by the TNAuthList Authority Token and validated through the certificate chain that reflects the responsible provider or organization's authority.
+* SPC entries identify the originating service providers enabled as legitimate originators for calls from the listed telephone numbers. Origination by an OSP not present in the TNAuthList is not considered legitimate and should be treated as potential spoofing.
+
+The combination of TN and SPC entries in a single certificate is the mechanism by which VESPER defines the legitimate origination path for a telephone number, enabling downstream origination policy distribution.
+
+### JWTClaimConstraints Extension (OPTIONAL)
+
+If the certificate is intended to authorize PASSporT claims beyond the base claims defined in {{RFC8225}}, the certificate MUST include a JWTClaimConstraints extension {{RFC8226}} and/or EnhancedJWTClaimConstraints extension {{RFC9118}}, derived from a JWTClaimConstraints Authority Token issued in accordance with {{I-D.ietf-acme-authority-token-jwtclaimcon}}. The JWTClaimConstraints Authority Token is the trust anchor for any additional entity information or claim values asserted in PASSporTs signed by this certificate. The STI CA MUST NOT widen the constraints specified in the Authority Token.
+
+### Transparency Receipt
+
+The issued certificate MUST be submitted to a transparency log prior to deployment. The resulting SCT or equivalent proof of inclusion MUST be embedded in the certificate. Relying parties MUST validate the embedded transparency receipt as part of certificate validation. The receipt proves the certificate was publicly recorded before use without requiring a live log query at verification time.
+
+### Validity and Renewal
+
+CAs SHOULD issue certificates with short validity intervals as specified in {{I-D.ietf-stir-certificates-shortlived}}. Certificate subjects SHOULD automate renewal to avoid service interruption. PASSporTs MUST include the full certificate chain using the `x5c` header parameter. Verification Services MUST prefer `x5c` over `x5u` and MUST NOT dereference `x5u` when a valid `x5c` chain is present.
 
 ## Use of VESPER Delegate Certificates for Signing Communications
 
-Once an Entity has received a delegate certificate containing validated right-to-use and claim constraints, it can use this certificate to sign communications associated with the authorized telephone number.
+Once a certificate subject has received a VESPER delegate certificate, it uses that certificate's private key to sign PASSporTs for calls and messages associated with the authorized telephone numbers. The JWTClaimConstraints extension in the certificate governs what additional claims the subject is permitted to assert, ensuring no claim can exceed what was authorized by the JWTClaimConstraints Authority Token presented at issuance.
 
-For example, as defined in {{RFC8224}} when the Entity initiates a SIP call, it generates a PASSporT object containing session-specific details such as "orig", "dest", and "iat". The Entity then signs the PASSporT using its delegate certificate, which binds both the telephone number and any authorized claims (e.g., RCD elements) to the communication.
-
-Critically, the JWTClaimConstraints extension in the certificate enforces the set of claims the Entity is permitted to assert in the PASSporT, ensuring that claims cannot exceed those vetted and authorized by the corresponding Claim Agent.
-
-As defined in {{RFC8224}}, the signed PASSporT is then attached to the SIP Identity header and transmitted with the call. The Verification Service (VS) on the receiving side performs STIR verification, checking:
-
-* That the PASSporT signature is valid.
-* That the delegate certificate is trusted, unexpired, and issued by a recognized CA.
-* If the PASSporT includes an "x5c" header, the certificate chain must be validated from the inline header; "x5u" must not be dereferenced.  
-* If "x5c" is absent, "x5u" MAY be used to retrieve the certificate chain.
-* That the certificate includes a valid TNAuthList extension for the telephone number in use in the "orig" claim.
-* That any asserted claims conform to the JWTClaimConstraints and/or EnhancedJWTClaimConstraints in the certificate.
-* That a corresponding transparency receipt exists, proving the certificate was publicly recorded.
-
-Senders SHOULD include "x5c"; relying parties SHOULD prefer "x5c" when both are available.
-
-If all verifications succeed, the relying party can trust that the call is both authorized and attributable, and that all claims have been validated by responsible participants in the ecosystem.
+For SIP calls, the signed PASSporT is attached to the SIP Identity header as defined in {{RFC8224}}, using the `x5c` header parameter to convey the certificate chain inline as specified in {{I-D.ietf-stir-certificates-shortlived}}.
 
 ## VESPER Authentication and Verification Procedures
 
-This section outlines the expected behavior of Authentication Services (AS) and Verification Services (VS) in deployments utilizing VESPER delegate certificates. These procedures extend the baseline STIR authentication and verification models defined in {{RFC8224}}, {{RFC8225}}, and {{RFC8226}} by incorporating validation of transparency-backed delegate certificates and associated claims.
+These procedures extend the baseline STIR authentication and verification models defined in {{RFC8224}}, {{RFC8225}}, and {{RFC8226}}.
 
 ### Authentication Service Behavior
 
-When originating a call, the Authentication Service performs the following steps:
+When originating a call or message, the Authentication Service:
 
-- Constructs a PASSporT for the session containing the required claims (e.g., `orig`, `dest`, `iat`), as well as any optional authorized claims (e.g., Rich Call Data).
-- Signs the PASSporT using a VESPER delegate certificate that:
-  - Contains a valid TNAuthList extension authorizing the `orig` telephone number.
-  - Optionally includes JWTClaimConstraints or EnhancedJWTClaimConstraints extensions consistent with the asserted claims.
-  - Is backed by a Signed Certificate Timestamp (SCT) from a transparency log.
-- Attaches the signed PASSporT in a SIP Identity header using the `"x5c"` header parameter to convey the certificate chain inline.
-- Ensures that the certificate is valid, unexpired, and issued by a CA compliant with the VESPER certificate issuance profile.
+- Constructs a PASSporT containing `orig`, `dest`, `iat`, the `vper` claim, and any optional claims authorized by JWTClaimConstraints in the certificate.
+- Signs the PASSporT using a VESPER delegate certificate whose TNAuthList authorizes the `orig` telephone number and that contains an embedded transparency receipt.
+- Conveys the certificate chain inline using the `x5c` header parameter.
 
 ### Verification Service Behavior
 
-Upon receiving a SIP request containing an Identity header, the Verification Service:
+Upon receiving a PASSporT, the Verification Service MUST:
 
-- Validates the PASSporT signature and parses the included claims.
-- Validates the VESPER delegate certificate by checking:
-  - Trust chain validity and issuer compliance with STI and VESPER certificate policies.
-  - The presence and accuracy of the TNAuthList extension corresponding to the `orig` telephone number.
-  - The presence and SCT validation of the certificate's transparency log inclusion.
-  - Any JWTClaimConstraints {{RFC8226}} and EnhancedJWTClaimConstraints {{RFC9118}} extensions, ensuring claimed values conform to constraints.
-- Rejects the PASSporT if any of the above validations fail.
+- Validate the PASSporT signature.
+- Validate the certificate trust chain against STIR ecosystem trust anchors.
+- Confirm the TNAuthList extension authorizes the `orig` telephone number.
+- Validate the embedded transparency receipt.
+- If JWTClaimConstraints or EnhancedJWTClaimConstraints extensions are present, verify that all asserted claims conform to those constraints.
+- Confirm the `vper` domain matches the dNSName SAN of the signing certificate.
+- Prefer `x5c` for certificate chain retrieval; MUST NOT dereference `x5u` when a valid `x5c` chain is present.
 
-This delineation ensures that only calls with properly issued and verifiable delegate certificates are authenticated and accepted under the VESPER framework, reinforcing accountability and integrity within the STIR ecosystem.
+The PASSporT MUST be rejected if any of the above checks fail.
 
-### Connected Identity Authentication and Verification
+### Connected Identity
 
-A similar verification process applies when VESPER is used in deployments that support Connected Identity as defined in {{I-D.ietf-stir-rfc4916-update}}. In this model, the destination party may return a PASSporT of type 'rsp' within a SIP response, signed using a delegate certificate authorized for the 'dest' telephone number in the original call.
+When VESPER is used with Connected Identity {{I-D.ietf-stir-rfc4916-update}}, the destination party returns a PASSporT of type `rsp` in a SIP 200 OK, signed using a VESPER delegate certificate authorized for the `dest` telephone number. The `rsp` PASSporT MUST include the original `orig` and `dest` values, a fresh `iat`, and optionally a `vper` claim reflecting the destination party's domain. The originating party MUST verify the `rsp` PASSporT using the same certificate validation steps above, applied to the `dest` telephone number and the destination party's certificate.
 
-#### Authentication by the Destination Party
+# PASSporT Claim: "vper" (Verifiable Persona Representation)
 
-When acting as an Authentication Service, the destination party performs the following steps to generate and sign the 'rsp' PASSporT:
+This section defines the `vper` PASSporT claim for conveying the domain identity of the party presenting a telephone number. The claim provides a verifiable binding between the PASSporT and the entity's domain as certified in the signing delegate certificate.
 
-Constructs a PASSporT of type 'rsp' including:
-
-- The original 'orig' and 'dest' values from the incoming call.
-- The 'iat' claim representing the issuance time.
-- Optionally, include other claims to convey attributes of entity including "vper", if appropriate.
-
-Sign the PASSporT using a valid VESPER delegate certificate containing a TNAuthList extension authorizing use of the 'dest' telephone number (i.e., the destination party's number).
-
-Include the "x5c" header in the PASSporT, conveying the certificate chain used for signing.
-
-Ensure the certificate is valid, unexpired, includes a valid SCT, and that the certificate corresponds to the 'dest' claim.
-
-Attach the signed PASSporT to a SIP 200 OK response using the Identity header as described in {{I-D.ietf-stir-rfc4916-update}}.
-
-#### Verification by the Originating Party
-
-To verify the 'rsp' PASSporT, the originating party (or an upstream Verification Service acting on its behalf) MUST perform the following checks:
-
-- The 'rsp' PASSporT MUST be signed using a valid VESPER delegate certificate with a TNAuthList value matching the 'dest' number.
-
-- The certificate MUST:
-  - Be issued by a Certification Authority compliant with {{RFC8226}} and the VESPER profile;
-  - Include a valid SCT and be within its validity period.
-
-- The PASSporT signature MUST be validated using the provided 'x5c' header.
-
-- The 'orig' and 'dest' claims MUST match those of the original PASSporT that initiated the call.
-
-- The 'iat' claim MUST be within an acceptable freshness interval.
-
-- The Verification Service SHOULD validate the certificate's inclusion in a transparency log using the SCT.
-
-These procedures confirm that the destination party has authenticated and cryptographically asserted its identity using a VESPER delegate certificate, extending mutual identity validation to the terminating side of the call. This process supports bi-directional trust, enhances accountability, and enables privacy-aware identity assertion.
-
-# PASSporT Claim: "vper" (Verifiable Persona Entity Representation)
-
-This section defines a new PASSporT claim, "vper" (Verifiable Persona Entity Representation), intended to encapsulate structured, extensible metadata about an entity authorized to use a telephone number. The "vper" claim enables verifiable, privacy-conscious assertion of real-world entity attributes bound to a delegate certificate and associated number via the VESPER framework.
-
-## Claim Format
-
-The "vper" claim is a JSON object containing the following REQUIRED fields:
+The `vper` claim is a JSON object containing the following field:
 
 ~~~~~~~~~~~~
 "vper": {
-  "id": "string",              // Globally unique NA identifier
-  "glue": ["string", ...],     // Array of GLUE URNs
-  "name": "string",            // Registered legal business name
-  "domain": "string"           // Domain associated with the entity
+  "domain": "string"
 }
 ~~~~~~~~~~~~
 
-Field Definitions
+* `domain` (REQUIRED): A DNS domain name under the administrative control of the party asserting the claim. The value MUST match the dNSName SAN in the signing VESPER delegate certificate. The value MUST be DNS-resolvable and is used as the primary identifier for domain-based discovery via the certificate repository defined in this document.
 
-* id (REQUIRED): A globally unique identifier for the entity associated via Number Assignment process. This MAY be a UUID, a public key thumbprint, or another opaque identifier that supports global uniqueness and non-repudiation. The identifier serves as a persistent reference to the entity across authority tokens and certificates.
-* glue (REQUIRED): An array of GLUE URNs defined in {{I-D.ietf-spice-glue-id}} that bind the entity to one or more standardized, jurisdiction-specific or globally recognized business identifiers (e.g., DUNS number, EIN, LEI, VAT ID). These enable interoperability across business registries and aid in regulatory traceability.
-* name (REQUIRED): A string containing the legal business name as registered with the relevant jurisdictional authority or business registry. This MUST match the name associated with the provided GLUE identifiers.
-* domain (REQUIRED): A string representing the canonical domain name associated with the business, typically used for its public website and/or authorized communication addresses (e.g., email). This value MUST be DNS-resolvable and under the administrative control of the asserting entity.
+## Semantics and Verification
 
-The "vper" claim may be used in full or in hashed form to support privacy-conscious deployments, as guided by the next section.
+The `vper` claim is conveyed inside a PASSporT and is integrity protected by the PASSporT signature. A relying party that successfully validates the PASSporT signature and the TNAuthList constraints of the signing delegate certificate can treat the `domain` value as bound to the authorized telephone number(s) for that certificate.
 
-Extensibility
+The `domain` value MUST match the dNSName SAN of the signing certificate. A relying party MUST reject a PASSporT where the `vper` domain does not match the certificate's dNSName SAN.
 
-The "vper" claim is designed to be extensible. Future specifications may define optional fields for additional structured entity metadata. Such extensions MUST be registered via the IANA PASSporT claim registry under this base claim or defined via new claim types.
+A relying party MAY use the `domain` value as input to the TN-keyed certificate repository lookup defined in this document to retrieve and independently validate the delegate certificate.
+
+# RTU Token
+
+This section defines the RTU Token, a portable JWT credential signed by the VESPER delegate certificate that can be distributed to originating service providers, relying parties, or policy systems as verifiable evidence of telephone number right-to-use and domain association.
+
+## Token Format
+
+The RTU Token is a JWT {{RFC7519}} signed using the private key of the VESPER delegate certificate. It is not a PASSporT and does not use PASSporT typing. The token MUST include a `cnf` (confirmation) claim {{RFC7800}} containing the public key of the signing delegate certificate (or a reference to it), binding the token to the certificate.
+
+The RTU Token MUST include:
+
+* `iss`: the entity's domain (matching the dNSName SAN of the signing certificate)
+* `iat`, `exp`: issuance and expiration times
+* `cnf`: confirmation claim binding the token to the signing certificate's public key
+* `tns`: array of E.164 telephone numbers authorized by the certificate's TNAuthList
+* `spcs`: array of SPCs authorized in the certificate's TNAuthList (MAY be omitted if no SPCs are present)
+* `domain`: the entity's domain (same value as `iss`)
+
+The token MAY additionally include claim-constrained attributes authorized by the JWTClaimConstraints extension of the signing certificate (e.g., Rich Call Data elements).
+
+## Usage
+
+The RTU Token is intended for distribution flows where a relying party or policy system needs portable evidence of RTU without performing a live certificate lookup. Primary use cases include:
+
+* Origination policy distribution: the token provides the SPC-scoped evidence that an OSP can validate to confirm it is an enabled legitimate originator for the listed TNs.
+* Web and multi-channel verification: a relying party that receives an RTU Token can validate the domain-TN binding without querying the certificate repository.
+* API-based registry interactions: the token can serve as a bearer credential in RTU registry or policy API contexts.
+
+## SD-JWT Extension
+
+A future extension of the RTU Token using SD-JWT {{I-D.ietf-oauth-selective-disclosure-jwt}} to support selective disclosure and a holder-wallet distribution model is anticipated. In that model, the entity holds a wallet of RTU Tokens and presents selective disclosures to relying parties on demand, enabling privacy-preserving verification without revealing the full TN inventory. This extension is not defined in this document.
 
 # JWTClaimConstraints for Transparent Claims
 
-This section defines how VESPER uses JWTClaimConstraints {{RFC8226}} and EnhancedJWTClaimConstraints {{RFC9118}} to announce claims through the certificate that is submitted to a transparency log, while preserving privacy when desired or required. In this model, a Claim Agent validates an Entity's desired claims and issues a JWTClaimConstraints Authority Token {{I-D.wendt-acme-authority-token-jwtclaimcon}} to a Certification Authority (CA). The CA includes a corresponding constraints extension in the delegate certificate, and that certificate is logged for ecosystem transparency. Three privacy modes are supported:
+This section defines how VESPER profiles JWTClaimConstraints {{RFC8226}} and EnhancedJWTClaimConstraints {{RFC9118}} to enable transparency-audited authorization of additional PASSporT claims while preserving privacy when desired. In this model, a JWTClaimConstraints Authority Token {{I-D.ietf-acme-authority-token-jwtclaimcon}} is issued to an STI CA authorizing specific claim names and, where applicable, constraining permissible claim values or value commitments. The STI CA includes corresponding constraints in the delegate certificate, and that certificate is logged for ecosystem auditability.
 
-1. Transparent-Value — the constraint fixes the exact value to be asserted (fully transparent).
-2. Semi‑Private (Unsalted Hash) — the constraint fixes a hash of the value (guessable by an observer who can test likely values).
-3. Private (Salted Commitment) — the constraint fixes a salted hash commitment; verification requires out‑of‑band salt disclosure from the Entity to an explicitly authorized relying party (RP).
+Three privacy modes are supported:
 
-## Goals and Non-Goals
+1. Transparent-Value: the constraint fixes the exact value to be asserted (fully transparent).
+2. Semi-Private (Unsalted Hash): the constraint fixes a hash of the value (guessable by an observer who can test likely values).
+3. Private (Salted Commitment): the constraint fixes a salted hash commitment; verification requires out-of-band salt disclosure from the certificate subject to an explicitly authorized relying party.
 
-- Binding: Relying parties MUST be able to verify that a presented claim value is one authorized by the certificate.
-- Transparency: Observers MUST be able to audit which claims are authorized for a number, without necessarily learning the private values.
-- Transparent Privacy Choice: Entities and Claim Agents MUST be able to choose per-claim whether values are public, semi‑private, or private.
-- Simplicity: All modes use widely deployed primitives (SHA‑2) and reuse deterministic serialization similar to RCD integrity {{RFC9795}} mechanism.
+## Constraint Encodings
 
-This section does not redefine the syntax of the JWTClaimConstraints/EnhancedJWTClaimConstraints extensions; it profiles their content to carry clear values or integrity artifacts for values.
+For each constrained claim, the JWTClaimConstraints Authority Token and the certificate extension MUST carry exactly one of the following encodings.
 
-## Addressing Claims in PASSporTs
+### Transparent-Value Constraint
 
-When Claims appear in PASSporTs, constraints refer to claims by claim name and, for structured claims, by JSON Pointer (RFC 6901) into the claim value. 
+The claim value is directly constrained to be the value in open text. The VS compares the presented PASSporT claim value for equality with the constrained value.
 
-However, even if the PASSporT does not include an explicit claim as part of the signed object in the context of a call or message, an important property of the transparency in the VESPER framework is if the relying party wants to validate claims made as part of transparency validation outside of PASSporT verification, it can look at the JWTClaimsConstraints objects to validate claims.
+### Semi-Private Constraint (Unsalted Hash)
 
-## Constraint Encodings (Three Privacy Modes)
-
-For each constrained claim (or claim path), the JWTClaimConstraints Authority Token and the certificate extension MUST carry exactly one of the following encodings.
-
-### Transparenct-Value Constraint
-
-The claim value is directly constrainted to be the value in open text.
-
-Verification: The VS compares the presented PASSporT claim value (after deterministic serialization if structured) for equality with value.
-
-### Semi‑Private Constraint (Unsalted Hash)
-
-Intended use: Values where limited hiding is acceptable, understanding that guessing is possible (e.g., logo URL or short labels).
-
-Semantics: The certificate fixes a digest D over the canonicalized value without a salt.
+The certificate fixes a digest D over the canonicalized value without a salt.
 
 Computation:
 
-V_bytes = deterministic_serialize(V)
-D = SHA-256(V_bytes)
+    V_bytes = deterministic_serialize(V)
+    D = SHA-256(V_bytes)
 
-Verification: The VS computes D' over the received value and accepts if D' == digest.
+Verification: The VS computes D' over the received value and accepts if D' == digest. This mirrors the integrity mechanism in {{RFC9795}}.
 
-Privacy: An observer who can guess candidate values can compute digests and test them. Use only when this risk is acceptable or values have sufficient entropy. This mirrors the integrity mechanism in {{RFC9795}}.
+### Private Constraint (Salted Commitment)
 
-### Private Constraint (Salted Commitment with Selective Disclosure)
-
-Intended use: Sensitive values (e.g., opaque IDs, PII) where the Entity wants verifiability only for explicitly authorized RPs.
-
-Semantics: The certificate fixes a commitment C that incorporates a secret, per‑claim salt S. Only C (and optionally a hash of S) is published. The Entity may later disclose S (and, if needed, V) out‑of‑band to an RP of its choosing for verification.
-
-Data Items
-
-V: value to be proven (octets after deterministic serialization).
-S: secret random salt (≥ 128 bits from a CSPRNG).
-H: a collision‑resistant hash (MUST support SHA‑256).
+The certificate fixes a commitment C incorporating a secret per-claim salt S. Only C is published. The certificate subject may disclose S and V out-of-band to an authorized relying party for verification.
 
 Computation:
 
-V_bytes = deterministic_serialize(V)
-C = H( S || V_bytes )
-(optional) S_hash = H(S)
+    V_bytes = deterministic_serialize(V)
+    C = SHA-256( S || V_bytes )
 
-Publication: The certificate and transparency log include only commit (and optional salt_hash). S and V are not published.
-
-Salt Disclosure: The Entity MAY disclose S (and, if required, V) to an authorized RP via an authenticated, confidential channel (e.g., a compact JWE encrypted to the RP's public key). Disclosure is per‑RP and per event at the Entity's discretion.
-
-Verification by RP:
-	1.	Obtain (V, S) from the Entity.
-	2.	Compute C' = H( S || deterministic_serialize(V) ).
-	3.	Accept if and only if C' == commit (and, if salt_hash present, H(S) == salt_hash).
+The salt S MUST be generated using a CSPRNG (minimum 128 bits) and MUST NOT be included in the certificate or transparency log.
 
 ## Certificate and Transparency Log Requirements
 
-The CA MUST copy the constraints from the JWTClaimConstraints Authority Token into the certificate's JWTClaimConstraints/EnhancedJWTClaimConstraints extension without widening them.
+The STI CA MUST copy the constraints from the JWTClaimConstraints Authority Token into the certificate extension without widening them. The issued certificate MUST be submitted to a transparency log, which records the existence of each constrained claim and its encoding (clear value, hash, or commitment) without revealing salts.
 
-The issued certificate MUST be submitted to a transparency log; the log therefore reveals:
-* the existence of each constrained claim/path, and
-* for each, either the clear value, an unsalted hash, or a salted commitment (but never the salt).
-* For mode commit, implementations MUST NOT include the salt in the certificate or log.
-
-## Authority Token Requirements
-
-A JWTClaimConstraints Authority Token MUST:
-
-* identify the Claim Agent and the Entity,
-* enumerate the constrained claims/paths and, for each, one of the three encodings above,
-* specify the hash algorithm where applicable ("alg": "sha-256" RECOMMENDED),
-* be time‑bounded and bound to the TN(s) (e.g., via TNAuthList) authorized for the Entity.
-
-The CA MUST verify the token per {{I-D.wendt-acme-authority-token-jwtclaimcon}} and issue a certificate that does not exceed the token's scope.
-
-## Verification by a Relying Party (VS)
-
-When verifying a PASSporT:
+## Verification by a Relying Party
 
 * For value mode: ensure the presented claim equals the constrained value.
 * For hash mode: recompute the digest over the presented claim and compare.
-* For commit mode: if the RP has received S (and V if needed) out‑of‑band, recompute and compare the commitment. If S is not available, the RP MUST treat the constraint as "authorized but not presently verifiable" and apply local policy (e.g., defer validation, request disclosure, or treat as unauthenticated attribute).
+* For commit mode: if the RP has received S and V out-of-band, recompute and compare the commitment. If S is not available, the RP MUST treat the constraint as authorized but not presently verifiable and apply local policy.
 
 # Security Considerations
 
-TBD
+## Threat Model and Goals
+
+VESPER provides verifiable evidence that a certificate subject is authorized to use one or more telephone numbers and (optionally) authorized to assert specific additional PASSporT claims. VESPER does not, by itself, determine whether a relying party should trust a caller, render user interface indicators, or enforce policy.
+
+The primary security goals are:
+
+* Prevent unauthorized parties from asserting telephone number authority.
+* Prevent over-claiming (asserting claims beyond those authorized by constraints).
+* Provide ecosystem auditability to detect mis-issuance.
+* Support privacy-preserving authorization of sensitive claim values.
+* Prevent enumeration of an entity's telephone number inventory via the certificate repository.
+
+## Certificate Repository Security
+
+### TN Hash Lookup
+
+The hash-keyed lookup path prevents enumeration of an entity's TN inventory by parties who do not already know the telephone numbers. Relying parties MUST compute lookup paths from the E.164 form of the telephone number as observed in context (e.g., from a PASSporT, a web page, or a message). Implementations SHOULD rate-limit repository responses to reduce the effectiveness of targeted probing.
+
+### Repository Domain Binding
+
+The domain of the certificate repository's TLS certificate MUST match the dNSName SAN of the VESPER delegate certificate served there. A relying party MUST reject a certificate if this match fails. This binding, together with standard WebPKI TLS validation, eliminates the need for cross-signing between the STI delegate certificate and the web TLS certificate.
+
+## PASSporT Header Retrieval
+
+Implementations MUST prefer `x5c` and MUST NOT dereference `x5u` when a valid `x5c` chain is present. If `x5u` dereferencing is permitted by local policy when `x5c` is absent, relying parties SHOULD restrict retrieval to HTTPS, enforce URI allowlisting, apply timeouts and size limits, and reject redirects to non-HTTPS schemes.
+
+## Claim Constraint Enforcement
+
+Relying parties MUST verify that any asserted claims conform to the JWTClaimConstraints and/or EnhancedJWTClaimConstraints extensions in the delegate certificate. A PASSporT that violates constraints MUST be treated as invalid.
+
+For the Semi-Private (Unsalted Hash) mode, observers may guess low-entropy values and test digests; deployments SHOULD use this mode only where that risk is acceptable.
+
+For the Private (Salted Commitment) mode, salts MUST be generated using a CSPRNG and MUST NOT be included in certificates or transparency logs. Salt disclosure MUST occur over authenticated and confidential channels.
+
+## Transparency Receipt Validation
+
+Relying parties MUST validate the embedded transparency receipt in the delegate certificate. Relying parties SHOULD apply local policy about which logs are trusted, minimum inclusion proof requirements, and handling of receipt validation failure.
+
+## Certificate Lifetime and Replay
+
+Short-lived certificates reduce dependence on revocation. Relying parties MUST enforce certificate validity windows and SHOULD enforce freshness checks on PASSporT `iat` claims. Relying parties SHOULD apply existing STIR replay mitigations appropriate to their environment.
+
+## Policy Separation
+
+VESPER standardizes evidence and verification inputs. Decisions about enforcement, dispute handling, and remediation are intentionally outside the scope of this document and MUST be governed by ecosystem policy.
 
 # IANA Considerations
 
@@ -413,6 +462,6 @@ This document requests that the IANA add a new entry to the "PASSporT Claims" re
 
 # Acknowledgments
 
-The authors would like to acknowledge Jon Peterson for valuable feedback into the concepts and framework for this document.  This work is mainly based on the many years of inputs and specifications developed in the STIR working group and the larger telephone industry which the authors acknowledge as a critically important feedback and influence toward the development of the VESPER framework.
+The authors would like to acknowledge Jon Peterson for valuable feedback into the concepts and framework for this document. This work is mainly based on the many years of inputs and specifications developed in the STIR working group and the larger telephone industry which the authors acknowledge as a critically important feedback and influence toward the development of the VESPER framework.
 
 --- back
