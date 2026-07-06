@@ -28,6 +28,7 @@ author:
     country: US
 
 normative:
+  RFC5280:
   RFC7519:
   RFC8224:
   RFC8225:
@@ -78,7 +79,7 @@ The certificate carries the following, all as defined in their respective specif
 
 * Telephone number authority: one or more telephone numbers in the TNAuthList extension {{RFC8226}}, representing the entity's right-to-use.
 * Optional self-asserted TN attributes: a VESPER delegate certificate MAY carry the TN Attributes extension {{I-D.wendt-stir-cert-tn-attr-ext}}, through which the number holder expresses self-asserted attributes about its own numbers, such as the originating providers it authorizes, do-not-originate status, and text-enabled status. These attributes are carried in a dedicated extension, are distinct from the telephone number authority in the TNAuthList, and do not extend or modify it.
-* Domain identifier: a domain name in the SubjectAltName, bound to the telephone number authority as defined in {{I-D.wendt-stir-tn-domain-binding}}.
+* Domain identifier: a domain name in the SubjectAltName {{RFC5280}}, bound to the telephone number authority as defined in {{I-D.wendt-stir-tn-domain-binding}}.
 * Optional claim constraints: JWTClaimConstraints {{RFC8226}} or EnhancedJWTClaimConstraints {{RFC9118}}, authorizing additional PASSporT claims such as Rich Call Data {{RFC9795}}.
 * Transparency: an embedded Signed Certificate Timestamp as defined in {{I-D.ietf-stir-certificate-transparency}}.
 
