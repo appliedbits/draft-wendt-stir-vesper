@@ -3,7 +3,7 @@ title: "VESPER - Verifiable STI Presentation and Evidence for RTU"
 abbrev: "VESPER"
 category: std
 
-docname: draft-wendt-stir-vesper-08
+docname: draft-wendt-stir-vesper-09
 submissiontype: IETF
 number:
 date:
@@ -41,11 +41,11 @@ normative:
 
 informative:
   RFC9118:
+  RFC9475:
   RFC9795:
   RFC9970:
   I-D.ietf-acme-authority-token-jwtclaimcon:
   I-D.ietf-stir-certificates-shortlived:
-  I-D.wendt-stir-cert-tn-attr-ext:
 
 --- abstract
 
@@ -75,12 +75,15 @@ The VESPER framework is built around a delegate certificate {{RFC9060}} issued t
 
 The VESPER delegate certificate is telephone number scoped: the telephone numbers in its TNAuthList represent the subject's right-to-use. It is delegated from a parent certificate held by the authority responsible for that right-to-use, typically the subject's TNSP or a responsible provider or organization that is authoritative in the telephone network and identified by a service provider code (SPC). Following the delegation model of {{RFC9060}}, Section 4.1, the parent certificate may be SPC scoped, and the telephone number scope of the VESPER delegate certificate MUST be encompassed by the parent's scope. The chain therefore expresses that an SPC-identified, network-authoritative provider has delegated the right-to-use of specific telephone numbers to the subject of the VESPER delegate certificate.
 
+The chain spans two levels of authentication. An SPC-scoped certificate authenticates a provider that is authoritative in the telephone network, which is the level at which STIR has been deployed to date. A telephone-number-scoped delegate certificate authenticates at the level of an individual telephone number and the entity assigned to use it. VESPER is concerned with the latter, and relies on the former for the authority it delegates.
+
+The authority model underlying this framework supports telephone numbers and is not inherently restricted to them: as noted in {{RFC9475}}, the `orig` and `dest` fields of a PASSporT {{RFC8225}} may contain URIs that are not telephone numbers. Any identifier whose use is administered by an authoritative party, and delegated by that party to a holder, can be authenticated in the same way. For identifiers that are themselves anchored in a domain, such as SIP URIs of the form user@domain, the authoritative party is the domain owner, and the domain association is intrinsic to the identifier rather than corroborating. This document offers no guidance on issuance for identities other than telephone numbers.
+
 The certificate carries the following, all as defined in their respective specifications:
 
 * Telephone number authority: one or more telephone numbers in the TNAuthList extension {{RFC8226}}, representing the entity's right-to-use.
-* Optional self-asserted TN attributes: a VESPER delegate certificate MAY carry the TN Attributes extension {{I-D.wendt-stir-cert-tn-attr-ext}}, through which the number holder expresses self-asserted attributes about its own numbers, such as the originating providers it authorizes, do-not-originate status, and text-enabled status. These attributes are carried in a dedicated extension, are distinct from the telephone number authority in the TNAuthList, and do not extend or modify it.
 * Domain identifier: a domain name in the SubjectAltName {{RFC5280}}, bound to the telephone number authority as defined in {{I-D.wendt-stir-tn-domain-binding}}.
-* Optional claim constraints: JWTClaimConstraints {{RFC8226}} or EnhancedJWTClaimConstraints {{RFC9118}}, authorizing additional PASSporT claims such as Rich Call Data {{RFC9795}}.
+* Optional claim constraints: JWTClaimConstraints {{RFC8226}} or EnhancedJWTClaimConstraints {{RFC9118}}. Claim constraints are the mechanism by which the issuer governs what the subject may assert, both authorizing additional PASSporT claims such as Rich Call Data {{RFC9795}} and restricting the claims and claim values the certificate may be used to sign.
 * Transparency: an embedded Signed Certificate Timestamp as defined in {{I-D.ietf-stir-certificate-transparency}}.
 
 VESPER deployments use short-lived certificates as described in {{I-D.ietf-stir-certificates-shortlived}}, convey the certificate chain inline using the `x5c` header parameter, and include the `x5u` header parameter referencing the certificate at its domain-hosted repository location.
@@ -148,7 +151,7 @@ When VESPER is used with Connected Identity {{RFC9970}}, the destination party r
 
 # Right-to-Use Token
 
-The Right-to-Use (RTU) Token is a JWT {{RFC7519}} signed by the private key of the VESPER delegate certificate, with the certificate chain conveyed in the JOSE header using the `x5c` parameter. The delegate certificate is the trust artifact; the token signature demonstrates that the presenter holds the corresponding private key. The token provides portable evidence of right-to-use outside of SIP signaling.
+The Right-to-Use (RTU) Token is a JWT {{RFC7519}} signed by the private key of the VESPER delegate certificate, with the certificate chain conveyed in the JOSE header using the `x5c` parameter. The delegate certificate is the trust artifact; the token signature demonstrates that the presenter holds the corresponding private key. The token provides portable evidence of right-to-use outside of SIP signaling. Established practice for demonstrating right-to-use outside of signaling relies largely on documents such as letters of authorization, which are not cryptographically verifiable and cannot be revoked once issued. The RTU Token provides a verifiable and short-lived alternative.
 
 The RTU Token includes:
 
@@ -160,7 +163,7 @@ The token may include additional claims authorized by the JWTClaimConstraints ex
 
 # Delivery Outside In-Band Signaling
 
-The VESPER trust artifacts defined in this document, the PASSporT and the Right-to-Use Token, are independent of how they are conveyed. They are signed by the VESPER delegate certificate and verified against the same bound certificate regardless of the path they travel. Where in-band signaling does not carry the artifact end to end, or where there is no in-band path between the parties, the same artifact can be conveyed through other mechanisms, including out-of-band publish-and-retrieve delivery. Such delivery mechanisms are specified separately and are not required in order to implement VESPER.
+The VESPER trust artifacts defined in this document, the PASSporT and the Right-to-Use Token, are independent of how they are conveyed. They are signed by the VESPER delegate certificate and verified against the same bound certificate regardless of the path they travel. Where in-band signaling does not carry the artifact end to end, or where there is no in-band path between the parties, the same artifact can be conveyed through other mechanisms, including out-of-band publish-and-retrieve delivery. This is the case, for example, for messaging conveyed over non-SIP transports that cannot carry a PASSporT {{RFC9475}}. Such delivery mechanisms are specified separately and are not required in order to implement VESPER.
 
 # Security Considerations
 
